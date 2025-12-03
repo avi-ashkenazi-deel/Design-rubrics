@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Designer Interview Rubric</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0d0d0d;
+            --bg-secondary: #141414;
+            --bg-surface: #1a1a1a;
+            --bg-elevated: #1f1f1f;
+            --border-color: #2a2a2a;
+            --border-hover: #3a3a3a;
+            
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-muted: #6a6a6a;
+            
+            --neon-red: #ff5c5c;
+            --neon-orange: #ff9f43;
+            --neon-green: #50fa7b;
+            --neon-cyan: #8be9fd;
+            --neon-purple: #bd93f9;
+            
+            --glow-red: 0 0 20px rgba(255, 92, 92, 0.3);
+            --glow-orange: 0 0 20px rgba(255, 159, 67, 0.3);
+            --glow-green: 0 0 20px rgba(80, 250, 123, 0.3);
+            --glow-cyan: 0 0 20px rgba(139, 233, 253, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        /* Form Controls */
+        label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        select:hover, input:hover {
+            border-color: var(--border-hover);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 3px rgba(139, 233, 253, 0.1);
+        }
+
+        select option {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border-color);
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--bg-surface);
+            border-color: var(--border-hover);
+        }
+
+        .btn-primary {
+            background: var(--neon-cyan);
+            color: var(--bg-primary);
+            border-color: var(--neon-cyan);
+        }
+
+        .btn-primary:hover {
+            background: #7dd3e8;
+            border-color: #7dd3e8;
+        }
+
+        .btn-add {
+            background: transparent;
+            border: 1px dashed var(--border-hover);
+            color: var(--text-secondary);
+        }
+
+        .btn-add:hover {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+
+        .btn-remove {
+            padding: 4px 8px;
+            font-size: 11px;
+            background: rgba(255, 92, 92, 0.1);
+            border-color: transparent;
+            color: var(--neon-red);
+        }
+
+        .btn-remove:hover {
+            background: rgba(255, 92, 92, 0.2);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            margin-left: 280px;
+            padding: 32px;
+            background: var(--bg-primary);
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 500;
+            width: fit-content;
+        }
+
+        .status-badge.loaded {
+            background: rgba(80, 250, 123, 0.15);
+            color: var(--neon-green);
+        }
+
+        .status-badge.error {
+            background: rgba(255, 92, 92, 0.15);
+            color: var(--neon-red);
+        }
+
+        .status-badge.loading {
+            background: rgba(139, 233, 253, 0.15);
+            color: var(--neon-cyan);
+        }
+
+        .status-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* Comparison Grid */
+        .comparison-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .comparison-header {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comparison-header-item {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+        }
+
+        .level-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .competency-row {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .competency-row:hover {
+            border-color: var(--border-hover);
+        }
+
+        .competency-header {
+            padding: 16px 20px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .competency-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: var(--bg-elevated);
+        }
+
+        .competency-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .competency-content {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .score-column {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Score Cards */
+        .score-card {
+            padding: 16px;
+            background: var(--bg-elevated);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            height: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .score-card:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .score-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .score-badge.score-1 {
+            background: rgba(255, 92, 92, 0.15);
+            color: var(--neon-red);
+            box-shadow: var(--glow-red);
+        }
+
+        .score-badge.score-2 {
+            background: rgba(255, 159, 67, 0.15);
+            color: var(--neon-orange);
+            box-shadow: var(--glow-orange);
+        }
+
+        .score-badge.score-3 {
+            background: rgba(80, 250, 123, 0.15);
+            color: var(--neon-green);
+            box-shadow: var(--glow-green);
+        }
+
+        .score-badge.score-4 {
+            background: rgba(139, 233, 253, 0.15);
+            color: var(--neon-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .score-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .score-label.fail {
+            color: var(--neon-orange);
+        }
+
+        .score-label.pass {
+            color: var(--neon-green);
+        }
+
+        .score-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* Level Comparison Cards */
+        .level-card {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            height: 100%;
+        }
+
+        .level-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .level-card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--neon-purple);
+        }
+
+        .level-card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .level-score-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .level-score-item {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .level-score-item .score-badge {
+            margin-bottom: 8px;
+        }
+
+        .level-score-item .score-text {
+            font-size: 12px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--bg-secondary);
+            border: 1px dashed var(--border-color);
+            border-radius: 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            max-width: 400px;
+            margin: 0 auto 20px;
+        }
+
+        .empty-state code {
+            display: inline-block;
+            background: var(--bg-elevated);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--neon-cyan);
+            margin-top: 12px;
+        }
+
+        /* Comparison Columns */
+        .comparison-columns {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .comparison-column {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .comparison-column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        /* Scrollable content */
+        .content-area {
+            max-width: 1400px;
+        }
+
+        /* Data Status Bar */
+        .data-status-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .data-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading .status-dot {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Filter group */
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Instructions panel */
+        .instructions {
+            padding: 10px 12px;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Highlight differences */
+        .highlighted {
+            background: rgba(255, 159, 67, 0.1);
+            border-color: var(--neon-orange) !important;
+        }
+
+        /* Compare Table Layout */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .compare-table-header {
+            display: flex;
+            gap: 1px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .compare-table-header .compare-table-cell {
+            padding: 14px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .compare-table-header .level-header-cell {
+            color: var(--neon-purple);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-icon {
+            font-size: 16px;
+        }
+
+        .compare-table-row {
+            display: flex;
+            gap: 1px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s ease;
+        }
+
+        .compare-table-row:last-child {
+            border-bottom: none;
+        }
+
+        .compare-table-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .compare-table-row.fail-row {
+            background: rgba(255, 92, 92, 0.03);
+        }
+
+        .compare-table-row.pass-row {
+            background: rgba(80, 250, 123, 0.03);
+        }
+
+        .compare-table-cell {
+            flex: 1;
+            padding: 16px;
+            min-width: 0;
+        }
+
+        .score-label-cell {
+            flex: 0 0 70px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border-color);
+        }
+
+        .score-status {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-status.fail {
+            color: var(--neon-orange);
+        }
+
+        .score-status.pass {
+            color: var(--neon-green);
+        }
+
+        .compare-cell-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .compare-table-cell:not(.score-label-cell) {
+            border-right: 1px solid var(--border-color);
+        }
+
+        .compare-table-cell:last-child {
+            border-right: none;
+        }
+
+        /* Multi-select dropdown */
+        .multi-select {
+            position: relative;
+        }
+
+        .multi-select-toggle {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .multi-select-toggle:hover {
+            border-color: var(--border-hover);
+        }
+
+        .multi-select.open .multi-select-toggle {
+            border-color: var(--neon-cyan);
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+
+        .multi-select-arrow {
+            font-size: 10px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        .multi-select.open .multi-select-arrow {
+            transform: rotate(180deg);
+        }
+
+        .multi-select-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-elevated);
+            border: 1px solid var(--neon-cyan);
+            border-top: none;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            z-index: 100;
+            padding: 4px 0;
+        }
+
+        .multi-select.open .multi-select-dropdown {
+            display: block;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .checkbox-item:hover {
+            background: var(--bg-surface);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--neon-cyan);
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">📋</div>
+                <span>Design Rubric</span>
+            </div>
+
+            <!-- Filters -->
+            <div class="section">
+                <div class="section-title">Filters</div>
+                <div class="filter-group">
+                    <label for="compare-stage">Interview Stage</label>
+                    <select id="compare-stage" onchange="onStageChange()">
+                        <option value="">Select stage...</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="compare-competency">Competency</label>
+                    <select id="compare-competency" onchange="updateCompareView()">
+                        <option value="">All competencies</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Score Level</label>
+                    <div class="multi-select" id="score-multi-select">
+                        <div class="multi-select-toggle" onclick="toggleScoreDropdown()">
+                            <span class="multi-select-label" id="score-select-label">All scores</span>
+                            <span class="multi-select-arrow">▾</span>
+                        </div>
+                        <div class="multi-select-dropdown" id="score-dropdown">
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="1" onchange="updateScoreSelection()">
+                                <span class="checkbox-label">1</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="2" onchange="updateScoreSelection()">
+                                <span class="checkbox-label">2</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="3" onchange="updateScoreSelection()">
+                                <span class="checkbox-label">3</span>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" value="4" onchange="updateScoreSelection()">
+                                <span class="checkbox-label">4</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compare Levels -->
+            <div class="section">
+                <div class="section-title">Compare Levels</div>
+                <div id="compare-levels-container">
+                    <div class="filter-group">
+                        <select class="compare-level-select" onchange="updateCompareView()">
+                            <option value="">Select level...</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-add" onclick="addComparisonColumn()">
+                    + Add Level to Compare
+                </button>
+            </div>
+
+            <!-- Data Actions -->
+            <div class="section" style="margin-top: auto;">
+                <div class="section-title">Data</div>
+                <div class="data-status-sidebar" id="data-status-sidebar">
+                    <span class="status-badge loading" id="data-status">
+                        <span class="status-dot"></span>
+                        Loading...
+                    </span>
+                    <span class="data-info" id="data-info">Fetching data...</span>
+                </div>
+                <button class="btn" onclick="reloadData()">
+                    Reload Data
+                </button>
+                <div class="instructions" id="last-updated-info">
+                    Loading file info...
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="header">
+                <h1>Compare Levels</h1>
+                <p>Compare competency requirements side-by-side across different designer levels</p>
+            </div>
+            <div class="content-area" id="compare-content">
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚖️</div>
+                    <h3>Compare designer levels</h3>
+                    <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Global state
+        let rubricData = [];
+        let selectedScores = [1, 2, 3, 4]; // All scores selected by default
+
+        // Competency icons
+        const competencyIcons = {
+            'Experience and background': '💼',
+            'Product Sense & Strategy': '🎯',
+            'Collaboration': '🤝',
+            'Communication': '💬',
+            'Ownership & Drive': '🚀',
+            'Craft & Visual Design': '🎨',
+            'User-centered problem solving': '🔍'
+        };
+
+        // Designer level icons and classes
+        const levelConfig = {
+            'Product Designer': { icon: '🌱', class: 'junior' },
+            'Senior Product Designer': { icon: '⭐', class: 'senior' },
+            'Staff Product Designer': { icon: '💎', class: 'staff' },
+            'Senior Staff Product Designer': { icon: '👑', class: 'senior-staff' }
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                const multiSelect = document.getElementById('score-multi-select');
+                if (!multiSelect.contains(e.target)) {
+                    multiSelect.classList.remove('open');
+                }
+            });
+        });
+
+        function toggleScoreDropdown() {
+            const multiSelect = document.getElementById('score-multi-select');
+            multiSelect.classList.toggle('open');
+        }
+
+        function updateScoreSelection() {
+            const checkboxes = document.querySelectorAll('#score-dropdown input[type="checkbox"]');
+            selectedScores = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => parseInt(cb.value));
+            
+            // If none selected, show all
+            if (selectedScores.length === 0) {
+                selectedScores = [1, 2, 3, 4];
+            }
+            
+            // Update label
+            const label = document.getElementById('score-select-label');
+            if (selectedScores.length === 4) {
+                label.textContent = 'All scores';
+            } else {
+                label.textContent = selectedScores.sort().join(', ');
+            }
+            
+            updateCompareView();
+        }
+
+        // CSV files - one per designer level
+        const csvFiles = [
+            { file: 'CSVs/PD.csv', level: 'Product Designer' },
+            { file: 'CSVs/SPD.csv', level: 'Senior Product Designer' },
+            { file: 'CSVs/SSPD.csv', level: 'Staff Product Designer' },
+            { file: 'CSVs/SSSPD.csv', level: 'Senior Staff Product Designer' }
+        ];
+
+        // Load data from multiple CSV files
+        async function loadData() {
+            updateDataStatus('loading', 'Loading CSV files...');
+            rubricData = [];
+            
+            const results = { loaded: [], failed: [] };
+            
+            for (const { file, level } of csvFiles) {
+                try {
+                    const response = await fetch(file);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+                    const csvText = await response.text();
+                    
+                    const parsed = Papa.parse(csvText, {
+                        header: false,
+                        skipEmptyLines: false
+                    });
+                    
+                    if (parsed.errors.length > 0) {
+                        console.warn(`CSV parsing warnings for ${file}:`, parsed.errors);
+                    }
+                    
+                    console.log(`Parsing ${file}, found ${parsed.data.length} rows`);
+                    console.log(`First 5 rows of ${file}:`, parsed.data.slice(0, 5));
+                    
+                    // Find the header row (contains "Assessment Stage" in first cell)
+                    let headerRowIndex = -1;
+                    for (let i = 0; i < Math.min(parsed.data.length, 20); i++) {
+                        const firstCell = parsed.data[i]?.[0]?.toString().trim() || '';
+                        console.log(`Row ${i} first cell: "${firstCell.substring(0, 30)}..."`);
+                        if (firstCell.includes('Assessment Stage') || firstCell.includes('Assessment')) {
+                            headerRowIndex = i;
+                            console.log(`Found header at row ${i}`);
+                            break;
+                        }
+                    }
+                    
+                    if (headerRowIndex === -1) {
+                        console.warn(`Could not find header row in ${file}. First 10 rows first cells:`, parsed.data.slice(0, 10).map(r => r?.[0]?.substring?.(0, 30)));
+                        results.failed.push(level);
+                        continue;
+                    }
+                    
+                    // Process data rows (after header)
+                    let currentStage = '';
+                    let rowsProcessed = 0;
+                    
+                    for (let i = headerRowIndex + 1; i < parsed.data.length; i++) {
+                        const row = parsed.data[i];
+                        
+                        // Skip empty rows or rows with not enough columns
+                        if (!row || row.length < 4) continue;
+                        
+                        // Get interview stage (column 0) - may be empty if continuation of previous stage
+                        const stage = row[0]?.toString().trim();
+                        if (stage && stage.length > 0 && !stage.startsWith(',')) {
+                            currentStage = stage;
+                        }
+                        
+                        // Get competency (column 1)
+                        let competency = row[1]?.toString().trim() || '';
+                        competency = competency.replace(/:$/, '').replace(/:\s*$/, ''); // Remove trailing colon
+                        
+                        if (!competency || !currentStage) continue;
+                        
+                        // Get scores - columns 3, 4, 5, 6 for Level 1-4 (new format)
+                        const score_1 = row[3]?.toString().trim() || '';
+                        const score_2 = row[4]?.toString().trim() || '';
+                        const score_3 = row[5]?.toString().trim() || '';
+                        const score_4 = row[6]?.toString().trim() || '';
+                        
+                        // Only add if we have at least some score data
+                        if (score_1 || score_2 || score_3 || score_4) {
+                            rubricData.push({
+                                interview_stage: currentStage,
+                                competency: competency,
+                                designer_level: level,
+                                score_1,
+                                score_2,
+                                score_3,
+                                score_4
+                            });
+                            rowsProcessed++;
+                        }
+                    }
+                    
+                    console.log(`${file}: Processed ${rowsProcessed} competency rows`);
+                    
+                    if (rowsProcessed > 0) {
+                        results.loaded.push(level);
+                    } else {
+                        console.warn(`No data rows found in ${file}`);
+                        results.failed.push(level);
+                    }
+                } catch (error) {
+                    console.error(`Failed to load ${file}:`, error);
+                    results.failed.push(level);
+                }
+            }
+            
+            console.log('Total rubric data entries:', rubricData.length);
+            console.log('Sample entry:', rubricData[0]);
+            
+            if (results.loaded.length === 0) {
+                updateDataStatus('error', 'No CSV files found. Please add your CSV files.');
+                showServerInstructions();
+                return;
+            }
+            
+            if (results.failed.length > 0) {
+                updateDataStatus('loaded', `Loaded ${results.loaded.length}/4 files • Missing: ${results.failed.join(', ')}`);
+            } else {
+                updateDataStatus('loaded', `All 4 levels loaded • ${rubricData.length} total entries`);
+            }
+            
+            onDataLoaded();
+        }
+
+        function reloadData() {
+            loadData();
+        }
+
+        function onDataLoaded() {
+            const stages = [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
+            const levels = [...new Set(rubricData.map(r => r.designer_level))].filter(Boolean);
+            const competencies = [...new Set(rubricData.map(r => r.competency))].filter(Boolean);
+
+            // Populate dropdowns
+            populateSelect('compare-stage', stages);
+            populateSelectWithAll('compare-competency', competencies, 'All competencies');
+
+            // Update comparison level dropdowns
+            updateComparisonLevelDropdowns(levels);
+
+            updateDataStatus('loaded', `${rubricData.length} entries • ${stages.length} stages • ${levels.length} levels`);
+            
+            // Update last modified info
+            updateLastModifiedInfo();
+        }
+
+        function populateSelectWithAll(id, options, allLabel) {
+            const select = document.getElementById(id);
+            select.innerHTML = `<option value="">${allLabel}</option>`;
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.add(option);
+            });
+        }
+
+        async function updateLastModifiedInfo() {
+            const infoEl = document.getElementById('last-updated-info');
+            let latestDate = null;
+            
+            for (const { file } of csvFiles) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    const lastModified = response.headers.get('Last-Modified');
+                    if (lastModified) {
+                        const date = new Date(lastModified);
+                        if (!latestDate || date > latestDate) {
+                            latestDate = date;
+                        }
+                    }
+                } catch (e) {
+                    // ignore
+                }
+            }
+            
+            if (latestDate) {
+                const formatted = latestDate.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                infoEl.innerHTML = `Last updated: ${formatted}`;
+            } else {
+                infoEl.style.display = 'none';
+            }
+        }
+
+        function populateSelect(id, options, keepFirst = true) {
+            const select = document.getElementById(id);
+            const firstOption = keepFirst ? select.options[0] : null;
+            select.innerHTML = '';
+            if (firstOption) select.add(firstOption);
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt;
+                option.textContent = opt;
+                select.add(option);
+            });
+        }
+
+        function updateComparisonLevelDropdowns(levels) {
+            const container = document.getElementById('compare-levels-container');
+            const selects = container.querySelectorAll('.compare-level-select');
+            selects.forEach(select => {
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select level...</option>';
+                levels.forEach(level => {
+                    const option = document.createElement('option');
+                    option.value = level;
+                    option.textContent = level;
+                    select.add(option);
+                });
+                select.value = currentValue;
+            });
+        }
+
+        function updateDataStatus(status, message) {
+            const badge = document.getElementById('data-status');
+            const info = document.getElementById('data-info');
+            
+            badge.className = `status-badge ${status}`;
+            badge.innerHTML = `<span class="status-dot"></span>${status === 'loaded' ? 'Loaded' : status === 'error' ? 'Error' : 'Loading...'}`;
+            info.textContent = message;
+        }
+
+        function showServerInstructions() {
+            const content = document.getElementById('primary-content');
+            content.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚠️</div>
+                    <h3>CSV Files Not Found</h3>
+                    <p>Please add your CSV files in the <strong>CSVs</strong> folder:</p>
+                    <div style="text-align: left; display: inline-block; margin: 16px 0;">
+                        <code style="display: block; margin: 4px 0;">CSVs/PD.csv</code>
+                        <code style="display: block; margin: 4px 0;">CSVs/SPD.csv</code>
+                        <code style="display: block; margin: 4px 0;">CSVs/SSPD.csv</code>
+                        <code style="display: block; margin: 4px 0;">CSVs/SSSPD.csv</code>
+                    </div>
+                    <p style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);">If you're running locally, start a server:</p>
+                    <code>python3 -m http.server 8000</code>
+                    <p style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Then open <strong>http://localhost:8000</strong></p>
+                </div>
+            `;
+        }
+
+        // Compare View
+        function addComparisonColumn() {
+            const levels = [...new Set(rubricData.map(r => r.designer_level))].filter(Boolean);
+            const container = document.getElementById('compare-levels-container');
+            
+            const index = container.children.length;
+            const div = document.createElement('div');
+            div.className = 'filter-group';
+            div.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <label style="flex: 1; margin: 0;">Level ${index + 1}</label>
+                    <button class="btn btn-remove" onclick="removeComparisonColumn(this)">Remove</button>
+                </div>
+                <select class="compare-level-select" onchange="updateCompareView()">
+                    <option value="">Select level...</option>
+                    ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
+                </select>
+            `;
+            container.appendChild(div);
+        }
+
+        function removeComparisonColumn(btn) {
+            const container = document.getElementById('compare-levels-container');
+            if (container.children.length > 1) {
+                btn.closest('.filter-group').remove();
+                updateCompareView();
+            }
+        }
+
+        function onStageChange() {
+            const stage = document.getElementById('compare-stage').value;
+            const competencySelect = document.getElementById('compare-competency');
+            const currentValue = competencySelect.value;
+            
+            // Get competencies for this stage only
+            let competencies;
+            if (stage) {
+                competencies = [...new Set(rubricData
+                    .filter(r => r.interview_stage === stage)
+                    .map(r => r.competency)
+                )].filter(Boolean);
+            } else {
+                competencies = [...new Set(rubricData.map(r => r.competency))].filter(Boolean);
+            }
+            
+            // Update competency dropdown
+            competencySelect.innerHTML = '<option value="">All competencies</option>';
+            competencies.forEach(comp => {
+                const option = document.createElement('option');
+                option.value = comp;
+                option.textContent = comp;
+                competencySelect.add(option);
+            });
+            
+            // Restore selection if still valid
+            if (competencies.includes(currentValue)) {
+                competencySelect.value = currentValue;
+            }
+            
+            updateCompareView();
+        }
+
+        function updateCompareView() {
+            const stage = document.getElementById('compare-stage').value;
+            const competencyFilter = document.getElementById('compare-competency').value;
+            const levelSelects = document.querySelectorAll('#compare-levels-container .compare-level-select');
+            const levels = Array.from(levelSelects).map(s => s.value).filter(Boolean);
+            const content = document.getElementById('compare-content');
+
+            if (!stage || levels.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚖️</div>
+                        <h3>Compare designer levels</h3>
+                        <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let competencies = [...new Set(rubricData.filter(r => r.interview_stage === stage).map(r => r.competency))];
+            
+            // Filter by competency if selected
+            if (competencyFilter) {
+                competencies = competencies.filter(c => c === competencyFilter);
+            }
+
+            content.innerHTML = `
+                <div class="comparison-grid">
+                    ${competencies.map(comp => renderCompareCompetencyRow(stage, comp, levels, selectedScores)).join('')}
+                </div>
+            `;
+        }
+
+        function renderCompareCompetencyRow(stage, competency, levels, scoresToShow) {
+            const icon = competencyIcons[competency] || '📌';
+            
+            // Get data for each level
+            const levelData = levels.map(level => 
+                rubricData.find(r => r.interview_stage === stage && r.competency === competency && r.designer_level === level)
+            );
+
+            return `
+                <div class="competency-row">
+                    <div class="competency-header">
+                        <div class="competency-icon">${icon}</div>
+                        <div class="competency-name">${competency}</div>
+                    </div>
+                    <div class="compare-table">
+                        <div class="compare-table-header">
+                            <div class="compare-table-cell score-label-cell">Score</div>
+                            ${levels.map(level => `
+                                <div class="compare-table-cell level-header-cell">
+                                    <span class="level-icon">${levelConfig[level]?.icon || '👤'}</span>
+                                    ${level}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${scoresToShow.map(score => `
+                            <div class="compare-table-row ${score <= 2 ? 'fail-row' : 'pass-row'}">
+                                <div class="compare-table-cell score-label-cell">
+                                    <span class="score-badge score-${score}">${score}</span>
+                                </div>
+                                ${levelData.map(data => `
+                                    <div class="compare-table-cell">
+                                        <div class="compare-cell-text">${data?.[`score_${score}`] || '—'}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderMiniScoreCard(score, text) {
+            return `
+                <div class="level-score-item">
+                    <span class="score-badge score-${score}">${score}</span>
+                    <div class="score-text">${text || '—'}</div>
+                </div>
+            `;
+        }
+
+    </script>
+</body>
+</html>
+
