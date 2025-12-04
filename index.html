@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Designer Interview Rubric</title>
+    <title>Hiring Rubric</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -757,7 +757,17 @@
         <aside class="sidebar">
             <div class="logo">
                 <div class="logo-icon">📋</div>
-                <span>Design Rubric</span>
+                <span>Hiring Rubric</span>
+            </div>
+
+            <!-- Discipline Selection -->
+            <div class="section">
+                <div class="section-title">Discipline</div>
+                <div class="filter-group">
+                    <select id="discipline-select" onchange="onDisciplineChange()">
+                        <option value="">Select discipline...</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Filters -->
@@ -841,14 +851,14 @@
         <!-- Main Content -->
         <main class="main">
             <div class="header">
-                <h1>Compare Levels</h1>
-                <p>Compare competency requirements side-by-side across different designer levels</p>
+                <h1 id="main-header-title">Compare Levels</h1>
+                <p id="main-header-subtitle">Select a discipline to compare competency requirements across levels</p>
             </div>
             <div class="content-area" id="compare-content">
                 <div class="empty-state">
                     <div class="empty-state-icon">⚖️</div>
-                    <h3>Compare designer levels</h3>
-                    <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
+                    <h3>Compare levels</h3>
+                    <p>Select a discipline, interview stage, and add levels to compare their requirements side-by-side.</p>
                 </div>
             </div>
         </main>
@@ -858,6 +868,9 @@
         // Global state
         let rubricData = [];
         let selectedScores = [1, 2, 3, 4]; // All scores selected by default
+        let disciplinesConfig = null;
+        let currentDiscipline = null;
+        let levelConfig = {}; // Will be populated from manifest
 
         // Competency icons
         const competencyIcons = {
@@ -870,17 +883,9 @@
             'User-centered problem solving': '🔍'
         };
 
-        // Designer level icons and classes
-        const levelConfig = {
-            'Product Designer': { icon: '🌱', class: 'junior' },
-            'Senior Product Designer': { icon: '⭐', class: 'senior' },
-            'Staff Product Designer': { icon: '💎', class: 'staff' },
-            'Senior Staff Product Designer': { icon: '👑', class: 'senior-staff' }
-        };
-
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
-            loadData();
+            loadDisciplines();
             
             // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
@@ -918,20 +923,73 @@
             updateCompareView();
         }
 
-        // CSV files - one per designer level
-        const csvFiles = [
-            { file: 'CSVs/PD.csv', level: 'Product Designer' },
-            { file: 'CSVs/SPD.csv', level: 'Senior Product Designer' },
-            { file: 'CSVs/SSPD.csv', level: 'Staff Product Designer' },
-            { file: 'CSVs/SSSPD.csv', level: 'Senior Staff Product Designer' }
-        ];
+        // Load disciplines from manifest
+        async function loadDisciplines() {
+            try {
+                const response = await fetch('disciplines/index.json');
+                if (!response.ok) throw new Error('Could not load disciplines manifest');
+                disciplinesConfig = await response.json();
+                
+                // Populate discipline dropdown
+                const disciplineSelect = document.getElementById('discipline-select');
+                disciplineSelect.innerHTML = '<option value="">Select discipline...</option>';
+                disciplinesConfig.disciplines.forEach(d => {
+                    const option = document.createElement('option');
+                    option.value = d.id;
+                    option.textContent = d.name;
+                    disciplineSelect.add(option);
+                });
+                
+                // Auto-select first discipline if only one exists
+                if (disciplinesConfig.disciplines.length === 1) {
+                    disciplineSelect.value = disciplinesConfig.disciplines[0].id;
+                    onDisciplineChange();
+                }
+            } catch (error) {
+                console.error('Failed to load disciplines:', error);
+                updateDataStatus('error', 'Could not load disciplines manifest');
+            }
+        }
 
-        // Load data from multiple CSV files
+        // Handle discipline change
+        function onDisciplineChange() {
+            const disciplineId = document.getElementById('discipline-select').value;
+            const headerSubtitle = document.getElementById('main-header-subtitle');
+            
+            if (!disciplineId) {
+                rubricData = [];
+                currentDiscipline = null;
+                headerSubtitle.textContent = 'Select a discipline to compare competency requirements across levels';
+                updateCompareView();
+                return;
+            }
+            
+            currentDiscipline = disciplinesConfig.disciplines.find(d => d.id === disciplineId);
+            headerSubtitle.textContent = `Compare ${currentDiscipline.name} competency requirements side-by-side across different levels`;
+            
+            // Build levelConfig from manifest
+            levelConfig = {};
+            currentDiscipline.levels.forEach(level => {
+                levelConfig[level.name] = { icon: level.icon, class: level.name.toLowerCase().replace(/\s+/g, '-') };
+            });
+            
+            loadData();
+        }
+
+        // Load data from multiple CSV files for current discipline
         async function loadData() {
+            if (!currentDiscipline) {
+                updateDataStatus('error', 'No discipline selected');
+                return;
+            }
             updateDataStatus('loading', 'Loading CSV files...');
             rubricData = [];
             
             const results = { loaded: [], failed: [] };
+            const csvFiles = currentDiscipline.levels.map(l => ({
+                file: `disciplines/${currentDiscipline.id}/${l.file}`,
+                level: l.name
+            }));
             
             for (const { file, level } of csvFiles) {
                 try {
@@ -1037,10 +1095,11 @@
                 return;
             }
             
+            const totalLevels = currentDiscipline.levels.length;
             if (results.failed.length > 0) {
-                updateDataStatus('loaded', `Loaded ${results.loaded.length}/4 files • Missing: ${results.failed.join(', ')}`);
+                updateDataStatus('loaded', `Loaded ${results.loaded.length}/${totalLevels} files • Missing: ${results.failed.join(', ')}`);
             } else {
-                updateDataStatus('loaded', `All 4 levels loaded • ${rubricData.length} total entries`);
+                updateDataStatus('loaded', `All ${totalLevels} levels loaded • ${rubricData.length} total entries`);
             }
             
             onDataLoaded();
@@ -1081,7 +1140,15 @@
 
         async function updateLastModifiedInfo() {
             const infoEl = document.getElementById('last-updated-info');
+            if (!currentDiscipline) {
+                infoEl.style.display = 'none';
+                return;
+            }
+            
             let latestDate = null;
+            const csvFiles = currentDiscipline.levels.map(l => ({
+                file: `disciplines/${currentDiscipline.id}/${l.file}`
+            }));
             
             for (const { file } of csvFiles) {
                 try {
@@ -1150,18 +1217,14 @@
         }
 
         function showServerInstructions() {
-            const content = document.getElementById('primary-content');
+            const content = document.getElementById('compare-content');
+            const disciplineName = currentDiscipline ? currentDiscipline.name : 'your discipline';
+            const disciplineId = currentDiscipline ? currentDiscipline.id : '[DisciplineName]';
             content.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-icon">⚠️</div>
                     <h3>CSV Files Not Found</h3>
-                    <p>Please add your CSV files in the <strong>CSVs</strong> folder:</p>
-                    <div style="text-align: left; display: inline-block; margin: 16px 0;">
-                        <code style="display: block; margin: 4px 0;">CSVs/PD.csv</code>
-                        <code style="display: block; margin: 4px 0;">CSVs/SPD.csv</code>
-                        <code style="display: block; margin: 4px 0;">CSVs/SSPD.csv</code>
-                        <code style="display: block; margin: 4px 0;">CSVs/SSSPD.csv</code>
-                    </div>
+                    <p>Please add your CSV files in the <strong>disciplines/${disciplineId}/</strong> folder.</p>
                     <p style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);">If you're running locally, start a server:</p>
                     <code>python3 -m http.server 8000</code>
                     <p style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Then open <strong>http://localhost:8000</strong></p>
@@ -1238,12 +1301,12 @@
             const levels = Array.from(levelSelects).map(s => s.value).filter(Boolean);
             const content = document.getElementById('compare-content');
 
-            if (!stage || levels.length === 0) {
+            if (!currentDiscipline || !stage || levels.length === 0) {
                 content.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">⚖️</div>
-                        <h3>Compare designer levels</h3>
-                        <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
+                        <h3>Compare levels</h3>
+                        <p>${!currentDiscipline ? 'Select a discipline to get started.' : 'Select an interview stage and add levels to compare their requirements side-by-side.'}</p>
                     </div>
                 `;
                 return;

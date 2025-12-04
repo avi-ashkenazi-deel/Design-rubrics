@@ -1,0 +1,22 @@
+{
+  "disciplines": [
+    {
+      "id": "Design",
+      "name": "Design",
+      "levels": [
+        { "file": "PD.csv", "name": "Product Designer", "icon": "🌱" },
+        { "file": "SPD.csv", "name": "Senior Product Designer", "icon": "⭐" },
+        { "file": "SSPD.csv", "name": "Staff Product Designer", "icon": "💎" },
+        { "file": "SSSPD.csv", "name": "Senior Staff Product Designer", "icon": "👑" }
+      ]
+    },
+    {
+      "id": "Engineering",
+      "name": "Engineering",
+      "levels": [
+        { "file": "SWE.csv", "name": "Software Engineer", "icon": "💻" },
+        { "file": "Senior-SWE.csv", "name": "Senior Software Engineer", "icon": "🚀" }
+      ]
+    }
+  ]
+}
