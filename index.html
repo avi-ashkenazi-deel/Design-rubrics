@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hiring at Deel</title>
+    <title>Deel OS</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -1435,13 +1435,15 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <span>Hiring at Deel</span>
+                <span>Deel OS</span>
             </div>
 
             <!-- Navigation -->
             <nav class="sidebar-nav" id="sidebar-nav">
-                <div class="nav-section-title">Hiring</div>
-                <div class="nav-divider"></div>
+                <div class="nav-section-header" id="nav-section-header">
+                    <div class="nav-section-title">Hiring</div>
+                    <div class="nav-divider"></div>
+                </div>
                 
                 <!-- Main menu -->
                 <div class="nav-menu" id="nav-main-menu">
@@ -1537,7 +1539,7 @@
             </div>
 
             <!-- Data Actions -->
-            <div class="section" style="margin-top: auto;">
+            <div class="section" id="data-section" style="margin-top: auto; display: none;">
                 <div class="section-title">Data</div>
                 <div class="data-status-sidebar" id="data-status-sidebar">
                     <span class="status-badge loading" id="data-status">
@@ -1557,15 +1559,11 @@
 
         <!-- Main Content -->
         <main class="main">
-            <div class="header">
-                <h1 id="current-view-title">Hiring at Deel</h1>
-                <p id="view-subtitle">Select an option from the sidebar to get started</p>
+            <div class="header" style="display: none;">
+                <h1 id="current-view-title"></h1>
+                <p id="view-subtitle"></p>
             </div>
             <div class="content-area" id="compare-content">
-                <div class="empty-state">
-                    <h3>Welcome to Hiring at Deel</h3>
-                    <p>Choose from Competencies, Rubrics, or Analyze Interview to get started.</p>
-                </div>
             </div>
         </main>
     </div>
@@ -1647,15 +1645,15 @@
             const content = document.getElementById('compare-content');
             const titleEl = document.getElementById('current-view-title');
             const subtitleEl = document.getElementById('view-subtitle');
+            const headerEl = document.querySelector('.header');
             
-            titleEl.textContent = 'Hiring at Deel';
-            subtitleEl.textContent = 'Select an option from the sidebar to get started';
-            content.innerHTML = `
-                <div class="empty-state">
-                    <h3>Welcome to Hiring at Deel</h3>
-                    <p>Choose from Competencies, Rubrics, or Analyze Interview to get started.</p>
-                </div>
-            `;
+            // Hide header and show empty black content
+            if (headerEl) headerEl.style.display = 'none';
+            content.innerHTML = '';
+            
+            // Hide data section
+            const dataSection = document.getElementById('data-section');
+            if (dataSection) dataSection.style.display = 'none';
         }
 
         // Initialize disciplines
@@ -2108,8 +2106,9 @@
 
         // Enter a view (drill down from main menu)
         function enterView(view) {
-            // Hide main menu, show back button
+            // Hide main menu and section header, show back button
             document.getElementById('nav-main-menu').style.display = 'none';
+            document.getElementById('nav-section-header').style.display = 'none';
             document.getElementById('nav-view-controls').style.display = 'flex';
             
             // Show discipline section
@@ -2117,6 +2116,16 @@
             if (disciplineSection) {
                 disciplineSection.style.display = 'flex';
             }
+            
+            // Show data section
+            const dataSection = document.getElementById('data-section');
+            if (dataSection) {
+                dataSection.style.display = 'flex';
+            }
+            
+            // Show header
+            const headerEl = document.querySelector('.header');
+            if (headerEl) headerEl.style.display = 'block';
             
             // Update active state in navigation
             document.querySelectorAll('.nav-item[data-view]').forEach(item => {
@@ -2128,8 +2137,9 @@
 
         // Exit view (go back to main menu)
         function exitView() {
-            // Show main menu, hide back button
+            // Show main menu and section header, hide back button
             document.getElementById('nav-main-menu').style.display = 'flex';
+            document.getElementById('nav-section-header').style.display = 'block';
             document.getElementById('nav-view-controls').style.display = 'none';
             
             // Hide discipline section and filters
