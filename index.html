@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Designer Interview Rubric</title>
+    <title>Hiring at Deel</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -176,9 +176,14 @@
             color: var(--text-secondary);
         }
 
-        .btn-add:hover {
+        .btn-add:hover:not(:disabled) {
             border-color: var(--neon-green);
             color: var(--neon-green);
+        }
+
+        .btn-add:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
         .btn-remove {
@@ -606,6 +611,290 @@
         .no-questions {
             color: var(--text-muted);
             font-style: italic;
+        }
+
+        /* Transcript Analysis Styles */
+        .transcript-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .transcript-input-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .transcript-input-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            flex: 1;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+        }
+
+        .transcript-textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: vertical;
+            margin-bottom: 16px;
+        }
+
+        .transcript-textarea:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+        }
+
+        .transcript-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .analyze-btn {
+            padding: 12px 24px;
+            background: var(--neon-cyan);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .analyze-btn:hover {
+            background: #7dd3e8;
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .analyze-btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .analyze-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid var(--bg-primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .transcript-results {
+            display: none;
+        }
+
+        .transcript-results.visible {
+            display: block;
+        }
+
+        .results-header {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-info {
+            display: flex;
+            gap: 24px;
+        }
+
+        .results-info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .results-info-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+
+        .results-info-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .overall-score {
+            text-align: right;
+        }
+
+        .overall-score-label {
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .overall-score-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .overall-score-value.high { color: var(--neon-green); }
+        .overall-score-value.medium { color: var(--neon-orange); }
+        .overall-score-value.low { color: var(--neon-red); }
+
+        /* Competency Results Cards */
+        .competency-results-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .competency-result-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .competency-result-header {
+            padding: 16px 20px;
+            background: var(--bg-surface);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .competency-result-title {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .competency-score-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .competency-score-badge.high {
+            background: rgba(80, 250, 123, 0.15);
+            color: var(--neon-green);
+        }
+
+        .competency-score-badge.medium {
+            background: rgba(255, 159, 67, 0.15);
+            color: var(--neon-orange);
+        }
+
+        .competency-score-badge.low {
+            background: rgba(255, 92, 92, 0.15);
+            color: var(--neon-red);
+        }
+
+        .competency-result-body {
+            padding: 16px 20px;
+        }
+
+        .question-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .question-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-item.covered {
+            background: rgba(80, 250, 123, 0.1);
+            border-color: rgba(80, 250, 123, 0.3);
+            color: var(--text-primary);
+        }
+
+        .question-item.covered::before {
+            content: '✓ ';
+            color: var(--neon-green);
+            font-weight: 600;
+        }
+
+        .question-item.not-covered {
+            opacity: 0.6;
+        }
+
+        .question-item.not-covered::before {
+            content: '○ ';
+            color: var(--text-muted);
         }
 
         .competency-content {
@@ -1043,8 +1332,7 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
-                <div class="logo-icon">📋</div>
-                <span>Design Rubric</span>
+                <span>Hiring at Deel</span>
             </div>
 
             <!-- View Switcher -->
@@ -1052,8 +1340,9 @@
                 <div class="section-title">View</div>
                 <div class="filter-group">
                     <select id="view-select" onchange="switchView(this.value)">
-                        <option value="rubric">📋  Hiring Rubric</option>
-                        <option value="definitions">📖  Competencies Definition</option>
+                        <option value="rubric">Hiring Rubric</option>
+                        <option value="definitions">Competencies Definition</option>
+                        <option value="transcript">Transcript Analysis</option>
                     </select>
                 </div>
             </div>
@@ -1070,7 +1359,6 @@
 
             <!-- Filters -->
             <div class="section" id="filters-section">
-                <div class="section-title">Filters</div>
                 <div class="filter-group">
                     <label for="compare-stage">Interview Stage</label>
                     <select id="compare-stage" onchange="onStageChange()">
@@ -1117,12 +1405,12 @@
                 <div class="section-title">Compare Levels</div>
                 <div id="compare-levels-container">
                     <div class="filter-group">
-                        <select class="compare-level-select" onchange="updateCompareView()">
+                        <select class="compare-level-select" onchange="onLevelSelectChange()">
                             <option value="">Select level...</option>
                         </select>
                     </div>
                 </div>
-                <button class="btn btn-add" onclick="addComparisonColumn()">
+                <button class="btn btn-add" id="add-level-btn" onclick="addComparisonColumn()" style="display: none;">
                     + Add Level to Compare
                 </button>
             </div>
@@ -1154,7 +1442,6 @@
             </div>
             <div class="content-area" id="compare-content">
                 <div class="empty-state">
-                    <div class="empty-state-icon">⚖️</div>
                     <h3>Compare designer levels</h3>
                     <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
                 </div>
@@ -1167,7 +1454,6 @@
         <div class="modal">
             <div class="modal-header">
                 <div class="modal-title-wrapper">
-                    <div class="modal-icon" id="modal-icon">📌</div>
                     <div class="modal-title" id="modal-title">Competency</div>
                 </div>
                 <button class="modal-close" onclick="closeModal()">×</button>
@@ -1192,41 +1478,32 @@
         let currentDiscipline = 'Design'; // Current selected discipline
         let disciplineConfig = null; // Current discipline configuration
 
-        // Discipline icons
-        const disciplineIcons = {
-            'Design': '🎨',
-            'Engineering': '💻',
-            'Product': '📦',
-            'Marketing': '📣',
-            'Sales': '💼',
-            'Data': '📊',
-            'Operations': '⚙️',
-            'HR': '👥',
-            'Finance': '💰'
-        };
+        // Discipline icons (disabled)
+        const disciplineIcons = {};
 
         // Default icon for unknown disciplines
-        const defaultDisciplineIcon = '📁';
+        const defaultDisciplineIcon = '';
 
-        // Competency icons
-        const competencyIcons = {
-            'Experience and background': '💼',
-            'Product Sense & Strategy': '🎯',
-            'Collaboration': '🤝',
-            'Communication': '💬',
-            'Ownership & Drive': '🚀',
-            'Craft & Visual Design': '🎨',
-            'User-centered problem solving': '🔍',
-            'User-Centered Problem Solving': '🔍'
-        };
+        // Competency icons (disabled)
+        const competencyIcons = {};
 
         // Designer level icons and classes
         const levelConfig = {
-            'Product Designer': { icon: '🌱', class: 'junior' },
-            'Senior Product Designer': { icon: '⭐', class: 'senior' },
-            'Staff Product Designer': { icon: '💎', class: 'staff' },
-            'Senior Staff Product Designer': { icon: '👑', class: 'senior-staff' }
+            'Product Designer': { icon: '', class: 'junior' },
+            'Senior Product Designer': { icon: '', class: 'senior' },
+            'Staff Product Designer': { icon: '', class: 'staff' },
+            'Senior Staff Product Designer': { icon: '', class: 'senior-staff' }
         };
+
+        // Stage display names (for UI display)
+        const stageDisplayNames = {
+            'Portfolio': 'Portfolio (Async)'
+        };
+
+        // Get display name for a stage
+        function getStageDisplayName(stage) {
+            return stageDisplayNames[stage] || stage;
+        }
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', async () => {
@@ -1259,8 +1536,7 @@
             disciplines.forEach(name => {
                 const option = document.createElement('option');
                 option.value = name;
-                const icon = disciplineIcons[name] || defaultDisciplineIcon;
-                option.textContent = `${icon}  ${name}`;
+                option.textContent = name;
                 select.add(option);
             });
             
@@ -1714,10 +1990,14 @@
                 titleEl.textContent = 'Hiring Rubric';
                 subtitleEl.textContent = 'Compare competency requirements side-by-side across different designer levels';
                 updateCompareView();
-            } else {
+            } else if (view === 'definitions') {
                 titleEl.textContent = 'Competencies Definition';
                 subtitleEl.textContent = 'Understand what each competency means and how it contributes to success';
                 renderDefinitionsView();
+            } else if (view === 'transcript') {
+                titleEl.textContent = 'Transcript Analysis';
+                subtitleEl.textContent = 'Analyze interview transcripts to evaluate question coverage per competency';
+                renderTranscriptView();
             }
         }
 
@@ -1739,9 +2019,8 @@
             if (uniqueDefinitions.length === 0) {
                 content.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">📖</div>
                         <h3>No competency definitions found</h3>
-                        <p>Add a Competencies.csv file in the disciplines/Design folder with Focus Area, Competency, and Description columns.</p>
+                        <p>Add a Competencies.csv file in the disciplines/${currentDiscipline} folder with Focus Area, Competency, and Description columns.</p>
                     </div>
                 `;
                 return;
@@ -1750,11 +2029,9 @@
             content.innerHTML = `
                 <div class="competencies-grid">
                     ${uniqueDefinitions.map(([name, data]) => {
-                        const icon = competencyIcons[name] || competencyIcons[name.replace(':', '')] || '📌';
                         return `
                             <div class="competency-definition-card">
                                 <div class="competency-definition-header">
-                                    <div class="competency-icon">${icon}</div>
                                     <div class="competency-name">${name}</div>
                                 </div>
                                 <div class="competency-definition-body">
@@ -1768,10 +2045,296 @@
             `;
         }
 
+        // OpenAI API Key (to be configured)
+        const OPENAI_API_KEY = ''; // Add your API key here
+
+        // Transcript Analysis State
+        let transcriptAnalysisResults = null;
+
+        // Render Transcript Analysis View
+        function renderTranscriptView() {
+            const content = document.getElementById('compare-content');
+            const stages = [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
+            
+            content.innerHTML = `
+                <div class="transcript-container">
+                    <div class="transcript-input-section">
+                        <h3>Interview Details</h3>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="interviewer-name">Interviewer Name</label>
+                                <input type="text" id="interviewer-name" placeholder="Enter interviewer name...">
+                            </div>
+                            <div class="input-group">
+                                <label for="interviewee-name">Candidate Name</label>
+                                <input type="text" id="interviewee-name" placeholder="Enter candidate name...">
+                            </div>
+                        </div>
+                        <div class="input-row">
+                            <div class="input-group">
+                                <label for="transcript-stage">Interview Stage</label>
+                                <select id="transcript-stage">
+                                    <option value="">Select stage...</option>
+                                    ${stages.map(s => `<option value="${s}">${getStageDisplayName(s)}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                        <label for="transcript-input">Interview Transcript</label>
+                        <textarea id="transcript-input" class="transcript-textarea" placeholder="Paste your Metaview transcript here..."></textarea>
+                        <button class="analyze-btn" id="analyze-btn" onclick="analyzeTranscript()">
+                            Analyze Transcript
+                        </button>
+                    </div>
+                    
+                    <div class="transcript-results" id="transcript-results">
+                        <!-- Results will be rendered here -->
+                    </div>
+                </div>
+            `;
+        }
+
+        // Analyze transcript using OpenAI
+        async function analyzeTranscript() {
+            const interviewer = document.getElementById('interviewer-name').value.trim();
+            const interviewee = document.getElementById('interviewee-name').value.trim();
+            const stage = document.getElementById('transcript-stage').value;
+            const transcript = document.getElementById('transcript-input').value.trim();
+            const analyzeBtn = document.getElementById('analyze-btn');
+            
+            // Validation
+            if (!interviewer || !interviewee) {
+                alert('Please enter both interviewer and candidate names.');
+                return;
+            }
+            if (!stage) {
+                alert('Please select an interview stage.');
+                return;
+            }
+            if (!transcript) {
+                alert('Please paste the interview transcript.');
+                return;
+            }
+            if (!OPENAI_API_KEY) {
+                alert('OpenAI API key is not configured. Please add your API key to the code.');
+                return;
+            }
+            
+            // Get questions for this stage
+            const stageQuestions = getQuestionsForStage(stage);
+            if (Object.keys(stageQuestions).length === 0) {
+                alert('No questions found for this interview stage.');
+                return;
+            }
+            
+            // Show loading state
+            analyzeBtn.classList.add('loading');
+            analyzeBtn.disabled = true;
+            
+            try {
+                const results = await callOpenAIForAnalysis(transcript, stageQuestions);
+                transcriptAnalysisResults = {
+                    interviewer,
+                    interviewee,
+                    stage,
+                    results
+                };
+                renderTranscriptResults();
+            } catch (error) {
+                console.error('Analysis failed:', error);
+                alert('Analysis failed: ' + error.message);
+            } finally {
+                analyzeBtn.classList.remove('loading');
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        // Get all questions for a stage grouped by competency
+        function getQuestionsForStage(stage) {
+            const result = {};
+            
+            for (const [key, questions] of Object.entries(questionsData)) {
+                const [qStage, ...competencyParts] = key.split('_');
+                const competency = competencyParts.join('_');
+                
+                if (qStage === stage && competency) {
+                    result[competency] = questions.split(/\n|(?=•)/)
+                        .map(q => q.replace(/^[•\-\*]\s*/, '').trim())
+                        .filter(q => q.length > 0);
+                }
+            }
+            
+            return result;
+        }
+
+        // Call OpenAI API for analysis
+        async function callOpenAIForAnalysis(transcript, stageQuestions) {
+            const questionsList = [];
+            let index = 0;
+            
+            for (const [competency, questions] of Object.entries(stageQuestions)) {
+                questions.forEach(q => {
+                    questionsList.push({
+                        index: index++,
+                        competency,
+                        question: q
+                    });
+                });
+            }
+            
+            const prompt = `You are an interview analysis assistant. Analyze the following interview transcript and determine which of the predefined interview questions were asked or addressed during the conversation.
+
+For each question, respond with whether it was "covered" (the topic was discussed, even if not asked verbatim) or "not_covered".
+
+Return your response as a JSON array with objects containing:
+- "index": the question index
+- "covered": boolean (true if the question topic was addressed)
+- "confidence": number 0-100 (how confident you are in this assessment)
+
+PREDEFINED QUESTIONS:
+${questionsList.map(q => `[${q.index}] (${q.competency}): ${q.question}`).join('\n')}
+
+INTERVIEW TRANSCRIPT:
+${transcript}
+
+Respond ONLY with the JSON array, no other text.`;
+
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${OPENAI_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o-mini',
+                    messages: [
+                        { role: 'user', content: prompt }
+                    ],
+                    temperature: 0.3
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error?.message || 'API request failed');
+            }
+            
+            const data = await response.json();
+            const content = data.choices[0].message.content;
+            
+            // Parse JSON response
+            let analysisResults;
+            try {
+                // Try to extract JSON from the response
+                const jsonMatch = content.match(/\[[\s\S]*\]/);
+                if (jsonMatch) {
+                    analysisResults = JSON.parse(jsonMatch[0]);
+                } else {
+                    analysisResults = JSON.parse(content);
+                }
+            } catch (e) {
+                console.error('Failed to parse OpenAI response:', content);
+                throw new Error('Failed to parse analysis results');
+            }
+            
+            // Map results back to competencies
+            const competencyResults = {};
+            
+            for (const [competency, questions] of Object.entries(stageQuestions)) {
+                competencyResults[competency] = questions.map((q, i) => {
+                    const questionIndex = questionsList.findIndex(
+                        ql => ql.competency === competency && ql.question === q
+                    );
+                    const result = analysisResults.find(r => r.index === questionIndex);
+                    return {
+                        question: q,
+                        covered: result?.covered || false,
+                        confidence: result?.confidence || 0
+                    };
+                });
+            }
+            
+            return competencyResults;
+        }
+
+        // Render transcript analysis results
+        function renderTranscriptResults() {
+            const resultsContainer = document.getElementById('transcript-results');
+            if (!transcriptAnalysisResults) {
+                resultsContainer.classList.remove('visible');
+                return;
+            }
+            
+            const { interviewer, interviewee, stage, results } = transcriptAnalysisResults;
+            
+            // Calculate overall coverage
+            let totalQuestions = 0;
+            let coveredQuestions = 0;
+            
+            for (const questions of Object.values(results)) {
+                totalQuestions += questions.length;
+                coveredQuestions += questions.filter(q => q.covered).length;
+            }
+            
+            const overallPercentage = totalQuestions > 0 
+                ? Math.round((coveredQuestions / totalQuestions) * 100) 
+                : 0;
+            
+            const overallClass = overallPercentage >= 70 ? 'high' : overallPercentage >= 40 ? 'medium' : 'low';
+            
+            resultsContainer.innerHTML = `
+                <div class="results-header">
+                    <div class="results-info">
+                        <div class="results-info-item">
+                            <span class="results-info-label">Interviewer</span>
+                            <span class="results-info-value">${interviewer}</span>
+                        </div>
+                        <div class="results-info-item">
+                            <span class="results-info-label">Candidate</span>
+                            <span class="results-info-value">${interviewee}</span>
+                        </div>
+                        <div class="results-info-item">
+                            <span class="results-info-label">Stage</span>
+                            <span class="results-info-value">${getStageDisplayName(stage)}</span>
+                        </div>
+                    </div>
+                    <div class="overall-score">
+                        <div class="overall-score-label">Overall Coverage</div>
+                        <div class="overall-score-value ${overallClass}">${overallPercentage}%</div>
+                    </div>
+                </div>
+                
+                <div class="competency-results-grid">
+                    ${Object.entries(results).map(([competency, questions]) => {
+                        const covered = questions.filter(q => q.covered).length;
+                        const total = questions.length;
+                        const percentage = total > 0 ? Math.round((covered / total) * 100) : 0;
+                        const scoreClass = percentage >= 70 ? 'high' : percentage >= 40 ? 'medium' : 'low';
+                        
+                        return `
+                            <div class="competency-result-card">
+                                <div class="competency-result-header">
+                                    <span class="competency-result-title">${competency}</span>
+                                    <span class="competency-score-badge ${scoreClass}">${percentage}% (${covered}/${total})</span>
+                                </div>
+                                <div class="competency-result-body">
+                                    ${questions.map(q => `
+                                        <div class="question-item ${q.covered ? 'covered' : 'not-covered'}">
+                                            ${q.question}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+            
+            resultsContainer.classList.add('visible');
+        }
+
         // Modal functions
         function openCompetencyModal(competency) {
             const modal = document.getElementById('competency-modal');
-            const icon = competencyIcons[competency] || competencyIcons[competency.replace(':', '')] || '📌';
             
             // Find the definition (try various formats)
             let definition = competencyDefinitions[competency] ||
@@ -1779,7 +2342,6 @@
                             competencyDefinitions[competency + ':'] ||
                             findSimilarCompetency(competency);
             
-            document.getElementById('modal-icon').textContent = icon;
             document.getElementById('modal-title').textContent = competency;
             
             if (definition) {
@@ -1831,7 +2393,7 @@
             const competencies = [...new Set(rubricData.map(r => r.competency))].filter(Boolean);
 
             // Populate dropdowns
-            populateSelect('compare-stage', stages);
+            populateSelect('compare-stage', stages, true, true);
             populateSelectWithAll('compare-competency', competencies, 'All competencies');
 
             // Update comparison level dropdowns
@@ -1887,7 +2449,7 @@
             }
         }
 
-        function populateSelect(id, options, keepFirst = true) {
+        function populateSelect(id, options, keepFirst = true, useDisplayNames = false) {
             const select = document.getElementById(id);
             const firstOption = keepFirst ? select.options[0] : null;
             select.innerHTML = '';
@@ -1895,7 +2457,7 @@
             options.forEach(opt => {
                 const option = document.createElement('option');
                 option.value = opt;
-                option.textContent = opt;
+                option.textContent = useDisplayNames ? getStageDisplayName(opt) : opt;
                 select.add(option);
             });
         }
@@ -1914,6 +2476,7 @@
                 });
                 select.value = currentValue;
             });
+            updateAddLevelButton();
         }
 
         function updateDataStatus(status, message) {
@@ -1929,20 +2492,23 @@
             const content = document.getElementById('primary-content');
             content.innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-state-icon">⚠️</div>
                     <h3>CSV Files Not Found</h3>
-                    <p>Please add your CSV files in the <strong>CSVs</strong> folder:</p>
-                    <div style="text-align: left; display: inline-block; margin: 16px 0;">
-                        <code style="display: block; margin: 4px 0;">CSVs/PD.csv</code>
-                        <code style="display: block; margin: 4px 0;">CSVs/SPD.csv</code>
-                        <code style="display: block; margin: 4px 0;">CSVs/SSPD.csv</code>
-                        <code style="display: block; margin: 4px 0;">CSVs/SSSPD.csv</code>
-                    </div>
+                    <p>Please add your CSV files in the <strong>disciplines</strong> folder.</p>
                     <p style="margin-top: 16px; font-size: 13px; color: var(--text-secondary);">If you're running locally, start a server:</p>
                     <code>python3 -m http.server 8000</code>
                     <p style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">Then open <strong>http://localhost:8000</strong></p>
                 </div>
             `;
+        }
+
+        // Check if add level button should be visible
+        function updateAddLevelButton() {
+            const levelSelects = document.querySelectorAll('#compare-levels-container .compare-level-select');
+            const allSelected = Array.from(levelSelects).every(s => s.value !== '');
+            const addBtn = document.getElementById('add-level-btn');
+            if (addBtn) {
+                addBtn.style.display = allSelected ? 'flex' : 'none';
+            }
         }
 
         // Compare View
@@ -1958,12 +2524,19 @@
                     <label style="flex: 1; margin: 0;">Level ${index + 1}</label>
                     <button class="btn btn-remove" onclick="removeComparisonColumn(this)">Remove</button>
                 </div>
-                <select class="compare-level-select" onchange="updateCompareView()">
+                <select class="compare-level-select" onchange="onLevelSelectChange()">
                     <option value="">Select level...</option>
                     ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
                 </select>
             `;
             container.appendChild(div);
+            updateAddLevelButton();
+        }
+
+        // Handle level select change
+        function onLevelSelectChange() {
+            updateCompareView();
+            updateAddLevelButton();
         }
 
         function removeComparisonColumn(btn) {
@@ -2017,7 +2590,6 @@
             if (!stage || levels.length === 0) {
                 content.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-state-icon">⚖️</div>
                         <h3>Compare designer levels</h3>
                         <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
                     </div>
@@ -2040,8 +2612,6 @@
         }
 
         function renderCompareCompetencyRow(stage, competency, levels, scoresToShow) {
-            const icon = competencyIcons[competency] || '📌';
-            
             // Check if we have a definition for this competency
             const hasDefinition = competencyDefinitions[competency] || 
                                  competencyDefinitions[competency.replace(':', '')] ||
@@ -2063,14 +2633,12 @@
             return `
                 <div class="competency-row">
                     <div class="competency-header">
-                        <div class="competency-icon">${icon}</div>
                         <div class="competency-title-wrapper">
                             <div class="competency-name">${competency}</div>
                             ${hasDefinition ? `<button class="info-icon" onclick="openCompetencyModal('${competency.replace(/'/g, "\\'")}')">i</button>` : ''}
                         </div>
                         ${hasQuestions ? `
                             <button class="questions-toggle ${showQuestions ? 'active' : ''}" onclick="toggleQuestions('${stage.replace(/'/g, "\\'")}', '${competency.replace(/'/g, "\\'")}')">
-                                <span class="questions-toggle-icon">❓</span>
                                 <span>${showQuestions ? 'Hide questions' : 'See questions'}</span>
                             </button>
                         ` : ''}
@@ -2079,7 +2647,7 @@
                         ${showQuestions ? `
                             <div class="questions-panel">
                                 <div class="questions-panel-header">
-                                    <span>❓</span> Interview Questions
+                                    Interview Questions
                                 </div>
                                 <div class="questions-panel-content">
                                     ${formatQuestionsAsHtml(questions)}
@@ -2092,7 +2660,6 @@
                                     <div class="compare-table-cell score-label-cell">Score</div>
                                     ${levels.map(level => `
                                         <div class="compare-table-cell level-header-cell">
-                                            <span class="level-icon">${levelConfig[level]?.icon || '👤'}</span>
                                             ${level}
                                         </div>
                                     `).join('')}
