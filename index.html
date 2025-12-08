@@ -86,6 +86,109 @@
             font-size: 16px;
         }
 
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-level {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-surface);
+            border-color: var(--border-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(139, 233, 253, 0.1);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .nav-item-text {
+            flex: 1;
+        }
+
+        .nav-chevron {
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item:hover .nav-chevron {
+            color: var(--text-secondary);
+            transform: translateX(2px);
+        }
+
+        .nav-back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .nav-back-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-back-arrow {
+            font-size: 16px;
+        }
+
+        .nav-section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 0 4px;
+        }
+
+        .nav-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 12px 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nav-view-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
         .section {
             display: flex;
             flex-direction: column;
@@ -1335,20 +1438,38 @@
                 <span>Hiring at Deel</span>
             </div>
 
-            <!-- View Switcher -->
-            <div class="section">
-                <div class="section-title">View</div>
-                <div class="filter-group">
-                    <select id="view-select" onchange="switchView(this.value)">
-                        <option value="rubric">Hiring Rubric</option>
-                        <option value="definitions">Competencies Definition</option>
-                        <option value="transcript">Transcript Analysis</option>
-                    </select>
+            <!-- Navigation -->
+            <nav class="sidebar-nav" id="sidebar-nav">
+                <div class="nav-section-title">Hiring</div>
+                <div class="nav-divider"></div>
+                
+                <!-- Main menu -->
+                <div class="nav-menu" id="nav-main-menu">
+                    <div class="nav-item" data-view="definitions" onclick="enterView('definitions')">
+                        <span class="nav-item-text">Competencies</span>
+                        <span class="nav-chevron">›</span>
+                    </div>
+                    <div class="nav-item" data-view="rubric" onclick="enterView('rubric')">
+                        <span class="nav-item-text">Rubrics</span>
+                        <span class="nav-chevron">›</span>
+                    </div>
+                    <div class="nav-item" data-view="transcript" onclick="enterView('transcript')">
+                        <span class="nav-item-text">Analyze Interview</span>
+                        <span class="nav-chevron">›</span>
+                    </div>
                 </div>
-            </div>
+                
+                <!-- View-specific controls (shown when in a view) -->
+                <div class="nav-view-controls" id="nav-view-controls" style="display: none;">
+                    <button class="nav-back-btn" onclick="exitView()">
+                        <span class="nav-back-arrow">‹</span>
+                        <span>Back</span>
+                    </button>
+                </div>
+            </nav>
 
-            <!-- Discipline -->
-            <div class="section">
+            <!-- Discipline (shown when in hiring sub-views) -->
+            <div class="section" id="discipline-section" style="display: none;">
                 <div class="section-title">Discipline</div>
                 <div class="filter-group">
                     <select id="discipline-select" onchange="onDisciplineChange()">
@@ -1358,7 +1479,7 @@
             </div>
 
             <!-- Filters -->
-            <div class="section" id="filters-section">
+            <div class="section" id="filters-section" style="display: none;">
                 <div class="filter-group">
                     <label for="compare-stage">Interview Stage</label>
                     <select id="compare-stage" onchange="onStageChange()">
@@ -1401,7 +1522,7 @@
             </div>
 
             <!-- Compare Levels -->
-            <div class="section" id="compare-levels-section">
+            <div class="section" id="compare-levels-section" style="display: none;">
                 <div class="section-title">Compare Levels</div>
                 <div id="compare-levels-container">
                     <div class="filter-group">
@@ -1437,13 +1558,13 @@
         <!-- Main Content -->
         <main class="main">
             <div class="header">
-                <h1 id="current-view-title">Hiring Rubric</h1>
-                <p id="view-subtitle">Compare competency requirements side-by-side across different designer levels</p>
+                <h1 id="current-view-title">Hiring at Deel</h1>
+                <p id="view-subtitle">Select an option from the sidebar to get started</p>
             </div>
             <div class="content-area" id="compare-content">
                 <div class="empty-state">
-                    <h3>Compare designer levels</h3>
-                    <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
+                    <h3>Welcome to Hiring at Deel</h3>
+                    <p>Choose from Competencies, Rubrics, or Analyze Interview to get started.</p>
                 </div>
             </div>
         </main>
@@ -1509,6 +1630,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             await initializeDisciplines();
             
+            // Show initial welcome state
+            showWelcomeState();
+            
             // Close dropdowns when clicking outside
             document.addEventListener('click', (e) => {
                 const multiSelect = document.getElementById('score-multi-select');
@@ -1517,6 +1641,22 @@
                 }
             });
         });
+
+        // Show welcome state
+        function showWelcomeState() {
+            const content = document.getElementById('compare-content');
+            const titleEl = document.getElementById('current-view-title');
+            const subtitleEl = document.getElementById('view-subtitle');
+            
+            titleEl.textContent = 'Hiring at Deel';
+            subtitleEl.textContent = 'Select an option from the sidebar to get started';
+            content.innerHTML = `
+                <div class="empty-state">
+                    <h3>Welcome to Hiring at Deel</h3>
+                    <p>Choose from Competencies, Rubrics, or Analyze Interview to get started.</p>
+                </div>
+            `;
+        }
 
         // Initialize disciplines
         async function initializeDisciplines() {
@@ -1566,6 +1706,7 @@
             competencyDefinitions = {};
             questionsData = {};
             showQuestionsState = {};
+            transcriptAnalysisResults = null;
             
             // Reload data for new discipline
             await loadDisciplineData();
@@ -1573,6 +1714,8 @@
             // Refresh current view
             if (currentView === 'definitions') {
                 renderDefinitionsView();
+            } else if (currentView === 'transcript') {
+                renderTranscriptView();
             } else {
                 updateCompareView();
             }
@@ -1963,12 +2106,54 @@
             return `<ul>${listItems.join('')}</ul>`;
         }
 
+        // Enter a view (drill down from main menu)
+        function enterView(view) {
+            // Hide main menu, show back button
+            document.getElementById('nav-main-menu').style.display = 'none';
+            document.getElementById('nav-view-controls').style.display = 'flex';
+            
+            // Show discipline section
+            const disciplineSection = document.getElementById('discipline-section');
+            if (disciplineSection) {
+                disciplineSection.style.display = 'flex';
+            }
+            
+            // Update active state in navigation
+            document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+                item.classList.toggle('active', item.dataset.view === view);
+            });
+            
+            switchView(view);
+        }
+
+        // Exit view (go back to main menu)
+        function exitView() {
+            // Show main menu, hide back button
+            document.getElementById('nav-main-menu').style.display = 'flex';
+            document.getElementById('nav-view-controls').style.display = 'none';
+            
+            // Hide discipline section and filters
+            const disciplineSection = document.getElementById('discipline-section');
+            const filtersSection = document.getElementById('filters-section');
+            const compareLevelsSection = document.getElementById('compare-levels-section');
+            
+            if (disciplineSection) disciplineSection.style.display = 'none';
+            if (filtersSection) filtersSection.style.display = 'none';
+            if (compareLevelsSection) compareLevelsSection.style.display = 'none';
+            
+            // Clear active state
+            document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show welcome state in main content
+            showWelcomeState();
+            currentView = null;
+        }
+
         // View toggle functions
         function switchView(view) {
             currentView = view;
-            
-            // Update dropdown value
-            document.getElementById('view-select').value = view;
             
             // Show/hide filters and compare levels sections
             const filtersSection = document.getElementById('filters-section');
