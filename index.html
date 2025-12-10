@@ -39,6 +39,90 @@
             box-sizing: border-box;
         }
 
+        /* Password Gate Styles */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .password-overlay.hidden {
+            display: none;
+        }
+
+        .password-modal {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+            max-width: 360px;
+            width: 90%;
+        }
+
+        .password-modal h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .password-modal p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .password-modal input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .password-modal input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+        }
+
+        .password-btn {
+            width: 100%;
+            padding: 12px 24px;
+            background: var(--neon-cyan);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .password-btn:hover {
+            background: #7dd3e8;
+        }
+
+        .password-error {
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--neon-red);
+            min-height: 20px;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-primary);
@@ -214,7 +298,7 @@
 
         select, input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px 16px 10px 12px;
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -223,6 +307,18 @@
             font-family: inherit;
             transition: all 0.2s ease;
             cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236a6a6a' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        select.no-chevron {
+            background-image: none;
+            padding-right: 12px;
+            cursor: default;
         }
 
         select:hover, input:hover {
@@ -1352,7 +1448,7 @@
 
         .multi-select-toggle {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px 16px 10px 12px;
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -1431,7 +1527,18 @@
     </style>
 </head>
 <body>
-    <div class="app">
+    <!-- Password Gate -->
+    <div class="password-overlay" id="password-overlay">
+        <div class="password-modal">
+            <h2>Deel OS</h2>
+            <p>Enter password to continue</p>
+            <input type="password" id="password-input" placeholder="Password" onkeypress="handlePasswordKeypress(event)">
+            <button class="password-btn" onclick="checkPassword()">Enter</button>
+            <div class="password-error" id="password-error"></div>
+        </div>
+    </div>
+
+    <div class="app" id="app" style="display: none;">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="logo">
@@ -1485,7 +1592,7 @@
                 <div class="filter-group">
                     <label for="compare-stage">Interview Stage</label>
                     <select id="compare-stage" onchange="onStageChange()">
-                        <option value="">Select stage...</option>
+                        <option value="">All stages</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -1525,11 +1632,10 @@
 
             <!-- Compare Levels -->
             <div class="section" id="compare-levels-section" style="display: none;">
-                <div class="section-title">Compare Levels</div>
+                <div class="section-title">Roles</div>
                 <div id="compare-levels-container">
                     <div class="filter-group">
                         <select class="compare-level-select" onchange="onLevelSelectChange()">
-                            <option value="">Select level...</option>
                         </select>
                     </div>
                 </div>
@@ -1587,6 +1693,44 @@
     </div>
 
     <script>
+        // Password protection
+        const SITE_PASSWORD = "let'sdeelwithavi";
+
+        function checkPassword() {
+            const input = document.getElementById('password-input');
+            const error = document.getElementById('password-error');
+            
+            if (input.value === SITE_PASSWORD) {
+                // Store in session so they don't have to re-enter
+                sessionStorage.setItem('deelos_authenticated', 'true');
+                showApp();
+            } else {
+                error.textContent = 'Incorrect password';
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        function handlePasswordKeypress(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        function showApp() {
+            document.getElementById('password-overlay').classList.add('hidden');
+            document.getElementById('app').style.display = 'flex';
+        }
+
+        // Check if already authenticated this session
+        if (sessionStorage.getItem('deelos_authenticated') === 'true') {
+            document.addEventListener('DOMContentLoaded', showApp);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('password-input').focus();
+            });
+        }
+
         // Global state
         let rubricData = [];
         let competencyDefinitions = {};
@@ -1597,8 +1741,14 @@
         let currentDiscipline = 'Design'; // Current selected discipline
         let disciplineConfig = null; // Current discipline configuration
 
-        // Discipline icons (disabled)
-        const disciplineIcons = {};
+        // Discipline icons
+        const disciplineIcons = {
+            'Account Executive Expansion': 'AE',
+            'Design': 'DS',
+            'Engineering': 'EN',
+            'Partnerships': 'PT',
+            'SDR': 'SD'
+        };
 
         // Default icon for unknown disciplines
         const defaultDisciplineIcon = '';
@@ -1795,21 +1945,46 @@
 
         // Auto-detect CSV files for a discipline
         async function autoDetectDisciplineConfig(discipline) {
-            const commonLevelFiles = [
-                { file: 'PD.csv', level: 'Product Designer' },
-                { file: 'SPD.csv', level: 'Senior Product Designer' },
-                { file: 'SSPD.csv', level: 'Staff Product Designer' },
-                { file: 'SSSPD.csv', level: 'Senior Staff Product Designer' },
-                { file: 'SWE.csv', level: 'Software Engineer' },
-                { file: 'Senior-SWE.csv', level: 'Senior Software Engineer' },
-                { file: 'Staff-SWE.csv', level: 'Staff Software Engineer' },
-                { file: 'PM.csv', level: 'Product Manager' },
-                { file: 'SPM.csv', level: 'Senior Product Manager' }
-            ];
-            
             const levels = [];
             
-            for (const { file, level } of commonLevelFiles) {
+            // First try to fetch files.json which explicitly lists the files
+            try {
+                const response = await fetch(`disciplines/${discipline}/files.json`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.files && data.files.length > 0) {
+                        data.files.forEach(f => {
+                            levels.push({
+                                file: `disciplines/${discipline}/${f.file}`,
+                                level: f.level
+                            });
+                        });
+                        return { levels };
+                    }
+                }
+            } catch (e) {}
+            
+            // Fallback: try known file-to-level mappings
+            const knownMappings = {
+                'PD.csv': 'Product Designer',
+                'SPD.csv': 'Senior Product Designer',
+                'SSPD.csv': 'Staff Product Designer',
+                'SSSPD.csv': 'Senior Staff Product Designer',
+                'BE.csv': 'Backend Engineer',
+                'BE Infra.csv': 'Backend Engineer - Infra',
+                'BE-Fintech.csv': 'Backend Engineer - Fintech',
+                'BE Forward Deployed.csv': 'Backend Engineer - Forward Deployed',
+                'DevOps .csv': 'DevOps Engineer',
+                'Staff Eng.csv': 'Staff Engineer',
+                'Tech Lead.csv': 'Tech Lead',
+                'SWE.csv': 'Software Engineer',
+                'Senior-SWE.csv': 'Senior Software Engineer',
+                'Staff-SWE.csv': 'Staff Software Engineer',
+                'PM.csv': 'Product Manager',
+                'SPM.csv': 'Senior Product Manager'
+            };
+            
+            for (const [file, level] of Object.entries(knownMappings)) {
                 try {
                     const response = await fetch(`disciplines/${discipline}/${file}`, { method: 'HEAD' });
                     if (response.ok) {
@@ -1852,14 +2027,21 @@
                     console.log(`Parsing ${file}, found ${parsed.data.length} rows`);
                     console.log(`First 5 rows of ${file}:`, parsed.data.slice(0, 5));
                     
-                    // Find the header row (contains "Assessment Stage" in first cell)
+                    // Find the header row (contains "Assessment Stage" or "Focus Area" in first cell)
                     let headerRowIndex = -1;
+                    let usesFocusArea = false;
                     for (let i = 0; i < Math.min(parsed.data.length, 20); i++) {
                         const firstCell = parsed.data[i]?.[0]?.toString().trim() || '';
                         console.log(`Row ${i} first cell: "${firstCell.substring(0, 30)}..."`);
                         if (firstCell.includes('Assessment Stage') || firstCell.includes('Assessment')) {
                             headerRowIndex = i;
                             console.log(`Found header at row ${i}`);
+                            break;
+                        }
+                        if (firstCell.includes('Focus Area')) {
+                            headerRowIndex = i;
+                            usesFocusArea = true;
+                            console.log(`Found Focus Area header at row ${i}`);
                             break;
                         }
                     }
@@ -1874,13 +2056,18 @@
                     let currentStage = '';
                     let rowsProcessed = 0;
                     
+                    // Determine column offsets based on format
+                    // Focus Area format: scores in columns 2-5
+                    // Assessment Stage format: scores in columns 3-6
+                    const scoreOffset = usesFocusArea ? 2 : 3;
+                    
                     for (let i = headerRowIndex + 1; i < parsed.data.length; i++) {
                         const row = parsed.data[i];
                         
                         // Skip empty rows or rows with not enough columns
                         if (!row || row.length < 4) continue;
                         
-                        // Get interview stage (column 0) - may be empty if continuation of previous stage
+                        // Get interview stage/focus area (column 0) - may be empty if continuation of previous stage
                         const stage = row[0]?.toString().trim();
                         if (stage && stage.length > 0 && !stage.startsWith(',')) {
                             currentStage = stage;
@@ -1892,11 +2079,11 @@
                         
                         if (!competency || !currentStage) continue;
                         
-                        // Get scores - columns 3, 4, 5, 6 for Level 1-4 (new format)
-                        const score_1 = row[3]?.toString().trim() || '';
-                        const score_2 = row[4]?.toString().trim() || '';
-                        const score_3 = row[5]?.toString().trim() || '';
-                        const score_4 = row[6]?.toString().trim() || '';
+                        // Get scores based on format
+                        const score_1 = row[scoreOffset]?.toString().trim() || '';
+                        const score_2 = row[scoreOffset + 1]?.toString().trim() || '';
+                        const score_3 = row[scoreOffset + 2]?.toString().trim() || '';
+                        const score_4 = row[scoreOffset + 3]?.toString().trim() || '';
                         
                         // Only add if we have at least some score data
                         if (score_1 || score_2 || score_3 || score_4) {
@@ -1951,10 +2138,13 @@
 
         // Load competency definitions from CSV
         async function loadCompetencyDefinitions() {
+            // Clear existing definitions
+            competencyDefinitions = {};
+            
             try {
                 const competenciesFile = getCompetenciesFile();
                 if (!competenciesFile) {
-                    console.warn('No competencies file configured for department:', currentDepartment);
+                    console.warn('No competencies file configured for discipline:', currentDiscipline);
                     return;
                 }
                 const response = await fetch(competenciesFile);
@@ -1971,6 +2161,9 @@
                 
                 console.log('Competencies parsed:', parsed.data);
                 
+                // Check if this is a definition-style CSV (has Description column) or rubric-style
+                const hasDescriptionColumn = parsed.meta.fields?.includes('Description');
+                
                 // Build a map of competency name -> definition
                 parsed.data.forEach(row => {
                     let competency = row['Competency']?.trim() || '';
@@ -1978,9 +2171,16 @@
                     competency = competency.replace(/:\s*$/, '').replace(/:$/, '').trim();
                     
                     if (competency) {
+                        // For rubric-style CSVs, use Focus Area as the description category
+                        // For definition-style CSVs, use the Description column
+                        const focusArea = row['Focus Area']?.trim() || '';
+                        const description = hasDescriptionColumn 
+                            ? (row['Description']?.trim() || '') 
+                            : (row['Level 1:...'] || row[Object.keys(row)[2]] || '').toString().trim();
+                        
                         competencyDefinitions[competency] = {
-                            focusArea: row['Focus Area']?.trim() || '',
-                            description: row['Description']?.trim() || ''
+                            focusArea: focusArea,
+                            description: description
                         };
                         
                         // Also store variations (with/without colon, different cases)
@@ -2593,6 +2793,11 @@ Respond ONLY with the JSON array, no other text.`;
 
             // Update comparison level dropdowns
             updateComparisonLevelDropdowns(levels);
+            
+            // Auto-update view if in rubric mode
+            if (currentView === 'rubric') {
+                updateCompareView();
+            }
 
             updateDataStatus('loaded', `${rubricData.length} entries • ${stages.length} stages • ${levels.length} levels`);
             
@@ -2660,17 +2865,47 @@ Respond ONLY with the JSON array, no other text.`;
         function updateComparisonLevelDropdowns(levels) {
             const container = document.getElementById('compare-levels-container');
             const selects = container.querySelectorAll('.compare-level-select');
-            selects.forEach(select => {
-                const currentValue = select.value;
-                select.innerHTML = '<option value="">Select level...</option>';
-                levels.forEach(level => {
-                    const option = document.createElement('option');
-                    option.value = level;
-                    option.textContent = level;
-                    select.add(option);
+            
+            // If only one level, hide the dropdown entirely and just show the level name
+            if (levels.length <= 1) {
+                container.style.display = levels.length === 1 ? 'block' : 'none';
+                if (levels.length === 1) {
+                    // Replace dropdown with static text for single level
+                    const firstGroup = container.querySelector('.filter-group');
+                    if (firstGroup) {
+                        const select = firstGroup.querySelector('select');
+                        if (select) {
+                            select.innerHTML = `<option value="${levels[0]}">${levels[0]}</option>`;
+                            select.value = levels[0];
+                            select.style.pointerEvents = 'none';
+                            select.style.opacity = '0.8';
+                            select.classList.add('no-chevron');
+                        }
+                    }
+                }
+            } else {
+                container.style.display = 'block';
+                selects.forEach((select, index) => {
+                    const currentValue = select.value;
+                    select.style.pointerEvents = '';
+                    select.style.opacity = '';
+                    select.classList.remove('no-chevron');
+                    select.innerHTML = '';
+                    levels.forEach(level => {
+                        const option = document.createElement('option');
+                        option.value = level;
+                        option.textContent = level;
+                        select.add(option);
+                    });
+                    
+                    // Auto-select: restore previous value, or select first level for first dropdown
+                    if (currentValue && levels.includes(currentValue)) {
+                        select.value = currentValue;
+                    } else if (index === 0 && levels.length > 0) {
+                        select.value = levels[0];
+                    }
                 });
-                select.value = currentValue;
-            });
+            }
             updateAddLevelButton();
         }
 
@@ -2701,8 +2936,16 @@ Respond ONLY with the JSON array, no other text.`;
             const levelSelects = document.querySelectorAll('#compare-levels-container .compare-level-select');
             const allSelected = Array.from(levelSelects).every(s => s.value !== '');
             const addBtn = document.getElementById('add-level-btn');
+            
+            // Get total available levels
+            const availableLevels = [...new Set(rubricData.map(r => r.designer_level))].filter(Boolean);
+            const currentSelectCount = levelSelects.length;
+            
+            // Hide button if: not all selected, only one level exists, or all levels are already shown
+            const shouldHide = !allSelected || availableLevels.length <= 1 || currentSelectCount >= availableLevels.length;
+            
             if (addBtn) {
-                addBtn.style.display = allSelected ? 'flex' : 'none';
+                addBtn.style.display = shouldHide ? 'none' : 'flex';
             }
         }
 
@@ -2711,21 +2954,32 @@ Respond ONLY with the JSON array, no other text.`;
             const levels = [...new Set(rubricData.map(r => r.designer_level))].filter(Boolean);
             const container = document.getElementById('compare-levels-container');
             
+            // Get currently selected levels to find the first unselected one
+            const currentSelects = container.querySelectorAll('.compare-level-select');
+            const selectedLevels = Array.from(currentSelects).map(s => s.value);
+            const unselectedLevels = levels.filter(l => !selectedLevels.includes(l));
+            
+            if (unselectedLevels.length === 0) return; // No more levels to add
+            
             const index = container.children.length;
             const div = document.createElement('div');
             div.className = 'filter-group';
             div.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <label style="flex: 1; margin: 0;">Level ${index + 1}</label>
+                    <label style="flex: 1; margin: 0;">Role ${index + 1}</label>
                     <button class="btn btn-remove" onclick="removeComparisonColumn(this)">Remove</button>
                 </div>
                 <select class="compare-level-select" onchange="onLevelSelectChange()">
-                    <option value="">Select level...</option>
                     ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
                 </select>
             `;
             container.appendChild(div);
-            updateAddLevelButton();
+            
+            // Auto-select the first unselected level
+            const newSelect = div.querySelector('select');
+            newSelect.value = unselectedLevels[0];
+            
+            onLevelSelectChange();
         }
 
         // Handle level select change
@@ -2782,35 +3036,66 @@ Respond ONLY with the JSON array, no other text.`;
             const levels = Array.from(levelSelects).map(s => s.value).filter(Boolean);
             const content = document.getElementById('compare-content');
 
-            if (!stage || levels.length === 0) {
+            if (levels.length === 0) {
                 content.innerHTML = `
                     <div class="empty-state">
                         <h3>Compare designer levels</h3>
-                        <p>Select an interview stage and add levels to compare their requirements side-by-side.</p>
+                        <p>Add levels to compare their requirements side-by-side.</p>
                     </div>
                 `;
                 return;
             }
 
-            let competencies = [...new Set(rubricData.filter(r => r.interview_stage === stage).map(r => r.competency))];
-            
-            // Filter by competency if selected
-            if (competencyFilter) {
-                competencies = competencies.filter(c => c === competencyFilter);
-            }
+            // If "All stages" is selected (empty value), show competencies across all stages
+            if (!stage) {
+                // Get all unique competencies
+                let competencies = [...new Set(rubricData.map(r => r.competency))];
+                
+                // Filter by competency if selected
+                if (competencyFilter) {
+                    competencies = competencies.filter(c => c === competencyFilter);
+                }
+                
+                // Group by competency, showing all stages where it appears
+                const stages = [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
+                
+                content.innerHTML = `
+                    <div class="comparison-grid">
+                        ${competencies.map(comp => {
+                            // Find which stages have this competency
+                            const stagesWithComp = stages.filter(s => 
+                                rubricData.some(r => r.interview_stage === s && r.competency === comp)
+                            );
+                            return stagesWithComp.map(s => 
+                                renderCompareCompetencyRow(s, comp, levels, selectedScores, true)
+                            ).join('');
+                        }).join('')}
+                    </div>
+                `;
+            } else {
+                let competencies = [...new Set(rubricData.filter(r => r.interview_stage === stage).map(r => r.competency))];
+                
+                // Filter by competency if selected
+                if (competencyFilter) {
+                    competencies = competencies.filter(c => c === competencyFilter);
+                }
 
-            content.innerHTML = `
-                <div class="comparison-grid">
-                    ${competencies.map(comp => renderCompareCompetencyRow(stage, comp, levels, selectedScores)).join('')}
-                </div>
-            `;
+                content.innerHTML = `
+                    <div class="comparison-grid">
+                        ${competencies.map(comp => renderCompareCompetencyRow(stage, comp, levels, selectedScores, false)).join('')}
+                    </div>
+                `;
+            }
         }
 
-        function renderCompareCompetencyRow(stage, competency, levels, scoresToShow) {
+        function renderCompareCompetencyRow(stage, competency, levels, scoresToShow, showStageName = false) {
             // Check if we have a definition for this competency
             const hasDefinition = competencyDefinitions[competency] || 
                                  competencyDefinitions[competency.replace(':', '')] ||
                                  findSimilarCompetency(competency);
+            
+            // Display name for competency (include stage if showing all stages)
+            const displayName = showStageName ? `${competency} — ${getStageDisplayName(stage)}` : competency;
             
             // Check if we have questions for this competency
             const questions = getQuestions(stage, competency);
@@ -2829,7 +3114,7 @@ Respond ONLY with the JSON array, no other text.`;
                 <div class="competency-row">
                     <div class="competency-header">
                         <div class="competency-title-wrapper">
-                            <div class="competency-name">${competency}</div>
+                            <div class="competency-name">${displayName}</div>
                             ${hasDefinition ? `<button class="info-icon" onclick="openCompetencyModal('${competency.replace(/'/g, "\\'")}')">i</button>` : ''}
                         </div>
                         ${hasQuestions ? `
