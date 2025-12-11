@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Google Identity Services (uncomment when auth is enabled)
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    -->
     <style>
         :root {
             --bg-primary: #0d0d0d;
@@ -39,8 +42,8 @@
             box-sizing: border-box;
         }
 
-        /* Password Gate Styles */
-        .password-overlay {
+        /* Auth Gate Styles */
+        .auth-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -53,74 +56,111 @@
             z-index: 9999;
         }
 
-        .password-overlay.hidden {
+        .auth-overlay.hidden {
             display: none;
         }
 
-        .password-modal {
+        .auth-modal {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 40px;
             text-align: center;
-            max-width: 360px;
+            max-width: 400px;
             width: 90%;
         }
 
-        .password-modal h2 {
+        .auth-modal h2 {
             font-size: 24px;
             font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 8px;
         }
 
-        .password-modal p {
+        .auth-modal p {
             font-size: 14px;
             color: var(--text-secondary);
             margin-bottom: 24px;
         }
 
-        .password-modal input {
-            width: 100%;
-            padding: 12px 16px;
-            background: var(--bg-elevated);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 14px;
-            font-family: inherit;
-            margin-bottom: 16px;
-            text-align: center;
+        .auth-modal .subtitle {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 16px;
         }
 
-        .password-modal input:focus {
-            outline: none;
-            border-color: var(--neon-cyan);
+        .google-signin-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
         }
 
-        .password-btn {
-            width: 100%;
-            padding: 12px 24px;
-            background: var(--neon-cyan);
-            color: var(--bg-primary);
-            border: none;
+        .auth-error {
+            color: var(--neon-red);
+            font-size: 13px;
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(255, 92, 92, 0.1);
             border-radius: 8px;
+            display: none;
+        }
+
+        .auth-error.visible {
+            display: block;
+        }
+
+        /* User profile in sidebar */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 8px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name {
             font-size: 14px;
             font-weight: 600;
-            font-family: inherit;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .signout-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
             cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
             transition: all 0.2s ease;
         }
 
-        .password-btn:hover {
-            background: #7dd3e8;
-        }
-
-        .password-error {
-            margin-top: 16px;
-            font-size: 13px;
+        .signout-btn:hover {
             color: var(--neon-red);
-            min-height: 20px;
+            background: rgba(255, 92, 92, 0.1);
         }
 
         body {
@@ -296,9 +336,9 @@
             margin-bottom: 6px;
         }
 
-        select, input {
+        select, input[type="text"], input[type="password"], textarea {
             width: 100%;
-            padding: 10px 16px 10px 12px;
+            padding: 10px 12px;
             background: var(--bg-elevated);
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -307,18 +347,38 @@
             font-family: inherit;
             transition: all 0.2s ease;
             cursor: pointer;
+        }
+
+        select {
+            padding-right: 36px;
             appearance: none;
             -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236a6a6a' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            padding-right: 36px;
+            -moz-appearance: none;
         }
 
         select.no-chevron {
-            background-image: none;
             padding-right: 12px;
             cursor: default;
+        }
+        
+        /* Custom select wrapper for chevron */
+        .select-wrapper {
+            position: relative;
+        }
+        
+        .select-wrapper::after {
+            content: '▾';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            font-size: 12px;
+        }
+        
+        .select-wrapper.no-chevron::after {
+            display: none;
         }
 
         select:hover, input:hover {
@@ -672,8 +732,8 @@
 
         /* Competencies Definition View */
         .competencies-grid {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
@@ -683,6 +743,8 @@
             border-radius: 12px;
             overflow: hidden;
             transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
         }
 
         .competency-definition-card:hover {
@@ -700,6 +762,17 @@
 
         .competency-definition-body {
             padding: 20px;
+            flex: 1;
+        }
+
+        /* Purple text selection for competencies view */
+        .competencies-grid ::selection {
+            background: rgba(189, 147, 249, 0.9);
+            color: #000;
+        }
+        .competencies-grid ::-moz-selection {
+            background: rgba(189, 147, 249, 0.9);
+            color: #000;
         }
 
         .competency-definition-text {
@@ -1164,6 +1237,43 @@
             box-shadow: var(--glow-cyan);
         }
 
+        /* Selection colors matching score colors */
+        .score-row-1 ::selection {
+            background: rgba(255, 92, 92, 0.9);
+            color: #000;
+        }
+        .score-row-1 ::-moz-selection {
+            background: rgba(255, 92, 92, 0.9);
+            color: #000;
+        }
+
+        .score-row-2 ::selection {
+            background: rgba(255, 159, 67, 0.9);
+            color: #000;
+        }
+        .score-row-2 ::-moz-selection {
+            background: rgba(255, 159, 67, 0.9);
+            color: #000;
+        }
+
+        .score-row-3 ::selection {
+            background: rgba(80, 250, 123, 0.9);
+            color: #000;
+        }
+        .score-row-3 ::-moz-selection {
+            background: rgba(80, 250, 123, 0.9);
+            color: #000;
+        }
+
+        .score-row-4 ::selection {
+            background: rgba(139, 233, 253, 0.9);
+            color: #000;
+        }
+        .score-row-4 ::-moz-selection {
+            background: rgba(139, 233, 253, 0.9);
+            color: #000;
+        }
+
         .score-label {
             font-size: 12px;
             font-weight: 500;
@@ -1433,6 +1543,11 @@
             color: var(--text-secondary);
         }
 
+        /* Diff highlighting for level comparison */
+        .diff-highlight {
+            color: var(--text-primary);
+        }
+
         .compare-table-cell:not(.score-label-cell) {
             border-right: 1px solid var(--border-color);
         }
@@ -1516,8 +1631,15 @@
         .checkbox-item input[type="checkbox"] {
             width: 16px;
             height: 16px;
+            min-width: 16px;
             accent-color: var(--neon-cyan);
             cursor: pointer;
+            appearance: checkbox;
+            -webkit-appearance: checkbox;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 0;
         }
 
         .checkbox-label {
@@ -1527,16 +1649,33 @@
     </style>
 </head>
 <body>
-    <!-- Password Gate -->
-    <div class="password-overlay" id="password-overlay">
-        <div class="password-modal">
+    <!-- Auth Gate (Google Auth - commented out until permissions granted)
+    <div class="auth-overlay" id="auth-overlay">
+        <div class="auth-modal">
             <h2>Deel OS</h2>
-            <p>Enter password to continue</p>
-            <input type="password" id="password-input" placeholder="Password" onkeypress="handlePasswordKeypress(event)">
-            <button class="password-btn" onclick="checkPassword()">Enter</button>
-            <div class="password-error" id="password-error"></div>
+            <p>Sign in with your Deel account to continue</p>
+            <div class="google-signin-container">
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleGoogleSignIn"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="filled_black"
+                     data-text="signin_with"
+                     data-size="large"
+                     data-logo_alignment="left">
+                </div>
+            </div>
+            <p class="subtitle">Only @deel.com accounts are allowed</p>
+            <div class="auth-error" id="auth-error"></div>
         </div>
     </div>
+    -->
 
     <div class="app" id="app" style="display: none;">
         <!-- Sidebar -->
@@ -1544,6 +1683,23 @@
             <div class="logo">
                 <span>Deel OS</span>
             </div>
+
+            <!-- User Profile (shown when Google Auth is enabled)
+            <div class="user-profile" id="user-profile" style="display: none;">
+                <img class="user-avatar" id="user-avatar" src="" alt="User">
+                <div class="user-info">
+                    <div class="user-name" id="user-name"></div>
+                    <div class="user-email" id="user-email"></div>
+                </div>
+                <button class="signout-btn" onclick="handleSignOut()" title="Sign out">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16,17 21,12 16,7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
+            -->
 
             <!-- Navigation -->
             <nav class="sidebar-nav" id="sidebar-nav">
@@ -1581,9 +1737,11 @@
             <div class="section" id="discipline-section" style="display: none;">
                 <div class="section-title">Discipline</div>
                 <div class="filter-group">
-                    <select id="discipline-select" onchange="onDisciplineChange()">
-                        <option value="">Loading...</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="discipline-select" onchange="onDisciplineChange()">
+                            <option value="">Loading...</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -1591,15 +1749,19 @@
             <div class="section" id="filters-section" style="display: none;">
                 <div class="filter-group">
                     <label for="compare-stage">Interview Stage</label>
-                    <select id="compare-stage" onchange="onStageChange()">
-                        <option value="">All stages</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="compare-stage" onchange="onStageChange()">
+                            <option value="">All stages</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="filter-group">
                     <label for="compare-competency">Competency</label>
-                    <select id="compare-competency" onchange="updateCompareView()">
-                        <option value="">All competencies</option>
-                    </select>
+                    <div class="select-wrapper">
+                        <select id="compare-competency" onchange="updateCompareView()">
+                            <option value="">All competencies</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="filter-group">
                     <label>Score Level</label>
@@ -1635,8 +1797,10 @@
                 <div class="section-title">Roles</div>
                 <div id="compare-levels-container">
                     <div class="filter-group">
-                        <select class="compare-level-select" onchange="onLevelSelectChange()">
-                        </select>
+                        <div class="select-wrapper">
+                            <select class="compare-level-select" onchange="onLevelSelectChange()">
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <button class="btn btn-add" id="add-level-btn" onclick="addComparisonColumn()" style="display: none;">
@@ -1693,43 +1857,96 @@
     </div>
 
     <script>
-        // Password protection
-        const SITE_PASSWORD = "let'sdeelwithavi";
+        // Google Authentication (commented out until permissions granted)
+        /*
+        const ALLOWED_DOMAIN = 'deel.com';
+        let currentUser = null;
 
-        function checkPassword() {
-            const input = document.getElementById('password-input');
-            const error = document.getElementById('password-error');
+        // Handle Google Sign-In response
+        function handleGoogleSignIn(response) {
+            // Decode JWT token
+            const payload = decodeJwtPayload(response.credential);
             
-            if (input.value === SITE_PASSWORD) {
-                // Store in session so they don't have to re-enter
-                sessionStorage.setItem('deelos_authenticated', 'true');
-                showApp();
-            } else {
-                error.textContent = 'Incorrect password';
-                input.value = '';
-                input.focus();
+            if (!payload) {
+                showAuthError('Failed to process sign-in. Please try again.');
+                return;
+            }
+
+            const email = payload.email || '';
+            const domain = email.split('@')[1];
+
+            // Verify domain
+            if (domain !== ALLOWED_DOMAIN) {
+                showAuthError(`Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed.`);
+                // Sign out from Google
+                google.accounts.id.disableAutoSelect();
+                return;
+            }
+
+            // Store user info
+            currentUser = {
+                name: payload.name,
+                email: payload.email,
+                picture: payload.picture
+            };
+
+            // Store in session
+            sessionStorage.setItem('deelos_user', JSON.stringify(currentUser));
+            
+            // Show app
+            showApp();
+        }
+
+        // Decode JWT payload (without verification - Google already verified)
+        function decodeJwtPayload(token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => 
+                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error('Failed to decode JWT:', e);
+                return null;
             }
         }
 
-        function handlePasswordKeypress(event) {
-            if (event.key === 'Enter') {
-                checkPassword();
-            }
+        function showAuthError(message) {
+            const error = document.getElementById('auth-error');
+            error.textContent = message;
+            error.classList.add('visible');
         }
 
-        function showApp() {
-            document.getElementById('password-overlay').classList.add('hidden');
-            document.getElementById('app').style.display = 'flex';
+        function handleSignOut() {
+            // Clear session
+            sessionStorage.removeItem('deelos_user');
+            currentUser = null;
+            
+            // Disable auto-select for next sign-in
+            google.accounts.id.disableAutoSelect();
+            
+            // Reload page to show sign-in
+            window.location.reload();
         }
 
         // Check if already authenticated this session
-        if (sessionStorage.getItem('deelos_authenticated') === 'true') {
-            document.addEventListener('DOMContentLoaded', showApp);
-        } else {
-            document.addEventListener('DOMContentLoaded', () => {
-                document.getElementById('password-input').focus();
-            });
+        const storedUser = sessionStorage.getItem('deelos_user');
+        if (storedUser) {
+            try {
+                currentUser = JSON.parse(storedUser);
+                document.addEventListener('DOMContentLoaded', showApp);
+            } catch (e) {
+                sessionStorage.removeItem('deelos_user');
+            }
         }
+        */
+
+        // Temporary: Show app directly without auth
+        function showApp() {
+            document.getElementById('app').style.display = 'flex';
+        }
+        document.addEventListener('DOMContentLoaded', showApp);
 
         // Global state
         let rubricData = [];
@@ -2284,6 +2501,53 @@
             }
             
             return null;
+        }
+
+        // Text diff algorithm for highlighting unique sentences between levels
+        function getTextDiff(texts) {
+            // If only one text or texts are identical, no highlighting needed
+            if (texts.length <= 1) return texts.map(t => t || '—');
+            
+            // Split text into sentences
+            const splitSentences = (text) => {
+                if (!text) return [];
+                // Split on period, exclamation, or question mark followed by space or end
+                return text.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+            };
+            
+            // Normalize sentence for comparison (lowercase, trim, remove extra spaces)
+            const normalize = (sentence) => {
+                return sentence.toLowerCase().trim().replace(/\s+/g, ' ');
+            };
+            
+            const sentencesPerText = texts.map(splitSentences);
+            
+            // Get all normalized sentences from all texts
+            const allNormalizedSentences = sentencesPerText.map(sentences => 
+                sentences.map(normalize)
+            );
+            
+            // A sentence is "common" if a similar one appears in ALL texts
+            const isCommonSentence = (normalizedSentence) => {
+                return allNormalizedSentences.every(textSentences => 
+                    textSentences.some(s => s === normalizedSentence)
+                );
+            };
+            
+            // Highlight sentences that are unique to each text
+            const highlightedTexts = sentencesPerText.map((sentences, textIndex) => {
+                if (sentences.length === 0) return texts[textIndex] || '—';
+                
+                return sentences.map(sentence => {
+                    const isUnique = !isCommonSentence(normalize(sentence));
+                    if (isUnique) {
+                        return `<span class="diff-highlight">${sentence}</span>`;
+                    }
+                    return sentence;
+                }).join(' ');
+            });
+            
+            return highlightedTexts.map(t => t || '—');
         }
 
         // Format questions as HTML list
@@ -2874,12 +3138,16 @@ Respond ONLY with the JSON array, no other text.`;
                     const firstGroup = container.querySelector('.filter-group');
                     if (firstGroup) {
                         const select = firstGroup.querySelector('select');
+                        const wrapper = firstGroup.querySelector('.select-wrapper');
                         if (select) {
                             select.innerHTML = `<option value="${levels[0]}">${levels[0]}</option>`;
                             select.value = levels[0];
                             select.style.pointerEvents = 'none';
                             select.style.opacity = '0.8';
                             select.classList.add('no-chevron');
+                        }
+                        if (wrapper) {
+                            wrapper.classList.add('no-chevron');
                         }
                     }
                 }
@@ -2890,6 +3158,10 @@ Respond ONLY with the JSON array, no other text.`;
                     select.style.pointerEvents = '';
                     select.style.opacity = '';
                     select.classList.remove('no-chevron');
+                    const wrapper = select.closest('.select-wrapper');
+                    if (wrapper) {
+                        wrapper.classList.remove('no-chevron');
+                    }
                     select.innerHTML = '';
                     levels.forEach(level => {
                         const option = document.createElement('option');
@@ -2969,9 +3241,11 @@ Respond ONLY with the JSON array, no other text.`;
                     <label style="flex: 1; margin: 0;">Role ${index + 1}</label>
                     <button class="btn btn-remove" onclick="removeComparisonColumn(this)">Remove</button>
                 </div>
-                <select class="compare-level-select" onchange="onLevelSelectChange()">
-                    ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
-                </select>
+                <div class="select-wrapper">
+                    <select class="compare-level-select" onchange="onLevelSelectChange()">
+                        ${levels.map(l => `<option value="${l}">${l}</option>`).join('')}
+                    </select>
+                </div>
             `;
             container.appendChild(div);
             
@@ -3144,18 +3418,24 @@ Respond ONLY with the JSON array, no other text.`;
                                         </div>
                                     `).join('')}
                                 </div>
-                                ${scoresToShow.map(score => `
-                                    <div class="compare-table-row ${score <= 2 ? 'fail-row' : 'pass-row'}">
+                                ${scoresToShow.map(score => {
+                                    // Get texts for this score from all levels
+                                    const textsForScore = levelData.map(data => data?.[`score_${score}`] || '');
+                                    // Apply diff highlighting if comparing multiple levels
+                                    const highlightedTexts = levels.length > 1 ? getTextDiff(textsForScore) : textsForScore.map(t => t || '—');
+                                    
+                                    return `
+                                    <div class="compare-table-row ${score <= 2 ? 'fail-row' : 'pass-row'} score-row-${score}">
                                         <div class="compare-table-cell score-label-cell">
                                             <span class="score-badge score-${score}">${score}</span>
                                         </div>
-                                        ${levelData.map(data => `
+                                        ${highlightedTexts.map(text => `
                                             <div class="compare-table-cell">
-                                                <div class="compare-cell-text">${data?.[`score_${score}`] || '—'}</div>
+                                                <div class="compare-cell-text">${text}</div>
                                             </div>
                                         `).join('')}
                                     </div>
-                                `).join('')}
+                                `}).join('')}
                             </div>
                         </div>
                     </div>
