@@ -1646,6 +1646,111 @@
             font-size: 14px;
             color: var(--text-primary);
         }
+
+        /* Ladders Styles */
+        .ladders-comparison-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .ladders-focus-area-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ladders-focus-area-header {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--neon-cyan);
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ladders-competency-row {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .ladders-competency-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ladders-competency-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ladders-compare-table-wrapper {
+            padding: 16px;
+        }
+
+        .ladders-compare-table {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .ladders-compare-table-header {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .ladders-compare-table-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .ladders-compare-table-cell {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ladders-role-header-cell {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--neon-purple);
+            padding: 8px 12px;
+            background: rgba(189, 147, 249, 0.1);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .ladders-cell-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            padding: 12px;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            min-height: 80px;
+        }
+
+        .ladders-cell-text .empty-value {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .ladders-cell-text .diff-highlight {
+            color: var(--text-primary);
+        }
+
+        .empty-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-style: italic;
+            padding: 8px 0;
+        }
     </style>
 </head>
 <body>
@@ -1720,6 +1825,18 @@
                     </div>
                     <div class="nav-item" data-view="transcript" onclick="enterView('transcript')">
                         <span class="nav-item-text">Analyze Interview</span>
+                        <span class="nav-chevron">›</span>
+                    </div>
+                </div>
+                
+                <!-- Ladders Section -->
+                <div class="nav-section-header" id="nav-ladders-header" style="margin-top: 24px;">
+                    <div class="nav-section-title">Ladders</div>
+                    <div class="nav-divider"></div>
+                </div>
+                <div class="nav-menu" id="nav-ladders-menu">
+                    <div class="nav-item" data-view="ladders" onclick="enterView('ladders')">
+                        <span class="nav-item-text">Ladders</span>
                         <span class="nav-chevron">›</span>
                     </div>
                 </div>
@@ -1806,6 +1923,58 @@
                 <button class="btn btn-add" id="add-level-btn" onclick="addComparisonColumn()" style="display: none;">
                     + Add Level to Compare
                 </button>
+            </div>
+
+            <!-- Ladders Discipline (shown when in ladders view) -->
+            <div class="section" id="ladders-discipline-section" style="display: none;">
+                <div class="section-title">Discipline</div>
+                <div class="filter-group">
+                    <div class="select-wrapper">
+                        <select id="ladders-discipline-select" onchange="onLaddersDisciplineChange()">
+                            <option value="">Loading...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ladders File Selection -->
+            <div class="section" id="ladders-file-section" style="display: none;">
+                <div class="section-title">Ladder Track</div>
+                <div class="filter-group">
+                    <div class="select-wrapper">
+                        <select id="ladders-file-select" onchange="onLaddersFileChange()">
+                            <option value="">Select a track...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ladders Filters -->
+            <div class="section" id="ladders-filters-section" style="display: none;">
+                <div class="filter-group">
+                    <label for="ladders-focus-area">Focus Area</label>
+                    <div class="select-wrapper">
+                        <select id="ladders-focus-area" onchange="updateLaddersView()">
+                            <option value="">All focus areas</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ladders Roles Selection -->
+            <div class="section" id="ladders-roles-section" style="display: none;">
+                <div class="filter-group">
+                    <label>Compare Roles</label>
+                    <div class="multi-select" id="ladders-roles-multi-select">
+                        <div class="multi-select-toggle" onclick="toggleLaddersRolesDropdown()">
+                            <span class="multi-select-label" id="ladders-roles-select-label">Select roles...</span>
+                            <span class="multi-select-arrow">▾</span>
+                        </div>
+                        <div class="multi-select-dropdown" id="ladders-roles-dropdown">
+                            <!-- Role checkboxes will be dynamically generated -->
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Data Actions -->
@@ -1958,6 +2127,14 @@
         let currentDiscipline = 'Design'; // Current selected discipline
         let disciplineConfig = null; // Current discipline configuration
 
+        // Ladders state
+        let laddersData = []; // Array of {focusArea, competency, roles: {roleName: description}}
+        let laddersDisciplines = []; // Available disciplines with ladders
+        let currentLaddersDiscipline = ''; // Currently selected discipline for ladders
+        let laddersConfig = null; // Current ladders configuration (files.json)
+        let selectedLaddersRoles = []; // Selected roles to compare
+        let availableLaddersRoles = []; // All available roles from the current ladder
+
         // Discipline icons
         const disciplineIcons = {
             'Account Executive Expansion': 'AE',
@@ -2000,9 +2177,14 @@
             
             // Close dropdowns when clicking outside
             document.addEventListener('click', (e) => {
-                const multiSelect = document.getElementById('score-multi-select');
-                if (!multiSelect.contains(e.target)) {
-                    multiSelect.classList.remove('open');
+                const scoreMultiSelect = document.getElementById('score-multi-select');
+                if (scoreMultiSelect && !scoreMultiSelect.contains(e.target)) {
+                    scoreMultiSelect.classList.remove('open');
+                }
+                
+                const laddersRolesMultiSelect = document.getElementById('ladders-roles-multi-select');
+                if (laddersRolesMultiSelect && !laddersRolesMultiSelect.contains(e.target)) {
+                    laddersRolesMultiSelect.classList.remove('open');
                 }
             });
         });
@@ -2467,6 +2649,467 @@
             }
         }
 
+        // ========== LADDERS FUNCTIONS ==========
+
+        // Load ladders disciplines index
+        async function loadLaddersDisciplines() {
+            try {
+                const response = await fetch('Ladders/index.json');
+                if (!response.ok) {
+                    console.warn('Ladders index.json not found');
+                    return [];
+                }
+                const data = await response.json();
+                return data.disciplines || [];
+            } catch (error) {
+                console.error('Failed to load ladders disciplines:', error);
+                return [];
+            }
+        }
+
+        // Initialize ladders disciplines dropdown
+        async function initializeLaddersDisciplines() {
+            laddersDisciplines = await loadLaddersDisciplines();
+            
+            const select = document.getElementById('ladders-discipline-select');
+            if (!select) return;
+            
+            select.innerHTML = '';
+            
+            if (laddersDisciplines.length === 0) {
+                select.innerHTML = '<option value="">No ladders available</option>';
+                return;
+            }
+            
+            laddersDisciplines.forEach(discipline => {
+                const option = document.createElement('option');
+                option.value = discipline;
+                option.textContent = discipline;
+                select.appendChild(option);
+            });
+            
+            // Select first discipline
+            currentLaddersDiscipline = laddersDisciplines[0];
+            select.value = currentLaddersDiscipline;
+        }
+
+        // Load ladders config for a discipline
+        async function loadLaddersConfig(discipline) {
+            try {
+                const response = await fetch(`Ladders/${discipline}/files.json`);
+                if (!response.ok) {
+                    console.warn(`files.json not found for Ladders/${discipline}`);
+                    return null;
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Failed to load ladders config:', error);
+                return null;
+            }
+        }
+
+        // Load ladder data from CSV
+        async function loadLaddersData(filePath) {
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    console.warn(`Ladder file not found: ${filePath}`);
+                    return { data: [], roles: [] };
+                }
+                const csvText = await response.text();
+                
+                const parsed = Papa.parse(csvText, {
+                    header: false,
+                    skipEmptyLines: true
+                });
+                
+                console.log('Ladders CSV parsed:', parsed.data);
+                
+                // Parse the unique structure: first row is headers (role names)
+                // First two columns are Focus Area and Competency
+                const headers = parsed.data[0] || [];
+                const roleHeaders = headers.slice(2).filter(h => h && h.trim() && h !== '-');
+                
+                // Parse data rows
+                const data = [];
+                let currentFocusArea = '';
+                
+                for (let i = 1; i < parsed.data.length; i++) {
+                    const row = parsed.data[i];
+                    if (!row || row.length < 2) continue;
+                    
+                    const focusArea = row[0]?.trim() || '';
+                    const competency = row[1]?.trim() || '';
+                    
+                    // Update current focus area if specified
+                    if (focusArea) {
+                        currentFocusArea = focusArea;
+                    }
+                    
+                    // Skip rows without competency
+                    if (!competency) continue;
+                    
+                    // Build roles object
+                    const roles = {};
+                    roleHeaders.forEach((role, idx) => {
+                        const value = row[idx + 2]?.trim() || '-';
+                        roles[role] = value;
+                    });
+                    
+                    data.push({
+                        focusArea: currentFocusArea,
+                        competency: competency,
+                        roles: roles
+                    });
+                }
+                
+                console.log('Ladders data processed:', data);
+                console.log('Available roles:', roleHeaders);
+                
+                return { data, roles: roleHeaders };
+            } catch (error) {
+                console.error('Failed to load ladders data:', error);
+                return { data: [], roles: [] };
+            }
+        }
+
+        // Handle ladders discipline change
+        async function onLaddersDisciplineChange() {
+            const select = document.getElementById('ladders-discipline-select');
+            currentLaddersDiscipline = select.value;
+            
+            // Clear existing data
+            laddersData = [];
+            laddersConfig = null;
+            selectedLaddersRoles = [];
+            availableLaddersRoles = [];
+            
+            // Load config for new discipline
+            await loadLaddersForDiscipline();
+        }
+
+        // Load ladders for current discipline
+        async function loadLaddersForDiscipline() {
+            if (!currentLaddersDiscipline) return;
+            
+            laddersConfig = await loadLaddersConfig(currentLaddersDiscipline);
+            
+            // Update file select dropdown
+            const fileSelect = document.getElementById('ladders-file-select');
+            if (fileSelect) {
+                fileSelect.innerHTML = '<option value="">Select a track...</option>';
+                
+                if (laddersConfig && laddersConfig.files) {
+                    laddersConfig.files.forEach(file => {
+                        const option = document.createElement('option');
+                        option.value = file.file;
+                        option.textContent = file.name || file.file;
+                        fileSelect.appendChild(option);
+                    });
+                    
+                    // Auto-select first file if available
+                    if (laddersConfig.files.length > 0) {
+                        fileSelect.value = laddersConfig.files[0].file;
+                        await onLaddersFileChange();
+                    }
+                }
+            }
+        }
+
+        // Handle ladder file change
+        async function onLaddersFileChange() {
+            const fileSelect = document.getElementById('ladders-file-select');
+            const selectedFile = fileSelect.value;
+            
+            if (!selectedFile) {
+                laddersData = [];
+                availableLaddersRoles = [];
+                selectedLaddersRoles = [];
+                updateLaddersRolesCheckboxes();
+                updateLaddersFocusAreaSelect();
+                updateLaddersView();
+                return;
+            }
+            
+            const filePath = `Ladders/${currentLaddersDiscipline}/${selectedFile}`;
+            const result = await loadLaddersData(filePath);
+            
+            laddersData = result.data;
+            availableLaddersRoles = result.roles;
+            
+            // Select first 2 roles by default
+            selectedLaddersRoles = availableLaddersRoles.slice(0, 2);
+            
+            updateLaddersRolesCheckboxes();
+            updateLaddersFocusAreaSelect();
+            updateLaddersView();
+        }
+
+        // Update ladders role checkboxes in dropdown
+        function updateLaddersRolesCheckboxes() {
+            const dropdown = document.getElementById('ladders-roles-dropdown');
+            if (!dropdown) return;
+            
+            if (availableLaddersRoles.length === 0) {
+                dropdown.innerHTML = '<div class="empty-text" style="padding: 8px 12px;">No roles available</div>';
+                updateLaddersRolesLabel();
+                return;
+            }
+            
+            dropdown.innerHTML = availableLaddersRoles.map(role => `
+                <label class="checkbox-item">
+                    <input type="checkbox" 
+                           value="${role}" 
+                           ${selectedLaddersRoles.includes(role) ? 'checked' : ''}
+                           onchange="updateLaddersRolesSelection()">
+                    <span class="checkbox-label">${role}</span>
+                </label>
+            `).join('');
+            
+            updateLaddersRolesLabel();
+        }
+
+        // Toggle ladders roles dropdown
+        function toggleLaddersRolesDropdown() {
+            const multiSelect = document.getElementById('ladders-roles-multi-select');
+            multiSelect.classList.toggle('open');
+        }
+
+        // Update ladders roles selection from checkboxes
+        function updateLaddersRolesSelection() {
+            const checkboxes = document.querySelectorAll('#ladders-roles-dropdown input[type="checkbox"]');
+            selectedLaddersRoles = Array.from(checkboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            
+            updateLaddersRolesLabel();
+            updateLaddersView();
+        }
+
+        // Update the label showing selected roles
+        function updateLaddersRolesLabel() {
+            const label = document.getElementById('ladders-roles-select-label');
+            if (!label) return;
+            
+            if (selectedLaddersRoles.length === 0) {
+                label.textContent = 'Select roles...';
+            } else if (selectedLaddersRoles.length === availableLaddersRoles.length) {
+                label.textContent = 'All roles';
+            } else if (selectedLaddersRoles.length <= 2) {
+                label.textContent = selectedLaddersRoles.join(', ');
+            } else {
+                label.textContent = `${selectedLaddersRoles.length} roles selected`;
+            }
+        }
+
+
+        // Update focus area select for ladders
+        function updateLaddersFocusAreaSelect() {
+            const select = document.getElementById('ladders-focus-area');
+            if (!select) return;
+            
+            const focusAreas = [...new Set(laddersData.map(d => d.focusArea))].filter(Boolean);
+            
+            select.innerHTML = '<option value="">All focus areas</option>';
+            focusAreas.forEach(area => {
+                const option = document.createElement('option');
+                option.value = area;
+                option.textContent = area;
+                select.appendChild(option);
+            });
+        }
+
+        // Update ladders view (main render function)
+        function updateLaddersView() {
+            const content = document.getElementById('compare-content');
+            const focusAreaFilter = document.getElementById('ladders-focus-area')?.value || '';
+            
+            if (laddersData.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ladder data loaded</h3>
+                        <p>Select a discipline and ladder track to view career progression.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (selectedLaddersRoles.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Select roles to compare</h3>
+                        <p>Check the roles you want to compare in the sidebar.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Filter data by focus area if selected
+            let filteredData = laddersData;
+            if (focusAreaFilter) {
+                filteredData = laddersData.filter(d => d.focusArea === focusAreaFilter);
+            }
+            
+            // Group by focus area
+            const groupedByFocusArea = {};
+            filteredData.forEach(item => {
+                if (!groupedByFocusArea[item.focusArea]) {
+                    groupedByFocusArea[item.focusArea] = [];
+                }
+                groupedByFocusArea[item.focusArea].push(item);
+            });
+            
+            content.innerHTML = `
+                <div class="ladders-comparison-grid">
+                    ${Object.entries(groupedByFocusArea).map(([focusArea, items]) => `
+                        <div class="ladders-focus-area-group">
+                            <div class="ladders-focus-area-header">${focusArea}</div>
+                            ${items.map(item => renderLaddersCompetencyRow(item)).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Render a single competency row for ladders
+        function renderLaddersCompetencyRow(item) {
+            const { competency, roles } = item;
+            
+            // Get values for selected roles
+            const roleValues = selectedLaddersRoles.map(role => roles[role] || '-');
+            
+            // Apply diff highlighting if comparing multiple roles
+            const highlightedValues = selectedLaddersRoles.length > 1 
+                ? getLaddersTextDiff(roleValues) 
+                : roleValues.map(v => v === '-' ? '<span class="empty-value">—</span>' : v);
+            
+            return `
+                <div class="ladders-competency-row">
+                    <div class="ladders-competency-header">
+                        <div class="ladders-competency-name">${competency}</div>
+                    </div>
+                    <div class="ladders-compare-table-wrapper">
+                        <div class="ladders-compare-table">
+                            <div class="ladders-compare-table-header">
+                                ${selectedLaddersRoles.map(role => `
+                                    <div class="ladders-compare-table-cell ladders-role-header-cell">
+                                        ${role}
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="ladders-compare-table-row">
+                                ${highlightedValues.map(value => `
+                                    <div class="ladders-compare-table-cell">
+                                        <div class="ladders-cell-text">${value}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Text diff for ladders (matching rubrics style)
+        function getLaddersTextDiff(texts) {
+            // If only one text, no highlighting needed
+            if (texts.length <= 1) return texts.map(t => t === '-' ? '<span class="empty-value">—</span>' : t);
+            
+            // Check if all texts are the same
+            const nonEmptyTexts = texts.filter(t => t && t !== '-');
+            if (nonEmptyTexts.length === 0) {
+                return texts.map(() => '<span class="empty-value">—</span>');
+            }
+            
+            // Split text into sentences
+            const splitSentences = (text) => {
+                if (!text || text === '-') return [];
+                return text.split(/(?<=[.!?])\s+/).filter(s => s.trim());
+            };
+            
+            // Normalize sentence for comparison
+            const normalize = (sentence) => {
+                return sentence.toLowerCase().trim().replace(/\s+/g, ' ');
+            };
+            
+            // Get all sentences from all texts
+            const sentencesPerText = texts.map(t => splitSentences(t));
+            
+            // Get all normalized sentences from all texts
+            const allNormalizedSentences = sentencesPerText.map(sentences => 
+                sentences.map(normalize)
+            );
+            
+            // A sentence is "common" if a similar one appears in ALL non-empty texts
+            const nonEmptyIndices = texts.map((t, i) => t && t !== '-' ? i : -1).filter(i => i >= 0);
+            const isCommonSentence = (normalizedSentence) => {
+                return nonEmptyIndices.every(idx => 
+                    allNormalizedSentences[idx].some(s => s === normalizedSentence)
+                );
+            };
+            
+            // Highlight sentences that are unique to each text
+            return texts.map((text, idx) => {
+                if (!text || text === '-') {
+                    return '<span class="empty-value">—</span>';
+                }
+                
+                const sentences = sentencesPerText[idx];
+                if (sentences.length === 0) return text;
+                
+                return sentences.map(sentence => {
+                    const isUnique = !isCommonSentence(normalize(sentence));
+                    if (isUnique) {
+                        return `<span class="diff-highlight">${sentence}</span>`;
+                    }
+                    return sentence;
+                }).join(' ');
+            });
+        }
+
+        // Render ladders definitions view (competency definitions from ladder data)
+        function renderLaddersDefinitionsView() {
+            const content = document.getElementById('compare-content');
+            
+            if (laddersData.length === 0) {
+                content.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No ladder data loaded</h3>
+                        <p>Select a discipline and ladder track to view competency definitions.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group by focus area
+            const groupedByFocusArea = {};
+            laddersData.forEach(item => {
+                if (!groupedByFocusArea[item.focusArea]) {
+                    groupedByFocusArea[item.focusArea] = [];
+                }
+                groupedByFocusArea[item.focusArea].push(item);
+            });
+            
+            content.innerHTML = `
+                <div class="competencies-grid">
+                    ${Object.entries(groupedByFocusArea).map(([focusArea, items]) => `
+                        ${items.map(item => `
+                            <div class="competency-definition-card">
+                                <div class="competency-definition-header">
+                                    <div class="competency-name">${item.competency}</div>
+                                </div>
+                                <div class="competency-definition-body">
+                                    <div class="focus-area-badge">${focusArea}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // ========== END LADDERS FUNCTIONS ==========
+
         // Toggle questions visibility for a competency
         function toggleQuestions(stage, competency) {
             const key = `${stage}_${competency}`;
@@ -2569,16 +3212,43 @@
         }
 
         // Enter a view (drill down from main menu)
-        function enterView(view) {
-            // Hide main menu and section header, show back button
+        async function enterView(view) {
+            // Hide main menu and section headers, show back button
             document.getElementById('nav-main-menu').style.display = 'none';
             document.getElementById('nav-section-header').style.display = 'none';
+            document.getElementById('nav-ladders-header').style.display = 'none';
+            document.getElementById('nav-ladders-menu').style.display = 'none';
             document.getElementById('nav-view-controls').style.display = 'flex';
             
-            // Show discipline section
+            // Hide all sidebar sections first
             const disciplineSection = document.getElementById('discipline-section');
-            if (disciplineSection) {
-                disciplineSection.style.display = 'flex';
+            const laddersDisciplineSection = document.getElementById('ladders-discipline-section');
+            const laddersFileSection = document.getElementById('ladders-file-section');
+            const laddersFiltersSection = document.getElementById('ladders-filters-section');
+            const laddersRolesSection = document.getElementById('ladders-roles-section');
+            
+            if (disciplineSection) disciplineSection.style.display = 'none';
+            if (laddersDisciplineSection) laddersDisciplineSection.style.display = 'none';
+            if (laddersFileSection) laddersFileSection.style.display = 'none';
+            if (laddersFiltersSection) laddersFiltersSection.style.display = 'none';
+            if (laddersRolesSection) laddersRolesSection.style.display = 'none';
+            
+            // Show appropriate sections based on view
+            if (view === 'ladders') {
+                // Show ladders-specific sections
+                if (laddersDisciplineSection) laddersDisciplineSection.style.display = 'flex';
+                if (laddersFileSection) laddersFileSection.style.display = 'flex';
+                if (laddersFiltersSection) laddersFiltersSection.style.display = 'flex';
+                if (laddersRolesSection) laddersRolesSection.style.display = 'flex';
+                
+                // Initialize ladders if not already done
+                if (laddersDisciplines.length === 0) {
+                    await initializeLaddersDisciplines();
+                    await loadLaddersForDiscipline();
+                }
+            } else {
+                // Show regular discipline section for hiring views
+                if (disciplineSection) disciplineSection.style.display = 'flex';
             }
             
             // Show data section
@@ -2601,19 +3271,29 @@
 
         // Exit view (go back to main menu)
         function exitView() {
-            // Show main menu and section header, hide back button
+            // Show main menu and section headers, hide back button
             document.getElementById('nav-main-menu').style.display = 'flex';
             document.getElementById('nav-section-header').style.display = 'block';
+            document.getElementById('nav-ladders-header').style.display = 'block';
+            document.getElementById('nav-ladders-menu').style.display = 'flex';
             document.getElementById('nav-view-controls').style.display = 'none';
             
-            // Hide discipline section and filters
+            // Hide all view-specific sections
             const disciplineSection = document.getElementById('discipline-section');
             const filtersSection = document.getElementById('filters-section');
             const compareLevelsSection = document.getElementById('compare-levels-section');
+            const laddersDisciplineSection = document.getElementById('ladders-discipline-section');
+            const laddersFileSection = document.getElementById('ladders-file-section');
+            const laddersFiltersSection = document.getElementById('ladders-filters-section');
+            const laddersRolesSection = document.getElementById('ladders-roles-section');
             
             if (disciplineSection) disciplineSection.style.display = 'none';
             if (filtersSection) filtersSection.style.display = 'none';
             if (compareLevelsSection) compareLevelsSection.style.display = 'none';
+            if (laddersDisciplineSection) laddersDisciplineSection.style.display = 'none';
+            if (laddersFileSection) laddersFileSection.style.display = 'none';
+            if (laddersFiltersSection) laddersFiltersSection.style.display = 'none';
+            if (laddersRolesSection) laddersRolesSection.style.display = 'none';
             
             // Clear active state
             document.querySelectorAll('.nav-item[data-view]').forEach(item => {
@@ -2657,6 +3337,10 @@
                 titleEl.textContent = 'Transcript Analysis';
                 subtitleEl.textContent = 'Analyze interview transcripts to evaluate question coverage per competency';
                 renderTranscriptView();
+            } else if (view === 'ladders') {
+                titleEl.textContent = 'Career Ladders';
+                subtitleEl.textContent = 'Compare role expectations across competencies and career levels';
+                updateLaddersView();
             }
         }
 
