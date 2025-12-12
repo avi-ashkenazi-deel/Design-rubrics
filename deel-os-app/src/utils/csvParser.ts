@@ -128,15 +128,33 @@ export async function loadCompetencyDefinitions(discipline: string): Promise<Com
       skipEmptyLines: true
     });
 
+    let currentFocusArea = '';
+
     for (const row of parsed.data) {
       const focusArea = row['Focus Area']?.trim() || '';
       let competency = row['Competency']?.trim() || '';
       const description = row['Description']?.trim() || '';
 
+      // Track current focus area for rows that don't repeat it
+      if (focusArea) currentFocusArea = focusArea;
+
       competency = competency.replace(/:\s*$/, '').replace(/:$/, '').trim();
       
-      if (competency && description) {
-        definitions[competency] = { focusArea, description };
+      if (competency) {
+        // If there's a Description column, use it
+        if (description) {
+          definitions[competency] = { focusArea: currentFocusArea, description };
+        } else {
+          // Otherwise, try to extract description from Level 1 column or create a placeholder
+          const level1 = row['Level 1'] || row['Level 1:'] || 
+                        Object.entries(row).find(([k]) => k.startsWith('Level 1'))?.[1] || '';
+          
+          // Use focus area as description if no other description available
+          definitions[competency] = { 
+            focusArea: currentFocusArea, 
+            description: level1 ? `Level 1 criteria: ${level1.substring(0, 200)}...` : currentFocusArea || 'No description available'
+          };
+        }
       }
     }
   } catch (error) {
