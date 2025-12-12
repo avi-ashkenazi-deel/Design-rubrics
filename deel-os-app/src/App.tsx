@@ -8,7 +8,6 @@ import { Header } from './components/Layout/Header';
 import { CompetenciesView } from './components/Views/CompetenciesView';
 import { RubricsView } from './components/Views/RubricsView';
 import { LaddersView } from './components/Views/LaddersView';
-import { TranscriptView } from './components/Views/TranscriptView';
 import { WelcomeView } from './components/Views/WelcomeView';
 import './styles/globals.css';
 
@@ -37,8 +36,6 @@ function AppContent() {
         return <RubricsView />;
       case 'ladders':
         return <LaddersView />;
-      case 'transcript':
-        return <TranscriptView />;
       default:
         return <WelcomeView />;
     }

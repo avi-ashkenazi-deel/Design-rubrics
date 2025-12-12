@@ -81,10 +81,6 @@ export function Sidebar() {
                 <span className="nav-item-text">Rubrics</span>
                 <span className="nav-chevron">›</span>
               </div>
-              <div className="nav-item" onClick={() => handleNavClick('transcript')}>
-                <span className="nav-item-text">Analyze Interview</span>
-                <span className="nav-chevron">›</span>
-              </div>
             </div>
 
             <div className="nav-section-header" style={{ marginTop: '24px' }}>

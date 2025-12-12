@@ -11,7 +11,7 @@ export interface AuthState {
 }
 
 // View types
-export type ViewType = 'definitions' | 'rubric' | 'transcript' | 'ladders' | null;
+export type ViewType = 'definitions' | 'rubric' | 'ladders' | null;
 
 // Discipline types
 export interface DisciplineFile {
