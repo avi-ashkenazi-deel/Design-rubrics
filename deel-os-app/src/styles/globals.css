@@ -846,22 +846,17 @@ select option {
   color: var(--text-secondary);
 }
 
-.bullet-list {
-  margin: 0;
-  padding: 0 0 0 1.2em;
-  list-style-type: disc;
+.bullet-item {
+  padding-left: 1em;
+  text-indent: -1em;
+  margin-bottom: 0.4em;
 }
 
-.bullet-list li {
-  margin-bottom: 0.5em;
-  padding-left: 0.3em;
-}
-
-.bullet-list li:last-child {
+.bullet-item:last-child {
   margin-bottom: 0;
 }
 
-.bullet-list .diff-highlight {
+.bullet-item .diff-highlight {
   color: var(--text-primary);
 }
 

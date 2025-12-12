@@ -1573,22 +1573,17 @@
             color: var(--text-secondary);
         }
 
-        .bullet-list {
-            margin: 0;
-            padding: 0 0 0 1.2em;
-            list-style-type: disc;
+        .bullet-item {
+            padding-left: 1em;
+            text-indent: -1em;
+            margin-bottom: 0.4em;
         }
 
-        .bullet-list li {
-            margin-bottom: 0.5em;
-            padding-left: 0.3em;
-        }
-
-        .bullet-list li:last-child {
+        .bullet-item:last-child {
             margin-bottom: 0;
         }
 
-        .bullet-list .diff-highlight {
+        .bullet-item .diff-highlight {
             color: var(--text-primary);
         }
 
@@ -3244,25 +3239,20 @@
             return highlightedTexts.map(t => t || '—');
         }
 
-        // Format cell text - convert bullet points to proper HTML list
+        // Format cell text - wrap bullet points in spans for proper hanging indent
         function formatCellText(text) {
             if (!text || text === '—') return text;
             
             // Check if text contains bullet points
             if (!text.includes('•')) return text;
             
-            // Split by bullet points and filter empty items
-            const items = text.split(/\s*•\s*/).filter(item => item.trim());
-            
-            if (items.length === 0) return text;
-            
-            // If only one item or no real bullets, return as-is
-            if (items.length === 1 && !text.trim().startsWith('•')) return text;
-            
-            // Convert to HTML list
-            return '<ul class="bullet-list">' + 
-                items.map(item => `<li>${item.trim()}</li>`).join('') + 
-                '</ul>';
+            // Wrap each bullet point in a div for proper hanging indent styling
+            // Split by bullet, wrap each in a bullet-item div
+            return text
+                .replace(/\s*•\s*/g, '</div><div class="bullet-item">• ')
+                .replace(/^<\/div>/, '')  // Remove leading </div>
+                .replace(/$/, '</div>')   // Add trailing </div>
+                .replace(/<div class="bullet-item">•\s*<\/div>/g, ''); // Clean empty items
         }
 
         // Format questions as HTML list

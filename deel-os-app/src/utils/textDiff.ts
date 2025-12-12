@@ -83,24 +83,18 @@ export function getLaddersTextDiff(texts: string[]): string[] {
   });
 }
 
-// Format cell text with bullet points - convert to proper HTML list
+// Format cell text - wrap bullet points in divs for proper hanging indent
 export function formatCellText(text: string): string {
   if (!text || text === '—') return text;
   
   // Check if text contains bullet points
   if (!text.includes('•')) return text;
   
-  // Split by bullet points and filter empty items
-  const items = text.split(/\s*•\s*/).filter(item => item.trim());
-  
-  if (items.length === 0) return text;
-  
-  // If only one item or no real bullets, return as-is
-  if (items.length === 1 && !text.trim().startsWith('•')) return text;
-  
-  // Convert to HTML list
-  return '<ul class="bullet-list">' + 
-    items.map(item => `<li>${item.trim()}</li>`).join('') + 
-    '</ul>';
+  // Wrap each bullet point in a div for proper hanging indent styling
+  return text
+    .replace(/\s*•\s*/g, '</div><div class="bullet-item">• ')
+    .replace(/^<\/div>/, '')  // Remove leading </div>
+    .replace(/$/, '</div>')   // Add trailing </div>
+    .replace(/<div class="bullet-item">•\s*<\/div>/g, ''); // Clean empty items
 }
 
