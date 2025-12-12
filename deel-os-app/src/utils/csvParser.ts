@@ -54,8 +54,12 @@ export async function loadRubricData(discipline: string, config: DisciplineConfi
       let currentStage = '';
       
       for (const row of parsed.data) {
-        // Support both old and new column names
-        const stage = row['Assessment Stage']?.trim() || row['Interview Stage']?.trim() || row['interview_stage']?.trim() || '';
+        // Support multiple column name formats: Assessment Stage, Interview Stage, Focus Area
+        const stage = row['Assessment Stage']?.trim() || 
+                     row['Interview Stage']?.trim() || 
+                     row['interview_stage']?.trim() || 
+                     row['Focus Area']?.trim() || 
+                     '';
         let competency = row['Competency']?.trim() || row['competency']?.trim() || '';
         
         if (stage) currentStage = stage;
