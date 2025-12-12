@@ -83,13 +83,24 @@ export function getLaddersTextDiff(texts: string[]): string[] {
   });
 }
 
-// Format cell text with bullet points
+// Format cell text with bullet points - convert to proper HTML list
 export function formatCellText(text: string): string {
   if (!text || text === '—') return text;
-  // Replace bullet points with line break + bullet, then remove the first <br> even if inside a span
-  return text
-    .replace(/\s*•\s*/g, '<br>• ')
-    .replace(/^(<[^>]*>)?<br>/, '$1')  // Remove first <br>, preserving any leading tag
-    .replace(/<br>\s*<br>/g, '<br>'); // Clean up double breaks
+  
+  // Check if text contains bullet points
+  if (!text.includes('•')) return text;
+  
+  // Split by bullet points and filter empty items
+  const items = text.split(/\s*•\s*/).filter(item => item.trim());
+  
+  if (items.length === 0) return text;
+  
+  // If only one item or no real bullets, return as-is
+  if (items.length === 1 && !text.trim().startsWith('•')) return text;
+  
+  // Convert to HTML list
+  return '<ul class="bullet-list">' + 
+    items.map(item => `<li>${item.trim()}</li>`).join('') + 
+    '</ul>';
 }
 

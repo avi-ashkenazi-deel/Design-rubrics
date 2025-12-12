@@ -846,6 +846,25 @@ select option {
   color: var(--text-secondary);
 }
 
+.bullet-list {
+  margin: 0;
+  padding: 0 0 0 1.2em;
+  list-style-type: disc;
+}
+
+.bullet-list li {
+  margin-bottom: 0.5em;
+  padding-left: 0.3em;
+}
+
+.bullet-list li:last-child {
+  margin-bottom: 0;
+}
+
+.bullet-list .diff-highlight {
+  color: var(--text-primary);
+}
+
 .diff-highlight {
   color: var(--text-primary);
 }
