@@ -546,6 +546,38 @@
             font-weight: 600;
         }
 
+        /* Competency grouping for "All stages" view */
+        .competency-grouped {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .competency-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .competency-group-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            padding: 12px 0;
+            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 4px;
+        }
+
+        .competency-group .competency-row {
+            margin-left: 0;
+        }
+
+        .competency-group .competency-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
         .competency-row {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
@@ -4025,15 +4057,22 @@ Respond ONLY with the JSON array, no other text.`;
                 const stages = [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
                 
                 content.innerHTML = `
-                    <div class="comparison-grid">
+                    <div class="comparison-grid competency-grouped">
                         ${competencies.map(comp => {
                             // Find which stages have this competency
                             const stagesWithComp = stages.filter(s => 
                                 rubricData.some(r => r.interview_stage === s && r.competency === comp)
                             );
-                            return stagesWithComp.map(s => 
-                                renderCompareCompetencyRow(s, comp, levels, selectedScores, true)
-                            ).join('');
+                            if (stagesWithComp.length === 0) return '';
+                            
+                            return `
+                                <div class="competency-group">
+                                    <div class="competency-group-header">${comp}</div>
+                                    ${stagesWithComp.map(s => 
+                                        renderCompareCompetencyRow(s, comp, levels, selectedScores, true, true)
+                                    ).join('')}
+                                </div>
+                            `;
                         }).join('')}
                     </div>
                 `;
@@ -4053,14 +4092,19 @@ Respond ONLY with the JSON array, no other text.`;
             }
         }
 
-        function renderCompareCompetencyRow(stage, competency, levels, scoresToShow, showStageName = false) {
+        function renderCompareCompetencyRow(stage, competency, levels, scoresToShow, showStageName = false, showStageOnly = false) {
             // Check if we have a definition for this competency
             const hasDefinition = competencyDefinitions[competency] || 
                                  competencyDefinitions[competency.replace(':', '')] ||
                                  findSimilarCompetency(competency);
             
-            // Display name for competency (include stage if showing all stages)
-            const displayName = showStageName ? `${competency} — ${getStageDisplayName(stage)}` : competency;
+            // Display name for competency (include stage if showing all stages, or just stage if grouped by competency)
+            let displayName = competency;
+            if (showStageOnly) {
+                displayName = getStageDisplayName(stage);
+            } else if (showStageName) {
+                displayName = `${competency} — ${getStageDisplayName(stage)}`;
+            }
             
             // Check if we have questions for this competency
             const questions = getQuestions(stage, competency);

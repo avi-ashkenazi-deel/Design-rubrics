@@ -457,6 +457,40 @@ select option {
   gap: 16px;
 }
 
+/* Competency grouping for "All stages" view */
+.competency-grouped {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.competency-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.competency-group-header {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  padding: 12px 0;
+  border-bottom: 2px solid var(--accent-color);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.competency-group .competency-row {
+  margin-left: 0;
+}
+
+.competency-group .competency-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
 .competency-row {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);

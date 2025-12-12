@@ -60,7 +60,7 @@ export function RubricsView() {
   };
 
   // Render a competency row
-  const renderCompetencyRow = (stage: string, competency: string) => {
+  const renderCompetencyRow = (stage: string, competency: string, showStageOnly = false) => {
     const hasDefinition = competencyDefinitions[competency] || 
                          competencyDefinitions[competency.replace(':', '')];
     
@@ -77,14 +77,22 @@ export function RubricsView() {
       )
     );
 
+    // Display name: just stage when grouped by competency, otherwise competency or competency + stage
+    let displayName = competency;
+    if (showStageOnly) {
+      displayName = stage;
+    } else if (!selectedStage) {
+      displayName = `${competency} — ${stage}`;
+    }
+
     return (
       <div key={`${stage}_${competency}`} className="competency-row">
         <div className="competency-header">
           <div className="competency-title-wrapper">
             <div className="competency-name">
-              {selectedStage ? competency : `${competency} — ${stage}`}
+              {displayName}
             </div>
-            {hasDefinition && (
+            {hasDefinition && !showStageOnly && (
               <button 
                 className="info-icon" 
                 onClick={() => setModalCompetency(competency)}
@@ -202,6 +210,52 @@ export function RubricsView() {
       </div>
     );
   };
+
+  // Get all unique competencies when showing all stages
+  const allCompetencies = [...new Set(rubricData.map(r => r.competency))];
+  const filteredCompetencies = selectedCompetency 
+    ? allCompetencies.filter(c => c === selectedCompetency)
+    : allCompetencies;
+
+  // When no stage is selected, group by competency
+  if (!selectedStage) {
+    return (
+      <>
+        <div className="comparison-grid competency-grouped">
+          {filteredCompetencies.map(comp => {
+            // Find which stages have this competency
+            const stagesWithComp = stages.filter(s => 
+              rubricData.some(r => r.interview_stage === s && r.competency === comp)
+            );
+            
+            if (stagesWithComp.length === 0) return null;
+
+            const hasDefinition = competencyDefinitions[comp] || 
+                                 competencyDefinitions[comp.replace(':', '')];
+
+            return (
+              <div key={comp} className="competency-group">
+                <div className="competency-group-header">
+                  {comp}
+                  {hasDefinition && (
+                    <button 
+                      className="info-icon" 
+                      onClick={() => setModalCompetency(comp)}
+                      style={{ marginLeft: '8px' }}
+                    >
+                      i
+                    </button>
+                  )}
+                </div>
+                {stagesWithComp.map(stage => renderCompetencyRow(stage, comp, true))}
+              </div>
+            );
+          })}
+        </div>
+        {renderModal()}
+      </>
+    );
+  }
 
   return (
     <>
