@@ -266,25 +266,26 @@ export function Sidebar() {
 
           <div className="section">
             <div className="section-title">Roles</div>
-            {levels.map((level, idx) => (
-              <div key={level} className="filter-group">
-                <div className="select-wrapper">
-                  <select
-                    value={selectedLevels[idx] || ''}
-                    onChange={(e) => {
-                      const newLevels = [...selectedLevels];
-                      newLevels[idx] = e.target.value;
-                      setSelectedLevels(newLevels.filter(Boolean));
-                    }}
-                  >
-                    <option value="">Select level...</option>
-                    {levels.map(l => (
-                      <option key={l} value={l}>{l}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            ))}
+            <div className="filter-group">
+              <MultiSelect
+                options={levels.map(l => ({ value: l, label: l }))}
+                selected={selectedLevels}
+                onChange={(level) => {
+                  if (selectedLevels.includes(level)) {
+                    setSelectedLevels(selectedLevels.filter(l => l !== level));
+                  } else {
+                    setSelectedLevels([...selectedLevels, level]);
+                  }
+                }}
+                placeholder="Select roles..."
+                getLabel={(selected) => {
+                  if (selected.length === 0) return 'Select roles...';
+                  if (selected.length === levels.length) return 'All roles';
+                  if (selected.length <= 2) return selected.join(', ');
+                  return `${selected.length} roles selected`;
+                }}
+              />
+            </div>
           </div>
         </>
       )}
