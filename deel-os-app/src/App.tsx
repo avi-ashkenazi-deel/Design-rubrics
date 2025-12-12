@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { AppProvider, useApp } from './context/AppContext';
 import { LaddersProvider } from './context/LaddersContext';
@@ -16,18 +16,18 @@ function AppContent() {
   // const { isAuthenticated } = useAuth();
   const { currentView } = useApp();
 
-  // Load Google Sign-In script
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
+  // Load Google Sign-In script - COMMENTED OUT FOR NOW
+  // useEffect(() => {
+  //   const script = document.createElement('script');
+  //   script.src = 'https://accounts.google.com/gsi/client';
+  //   script.async = true;
+  //   script.defer = true;
+  //   document.head.appendChild(script);
 
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
+  //   return () => {
+  //     document.head.removeChild(script);
+  //   };
+  // }, []);
 
   const renderView = () => {
     switch (currentView) {

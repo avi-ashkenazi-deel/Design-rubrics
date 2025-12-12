@@ -1,4 +1,4 @@
-import { UserProfile } from '../Auth/GoogleAuth';
+// import { UserProfile } from '../Auth/GoogleAuth';
 import { useApp } from '../../context/AppContext';
 import { useLadders } from '../../context/LaddersContext';
 import { MultiSelect } from '../shared/MultiSelect';
@@ -62,7 +62,7 @@ export function Sidebar() {
         <span>Deel OS</span>
       </div>
 
-      <UserProfile />
+      {/* <UserProfile /> */}
 
       <nav className="sidebar-nav">
         {/* Main Menu - shown when not in a view */}
