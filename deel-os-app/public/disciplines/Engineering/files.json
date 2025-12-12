@@ -1,0 +1,14 @@
+{
+  "files": [
+    { "file": "BE.csv", "level": "Backend Engineer" },
+    { "file": "BE Infra.csv", "level": "Backend Engineer - Infra" },
+    { "file": "BE-Fintech.csv", "level": "Backend Engineer - Fintech" },
+    { "file": "BE Forward Deployed.csv", "level": "Backend Engineer - Forward Deployed" },
+    { "file": "DevOps .csv", "level": "DevOps Engineer" },
+    { "file": "Staff Eng.csv", "level": "Staff Engineer" },
+    { "file": "Tech Lead.csv", "level": "Tech Lead" }
+  ]
+}
+
+
+

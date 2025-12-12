@@ -8,9 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <!-- Google Identity Services (uncomment when auth is enabled)
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    -->
     <style>
         :root {
             --bg-primary: #0d0d0d;
@@ -1754,7 +1752,6 @@
     </style>
 </head>
 <body>
-    <!-- Auth Gate (Google Auth - commented out until configured)
     <div class="auth-overlay" id="auth-overlay">
         <div class="auth-modal">
             <h2>Deel OS</h2>
@@ -1780,7 +1777,6 @@
             <div class="auth-error" id="auth-error"></div>
         </div>
     </div>
-    -->
 
     <div class="app" id="app" style="display: none;">
         <!-- Sidebar -->
@@ -1789,7 +1785,6 @@
                 <span>Deel OS</span>
             </div>
 
-            <!-- User Profile (shown when Google Auth is enabled)
             <div class="user-profile" id="user-profile" style="display: none;">
                 <img class="user-avatar" id="user-avatar" src="" alt="User">
                 <div class="user-info">
@@ -1804,7 +1799,6 @@
                     </svg>
                 </button>
             </div>
-            -->
 
             <!-- Navigation -->
             <nav class="sidebar-nav" id="sidebar-nav">
@@ -2026,8 +2020,7 @@
     </div>
 
     <script>
-        // Google Authentication (commented out until configured)
-        /*
+        // Google Authentication
         const ALLOWED_DOMAIN = 'deel.com';
         let currentUser = null;
 
@@ -2099,6 +2092,20 @@
             window.location.reload();
         }
 
+        function showApp() {
+            // Hide auth overlay
+            document.getElementById('auth-overlay').classList.add('hidden');
+            // Show app
+            document.getElementById('app').style.display = 'flex';
+            // Show user profile
+            if (currentUser) {
+                document.getElementById('user-profile').style.display = 'flex';
+                document.getElementById('user-name').textContent = currentUser.name;
+                document.getElementById('user-email').textContent = currentUser.email;
+                document.getElementById('user-avatar').src = currentUser.picture;
+            }
+        }
+
         // Check if already authenticated this session
         const storedUser = sessionStorage.getItem('deelos_user');
         if (storedUser) {
@@ -2109,13 +2116,6 @@
                 sessionStorage.removeItem('deelos_user');
             }
         }
-        */
-
-        // Temporary: Show app directly without auth
-        function showApp() {
-            document.getElementById('app').style.display = 'flex';
-        }
-        document.addEventListener('DOMContentLoaded', showApp);
 
         // Global state
         let rubricData = [];
@@ -2457,8 +2457,8 @@
                     
                     // Determine column offsets based on format
                     // Focus Area format: scores in columns 2-5
-                    // Assessment Stage format: scores in columns 3-6
-                    const scoreOffset = usesFocusArea ? 2 : 3;
+                    // Assessment Stage format: scores in columns 2-5 (Assessment Stage, Competency, Level 1-4)
+                    const scoreOffset = 2;
                     
                     for (let i = headerRowIndex + 1; i < parsed.data.length; i++) {
                         const row = parsed.data[i];
@@ -3000,7 +3000,7 @@
                             <div class="ladders-compare-table-row">
                                 ${highlightedValues.map(value => `
                                     <div class="ladders-compare-table-cell">
-                                        <div class="ladders-cell-text">${value}</div>
+                                        <div class="ladders-cell-text">${formatCellText(value)}</div>
                                     </div>
                                 `).join('')}
                             </div>
@@ -3191,6 +3191,13 @@
             });
             
             return highlightedTexts.map(t => t || '—');
+        }
+
+        // Format cell text - convert bullet points to line breaks
+        function formatCellText(text) {
+            if (!text || text === '—') return text;
+            // Replace bullet points with line break + bullet (except at the start)
+            return text.replace(/\s*•\s*/g, '<br>• ').replace(/^<br>/, '');
         }
 
         // Format questions as HTML list
@@ -4115,7 +4122,7 @@ Respond ONLY with the JSON array, no other text.`;
                                         </div>
                                         ${highlightedTexts.map(text => `
                                             <div class="compare-table-cell">
-                                                <div class="compare-cell-text">${text}</div>
+                                                <div class="compare-cell-text">${formatCellText(text)}</div>
                                             </div>
                                         `).join('')}
                                     </div>
