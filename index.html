@@ -3228,8 +3228,11 @@
         // Format cell text - convert bullet points to line breaks
         function formatCellText(text) {
             if (!text || text === '—') return text;
-            // Replace bullet points with line break + bullet (except at the start)
-            return text.replace(/\s*•\s*/g, '<br>• ').replace(/^<br>/, '');
+            // Replace bullet points with line break + bullet, then remove the first <br> even if inside a span
+            return text
+                .replace(/\s*•\s*/g, '<br>• ')
+                .replace(/^(<[^>]*>)?<br>/, '$1')  // Remove first <br>, preserving any leading tag
+                .replace(/<br>\s*<br>/g, '<br>'); // Clean up double breaks
         }
 
         // Format questions as HTML list

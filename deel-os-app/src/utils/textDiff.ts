@@ -86,6 +86,10 @@ export function getLaddersTextDiff(texts: string[]): string[] {
 // Format cell text with bullet points
 export function formatCellText(text: string): string {
   if (!text || text === '—') return text;
-  return text.replace(/\s*•\s*/g, '<br>• ').replace(/^<br>/, '');
+  // Replace bullet points with line break + bullet, then remove the first <br> even if inside a span
+  return text
+    .replace(/\s*•\s*/g, '<br>• ')
+    .replace(/^(<[^>]*>)?<br>/, '$1')  // Remove first <br>, preserving any leading tag
+    .replace(/<br>\s*<br>/g, '<br>'); // Clean up double breaks
 }
 
