@@ -11,10 +11,13 @@ import type {
   LaddersIndex
 } from '../types';
 
+// Get base URL from Vite
+const BASE_URL = import.meta.env.BASE_URL || '/';
+
 // Load disciplines index
 export async function loadDisciplinesIndex(): Promise<string[]> {
   try {
-    const response = await fetch('./disciplines/index.json');
+    const response = await fetch(`${BASE_URL}disciplines/index.json`);
     if (!response.ok) return [];
     const data: DisciplinesIndex = await response.json();
     return data.disciplines || [];
@@ -27,7 +30,7 @@ export async function loadDisciplinesIndex(): Promise<string[]> {
 // Load discipline config
 export async function loadDisciplineConfig(discipline: string): Promise<DisciplineConfig | null> {
   try {
-    const response = await fetch(`./disciplines/${discipline}/files.json`);
+    const response = await fetch(`${BASE_URL}disciplines/${discipline}/files.json`);
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {
@@ -42,7 +45,7 @@ export async function loadRubricData(discipline: string, config: DisciplineConfi
 
   for (const fileConfig of config.files) {
     try {
-      const response = await fetch(`./disciplines/${discipline}/${fileConfig.file}`);
+      const response = await fetch(`${BASE_URL}disciplines/${discipline}/${fileConfig.file}`);
       if (!response.ok) continue;
       
       const csvText = await response.text();
@@ -116,7 +119,7 @@ export async function loadCompetencyDefinitions(discipline: string): Promise<Com
   const definitions: CompetencyDefinitions = {};
   
   try {
-    const response = await fetch(`./disciplines/${discipline}/Competencies.csv`);
+    const response = await fetch(`${BASE_URL}disciplines/${discipline}/Competencies.csv`);
     if (!response.ok) return definitions;
     
     const csvText = await response.text();
@@ -148,7 +151,7 @@ export async function loadQuestions(discipline: string): Promise<QuestionsData> 
   const questionsData: QuestionsData = {};
   
   try {
-    const response = await fetch(`./disciplines/${discipline}/Questions.csv`);
+    const response = await fetch(`${BASE_URL}disciplines/${discipline}/Questions.csv`);
     if (!response.ok) return questionsData;
     
     const csvText = await response.text();
@@ -179,7 +182,7 @@ export async function loadQuestions(discipline: string): Promise<QuestionsData> 
 // Load ladders disciplines
 export async function loadLaddersDisciplines(): Promise<string[]> {
   try {
-    const response = await fetch('./Ladders/index.json');
+    const response = await fetch(`${BASE_URL}Ladders/index.json`);
     if (!response.ok) return [];
     const data: LaddersIndex = await response.json();
     return data.disciplines || [];
@@ -192,7 +195,7 @@ export async function loadLaddersDisciplines(): Promise<string[]> {
 // Load ladders config
 export async function loadLaddersConfig(discipline: string): Promise<LaddersConfig | null> {
   try {
-    const response = await fetch(`./Ladders/${discipline}/files.json`);
+    const response = await fetch(`${BASE_URL}Ladders/${discipline}/files.json`);
     if (!response.ok) return null;
     return await response.json();
   } catch (error) {

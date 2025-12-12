@@ -85,7 +85,8 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
       if (!currentDiscipline || !selectedFile) return;
       
       setIsLoading(true);
-      const filePath = `./Ladders/${currentDiscipline}/${selectedFile}`;
+      const basePath = import.meta.env.BASE_URL || '/';
+      const filePath = `${basePath}Ladders/${currentDiscipline}/${selectedFile}`;
       const result = await loadLaddersData(filePath);
       
       setLaddersData(result.data);
