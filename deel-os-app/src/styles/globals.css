@@ -651,6 +651,16 @@ select option {
   gap: 16px;
 }
 
+/* Purple text selection for competencies view */
+.competencies-grid ::selection {
+  background: rgba(189, 147, 249, 0.9);
+  color: #000;
+}
+.competencies-grid ::-moz-selection {
+  background: rgba(189, 147, 249, 0.9);
+  color: #000;
+}
+
 .competency-definition-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
@@ -906,6 +916,43 @@ select option {
   background: rgba(139, 233, 253, 0.15);
   color: var(--neon-cyan);
   box-shadow: var(--glow-cyan);
+}
+
+/* Selection colors matching score colors */
+.score-row-1 ::selection {
+  background: rgba(255, 92, 92, 0.9);
+  color: #000;
+}
+.score-row-1 ::-moz-selection {
+  background: rgba(255, 92, 92, 0.9);
+  color: #000;
+}
+
+.score-row-2 ::selection {
+  background: rgba(255, 159, 67, 0.9);
+  color: #000;
+}
+.score-row-2 ::-moz-selection {
+  background: rgba(255, 159, 67, 0.9);
+  color: #000;
+}
+
+.score-row-3 ::selection {
+  background: rgba(80, 250, 123, 0.9);
+  color: #000;
+}
+.score-row-3 ::-moz-selection {
+  background: rgba(80, 250, 123, 0.9);
+  color: #000;
+}
+
+.score-row-4 ::selection {
+  background: rgba(139, 233, 253, 0.9);
+  color: #000;
+}
+.score-row-4 ::-moz-selection {
+  background: rgba(139, 233, 253, 0.9);
+  color: #000;
 }
 
 /* Multi-select Dropdown */
