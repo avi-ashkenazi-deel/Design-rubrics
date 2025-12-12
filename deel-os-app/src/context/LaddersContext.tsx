@@ -85,7 +85,7 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
       if (!currentDiscipline || !selectedFile) return;
       
       setIsLoading(true);
-      const filePath = `/Ladders/${currentDiscipline}/${selectedFile}`;
+      const filePath = `./Ladders/${currentDiscipline}/${selectedFile}`;
       const result = await loadLaddersData(filePath);
       
       setLaddersData(result.data);
