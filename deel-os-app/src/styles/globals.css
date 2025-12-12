@@ -675,12 +675,35 @@ select option {
   border-color: var(--border-hover);
 }
 
+.competency-definition-card.clickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.competency-definition-card.clickable:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.view-rubric-link {
+  font-size: 12px;
+  color: var(--accent-color);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.competency-definition-card.clickable:hover .view-rubric-link {
+  opacity: 1;
+}
+
 .competency-definition-header {
   padding: 16px 20px;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 12px;
 }
 
