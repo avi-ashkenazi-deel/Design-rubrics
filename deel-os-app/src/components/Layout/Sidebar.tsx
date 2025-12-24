@@ -1,10 +1,19 @@
+import { useState } from 'react';
 // import { UserProfile } from '../Auth/GoogleAuth';
 import { useApp } from '../../context/AppContext';
 import { useLadders } from '../../context/LaddersContext';
 import { MultiSelect } from '../shared/MultiSelect';
+import { HistoryPanel } from '../shared/HistoryPanel';
+import { AddDisciplineModal } from '../shared/AddDisciplineModal';
+import { AddStageModal } from '../shared/AddStageModal';
+import { AddRoleModal } from '../shared/AddRoleModal';
 import type { ViewType } from '../../types';
 
 export function Sidebar() {
+  const [showHistory, setShowHistory] = useState(false);
+  const [showAddDiscipline, setShowAddDiscipline] = useState(false);
+  const [showAddStage, setShowAddStage] = useState(false);
+  const [showAddRole, setShowAddRole] = useState(false);
   const { 
     currentView, 
     setCurrentView,
@@ -113,14 +122,23 @@ export function Sidebar() {
           <div className="section-title">Discipline</div>
           <div className="filter-group">
             <div className="select-wrapper">
-              <select 
-                value={currentDiscipline} 
-                onChange={(e) => setCurrentDiscipline(e.target.value)}
-              >
-                {disciplines.map(d => (
-                  <option key={d} value={d}>{d}</option>
-                ))}
-              </select>
+                <select 
+                  value={currentDiscipline} 
+                  onChange={(e) => {
+                    if (e.target.value === '__add_new__') {
+                      setShowAddDiscipline(true);
+                      e.target.value = currentDiscipline; // Reset selection
+                    } else {
+                      setCurrentDiscipline(e.target.value);
+                    }
+                  }}
+                >
+                  {disciplines.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                  <option disabled>────────────</option>
+                  <option value="__add_new__" className="add-option">Add new discipline</option>
+                </select>
             </div>
           </div>
         </div>
@@ -208,12 +226,21 @@ export function Sidebar() {
               <div className="select-wrapper">
                 <select 
                   value={selectedStage} 
-                  onChange={(e) => setSelectedStage(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value === '__add_new__') {
+                      setShowAddStage(true);
+                      e.target.value = selectedStage; // Reset selection
+                    } else {
+                      setSelectedStage(e.target.value);
+                    }
+                  }}
                 >
                   <option value="">All stages</option>
                   {stages.map(s => (
                     <option key={s} value={s}>{s}</option>
                   ))}
+                  <option disabled>────────────</option>
+                  <option value="__add_new__" className="add-option">Add new stage</option>
                 </select>
               </div>
             </div>
@@ -280,6 +307,10 @@ export function Sidebar() {
                   if (selected.length <= 2) return selected.join(', ');
                   return `${selected.length} roles selected`;
                 }}
+                addAction={{
+                  label: 'Add new role',
+                  onClick: () => setShowAddRole(true)
+                }}
               />
             </div>
           </div>
@@ -300,8 +331,59 @@ export function Sidebar() {
           <button className="btn" onClick={reloadData}>
             Reload Data
           </button>
+          
+          {/* History Button */}
+          <button className="history-btn" onClick={() => setShowHistory(true)}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span>Version History</span>
+          </button>
         </div>
       )}
+
+      {/* History Panel */}
+      <HistoryPanel 
+        isOpen={showHistory} 
+        onClose={() => setShowHistory(false)}
+        onRevert={reloadData}
+      />
+      
+      {/* Add Discipline Modal */}
+      <AddDisciplineModal
+        isOpen={showAddDiscipline}
+        onClose={() => setShowAddDiscipline(false)}
+        onSuccess={() => {
+          setShowAddDiscipline(false);
+          reloadData();
+        }}
+        existingDisciplines={disciplines}
+      />
+      
+      {/* Add Stage Modal */}
+      <AddStageModal
+        isOpen={showAddStage}
+        onClose={() => setShowAddStage(false)}
+        onSuccess={() => {
+          setShowAddStage(false);
+          reloadData();
+        }}
+        discipline={currentDiscipline}
+        existingCompetencies={competencies}
+      />
+      
+      {/* Add Role Modal */}
+      <AddRoleModal
+        isOpen={showAddRole}
+        onClose={() => setShowAddRole(false)}
+        onSuccess={() => {
+          setShowAddRole(false);
+          reloadData();
+        }}
+        discipline={currentDiscipline}
+        existingRoles={levels}
+      />
     </aside>
   );
 }

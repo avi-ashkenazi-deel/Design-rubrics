@@ -11,6 +11,10 @@ interface MultiSelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   getLabel?: (selected: string[]) => string;
+  addAction?: {
+    label: string;
+    onClick: () => void;
+  };
 }
 
 export function MultiSelect({ 
@@ -18,7 +22,8 @@ export function MultiSelect({
   selected, 
   onChange, 
   placeholder = 'Select...', 
-  getLabel 
+  getLabel,
+  addAction
 }: MultiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -40,6 +45,13 @@ export function MultiSelect({
       ? placeholder 
       : selected.join(', ');
 
+  const handleAddClick = () => {
+    if (addAction) {
+      addAction.onClick();
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div className={`multi-select ${isOpen ? 'open' : ''}`} ref={ref}>
       <div className="multi-select-toggle" onClick={() => setIsOpen(!isOpen)}>
@@ -57,8 +69,21 @@ export function MultiSelect({
             <span className="checkbox-label">{option.label}</span>
           </label>
         ))}
+        {addAction && (
+          <>
+            <div className="multi-select-divider" />
+            <div className="multi-select-add-option" onClick={handleAddClick}>
+              {addAction.label}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
+
+
+
+
+
 

@@ -7,11 +7,20 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
+    "db:logs": "docker-compose logs -f postgres",
+    "server": "node server/index.js",
+    "migrate": "node server/migrate.js"
   },
   "dependencies": {
     "@types/papaparse": "^5.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
     "papaparse": "^5.5.3",
+    "pg": "^8.13.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

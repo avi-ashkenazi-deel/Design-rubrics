@@ -19,7 +19,11 @@ const VIEW_TITLES: Record<string, { title: string; subtitle: string }> = {
   }
 };
 
-export function Header() {
+interface HeaderProps {
+  actions?: React.ReactNode;
+}
+
+export function Header({ actions }: HeaderProps) {
   const { currentView } = useApp();
 
   if (!currentView) return null;
@@ -28,9 +32,17 @@ export function Header() {
 
   return (
     <div className="header">
-      <h1>{viewInfo.title}</h1>
-      <p>{viewInfo.subtitle}</p>
+      <div className="header-content">
+        <div className="header-text">
+          <h1>{viewInfo.title}</h1>
+          <p>{viewInfo.subtitle}</p>
+        </div>
+        {actions && (
+          <div className="header-actions">
+            {actions}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
-

@@ -1,19 +1,42 @@
+import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { EditCompetencyModal } from '../shared/EditCompetencyModal';
+
+interface EditingCompetency {
+  id?: number;
+  name: string;
+  focusArea: string;
+  description: string;
+  isNew: boolean;
+}
 
 export function CompetenciesView() {
+  const [editingCompetency, setEditingCompetency] = useState<EditingCompetency | null>(null);
+  
   const { 
     competencyDefinitions, 
     currentDiscipline,
     setCurrentView,
     setSelectedCompetency,
     setSelectedStage,
-    rubricData
+    rubricData,
+    useApi,
+    reloadData
   } = useApp();
+
+  const openAddModal = () => {
+    setEditingCompetency({
+      name: '',
+      focusArea: '',
+      description: '',
+      isNew: true
+    });
+  };
 
   const definitions = Object.entries(competencyDefinitions);
   
   // Filter out duplicates
-  const uniqueDefinitions: [string, { focusArea: string; description: string }][] = [];
+  const uniqueDefinitions: [string, { id?: number; focusArea: string; description: string }][] = [];
   const seenDescriptions = new Set<string>();
   
   definitions.forEach(([name, data]) => {
@@ -41,44 +64,113 @@ export function CompetenciesView() {
     }
   };
 
+  // Open edit modal
+  const handleEditCompetency = (e: React.MouseEvent, name: string, data: { id?: number; focusArea: string; description: string }) => {
+    e.stopPropagation(); // Prevent card click
+    setEditingCompetency({
+      id: data.id,
+      name,
+      focusArea: data.focusArea,
+      description: data.description,
+      isNew: false
+    });
+  };
+
+  // Handle save from modal
+  const handleSave = async () => {
+    await reloadData();
+    setEditingCompetency(null);
+  };
+
+  // Add button component
+  const AddButton = () => {
+    if (!useApi) return null;
+    return (
+      <div className="competencies-actions">
+        <button className="add-competency-btn" onClick={openAddModal}>
+          Add new competency
+        </button>
+      </div>
+    );
+  };
+
   if (uniqueDefinitions.length === 0) {
     return (
-      <div className="empty-state">
-        <h3>No competency definitions found</h3>
-        <p>
-          Add a Competencies.csv file in the disciplines/{currentDiscipline} folder 
-          with Focus Area, Competency, and Description columns.
-        </p>
-      </div>
+      <>
+        <AddButton />
+        <div className="empty-state">
+          <h3>No competency definitions found</h3>
+          <p>
+            {useApi 
+              ? 'Click "Add new competency" to create the first competency definition.'
+              : `Add a Competencies.csv file in the disciplines/${currentDiscipline} folder with Focus Area, Competency, and Description columns.`
+            }
+          </p>
+        </div>
+
+        {/* Edit/Add Modal */}
+        <EditCompetencyModal
+          isOpen={editingCompetency !== null}
+          onClose={() => setEditingCompetency(null)}
+          onSave={handleSave}
+          competency={editingCompetency}
+          discipline={currentDiscipline}
+        />
+      </>
     );
   }
 
   return (
-    <div className="competencies-grid">
-      {uniqueDefinitions.map(([name, data]) => {
-        const isClickable = hasRubricData(name);
-        return (
-          <div 
-            key={name} 
-            className={`competency-definition-card ${isClickable ? 'clickable' : ''}`}
-            onClick={() => isClickable && handleCompetencyClick(name)}
-          >
-            <div className="competency-definition-header">
-              <div className="competency-name">{name}</div>
-              {isClickable && (
-                <span className="view-rubric-link">View in Rubrics →</span>
-              )}
+    <>
+      <AddButton />
+      <div className="competencies-grid">
+        {uniqueDefinitions.map(([name, data]) => {
+          const isClickable = hasRubricData(name);
+          return (
+            <div 
+              key={name} 
+              className={`competency-definition-card ${isClickable ? 'clickable' : ''}`}
+              onClick={() => isClickable && handleCompetencyClick(name)}
+            >
+              <div className="competency-definition-header">
+                <div className="competency-name">{name}</div>
+                <div className="competency-header-actions">
+                  {isClickable && (
+                    <span className="view-rubric-link">View in Rubrics →</span>
+                  )}
+                  {useApi && (
+                    <button 
+                      className="edit-competency-btn"
+                      onClick={(e) => handleEditCompetency(e, name, data)}
+                      title="Edit competency"
+                    >
+                      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        <path d="m15 5 4 4" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="competency-definition-body">
+                {data.focusArea && (
+                  <div className="focus-area-badge">{data.focusArea}</div>
+                )}
+                <div className="competency-definition-text">{data.description}</div>
+              </div>
             </div>
-            <div className="competency-definition-body">
-              {data.focusArea && (
-                <div className="focus-area-badge">{data.focusArea}</div>
-              )}
-              <div className="competency-definition-text">{data.description}</div>
-            </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+
+      {/* Edit/Add Modal */}
+      <EditCompetencyModal
+        isOpen={editingCompetency !== null}
+        onClose={() => setEditingCompetency(null)}
+        onSave={handleSave}
+        competency={editingCompetency}
+        discipline={currentDiscipline}
+      />
+    </>
   );
 }
-

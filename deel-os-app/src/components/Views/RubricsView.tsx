@@ -1,6 +1,16 @@
 import { useState } from 'react';
-import { useApp } from '../../context/AppContext';
+import { useApp, type RubricDataWithId } from '../../context/AppContext';
 import { getTextDiff, formatCellText } from '../../utils/textDiff';
+import { EditCellModal } from '../shared/EditCellModal';
+
+interface EditState {
+  rubricId: number;
+  field: string;
+  value: string;
+  level: string;
+  competency: string;
+  score: number;
+}
 
 export function RubricsView() {
   const { 
@@ -10,11 +20,14 @@ export function RubricsView() {
     selectedLevels,
     selectedScores,
     selectedStage,
-    selectedCompetency
+    selectedCompetency,
+    useApi,
+    updateCell
   } = useApp();
 
   const [showQuestionsState, setShowQuestionsState] = useState<Record<string, boolean>>({});
   const [modalCompetency, setModalCompetency] = useState<string | null>(null);
+  const [editState, setEditState] = useState<EditState | null>(null);
 
   if (selectedLevels.filter(Boolean).length === 0) {
     return (
@@ -41,10 +54,16 @@ export function RubricsView() {
   // Get questions for a stage/competency
   const getQuestions = (stage: string, competency: string): string | null => {
     const key = `${stage}_${competency}`;
-    if (questionsData[key]) return questionsData[key];
+    const data = questionsData[key];
+    if (data) {
+      return typeof data === 'string' ? data : data.text;
+    }
     
     const keyNoColon = `${stage}_${competency.replace(/:\s*$/, '')}`;
-    if (questionsData[keyNoColon]) return questionsData[keyNoColon];
+    const dataNoColon = questionsData[keyNoColon];
+    if (dataNoColon) {
+      return typeof dataNoColon === 'string' ? dataNoColon : dataNoColon.text;
+    }
     
     return null;
   };
@@ -57,6 +76,33 @@ export function RubricsView() {
       return text ? `<li>${text}</li>` : '';
     }).filter(item => item);
     return `<ul>${listItems.join('')}</ul>`;
+  };
+
+  // Handle opening edit modal
+  const handleEditClick = (
+    rubric: RubricDataWithId,
+    field: string,
+    value: string,
+    level: string,
+    competency: string,
+    score: number
+  ) => {
+    if (!useApi || !rubric.id) return;
+    
+    setEditState({
+      rubricId: rubric.id,
+      field,
+      value,
+      level,
+      competency,
+      score
+    });
+  };
+
+  // Handle save
+  const handleSave = async (newValue: string) => {
+    if (!editState) return;
+    await updateCell(editState.rubricId, editState.field, newValue);
   };
 
   // Render a competency row
@@ -146,14 +192,54 @@ export function RubricsView() {
                     <div className="compare-table-cell score-label-cell">
                       <span className={`score-badge score-${score}`}>{score}</span>
                     </div>
-                    {highlightedTexts.map((text, idx) => (
-                      <div key={idx} className="compare-table-cell">
+                    {highlightedTexts.map((text, idx) => {
+                      const rubric = levelData[idx];
+                      const level = levels[idx];
+                      const field = `score_${score}`;
+                      const originalValue = rubric?.[field as keyof typeof rubric] as string || '';
+                      const canEdit = useApi && rubric?.id;
+
+                      return (
                         <div 
-                          className="compare-cell-text"
-                          dangerouslySetInnerHTML={{ __html: formatCellText(text) }}
-                        />
-                      </div>
-                    ))}
+                          key={idx} 
+                          className={`compare-table-cell ${canEdit ? 'editable-cell' : ''}`}
+                        >
+                          <div 
+                            className="compare-cell-text"
+                            dangerouslySetInnerHTML={{ __html: formatCellText(text) }}
+                          />
+                          {canEdit && (
+                            <button
+                              className="edit-pencil-btn"
+                              onClick={() => handleEditClick(
+                                rubric,
+                                field,
+                                originalValue,
+                                level,
+                                competency,
+                                score
+                              )}
+                              title="Edit cell"
+                              aria-label="Edit cell"
+                            >
+                              <svg 
+                                viewBox="0 0 24 24" 
+                                width="16" 
+                                height="16" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                strokeWidth="2"
+                                strokeLinecap="round" 
+                                strokeLinejoin="round"
+                              >
+                                <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                                <path d="m15 5 4 4" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               })}
@@ -253,6 +339,16 @@ export function RubricsView() {
           })}
         </div>
         {renderModal()}
+        
+        {/* Edit Cell Modal */}
+        <EditCellModal
+          isOpen={editState !== null}
+          onClose={() => setEditState(null)}
+          onSave={handleSave}
+          initialValue={editState?.value || ''}
+          title={`Score ${editState?.score}`}
+          subtitle={`${editState?.level} • ${editState?.competency}`}
+        />
       </>
     );
   }
@@ -267,7 +363,16 @@ export function RubricsView() {
         )}
       </div>
       {renderModal()}
+      
+      {/* Edit Cell Modal */}
+      <EditCellModal
+        isOpen={editState !== null}
+        onClose={() => setEditState(null)}
+        onSave={handleSave}
+        initialValue={editState?.value || ''}
+        title={`Score ${editState?.score}`}
+        subtitle={`${editState?.level} • ${editState?.competency}`}
+      />
     </>
   );
 }
-
