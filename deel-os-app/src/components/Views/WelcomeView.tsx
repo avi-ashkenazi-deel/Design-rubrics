@@ -79,7 +79,7 @@ export function WelcomeView() {
   const particlesRef = useRef<Particle[]>([]);
   const floatingTextsRef = useRef<FloatingText[]>([]);
   const cardsRef = useRef<FloatingCard[]>([]);
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number>(undefined);
   const revealProgressRef = useRef(0);
   const lastTextTime = useRef(0);
   const cardsInitialized = useRef(false);
