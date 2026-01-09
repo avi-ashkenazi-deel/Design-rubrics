@@ -52,6 +52,12 @@ interface FloatingText {
   text: string;
 }
 
+interface PulseText {
+  scale: number;
+  alpha: number;
+  startTime: number;
+}
+
 interface FloatingCard {
   x: number;
   y: number;
@@ -63,6 +69,7 @@ interface FloatingCard {
   value: typeof DEEL_VALUES[0];
   delay: number;
   floatPhase: number;
+  isCentered: boolean;
 }
 
 export function WelcomeView() {
@@ -77,6 +84,10 @@ export function WelcomeView() {
   const lastTextTime = useRef(0);
   const cardsInitialized = useRef(false);
   const mouseRef = useRef({ x: 0, y: 0 });
+  const [centeredCardIndex, setCenteredCardIndex] = useState<number | null>(null);
+  const mainTextScaleRef = useRef(1);
+  const mainTextAlphaRef = useRef(1);
+  const pulsesRef = useRef<PulseText[]>([]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -144,10 +155,11 @@ export function WelcomeView() {
         baseY: canvas.height * positions[i].y,
         rotation: (Math.random() - 0.5) * 0.08,
         rotationSpeed: (Math.random() - 0.5) * 0.0003,
-        scale: 1, // Start fully visible
+        scale: 1,
         value,
-        delay: 0, // No delay
-        floatPhase: Math.random() * Math.PI * 2
+        delay: 0,
+        floatPhase: Math.random() * Math.PI * 2,
+        isCentered: false
       }));
       cardsInitialized.current = true;
     };
@@ -247,115 +259,221 @@ export function WelcomeView() {
 
       ctx.globalAlpha = 1;
 
+      // Calculate main text scale (zoom out when card is centered)
+      const mainTextTargetScale = centeredCardIndex !== null ? 0.6 : 1;
+      const mainTextTargetAlpha = centeredCardIndex !== null ? 0.25 : 1;
+      
+      // Smooth animation for main text
+      mainTextScaleRef.current += (mainTextTargetScale - mainTextScaleRef.current) * 0.08;
+      mainTextAlphaRef.current += (mainTextTargetAlpha - mainTextAlphaRef.current) * 0.08;
+
+      // Floating motion for main text when zoomed out
+      const mainFloatX = centeredCardIndex !== null ? Math.sin(time * 0.001) * 3 : 0;
+      const mainFloatY = centeredCardIndex !== null ? Math.cos(time * 0.0008) * 2 : 0;
+
       // Draw main text
       ctx.save();
+      ctx.translate(centerX + mainFloatX, centerY + mainFloatY);
+      ctx.scale(mainTextScaleRef.current, mainTextScaleRef.current);
+      
+      // Apply blur effect when zoomed out (using shadow trick)
+      const isZoomedOut = mainTextScaleRef.current < 0.9;
       
       // Clip for reveal effect
       if (revealProgressRef.current < 1) {
         ctx.beginPath();
-        ctx.rect(0, 0, canvas.width * revealProgressRef.current, canvas.height);
+        ctx.rect(-canvas.width, -canvas.height, canvas.width * 2 * revealProgressRef.current, canvas.height * 2);
         ctx.clip();
       }
 
       // Pulsing glow for love effect
       const pulse = Math.sin(time * 0.003) * 0.3 + 0.7;
+      ctx.globalAlpha = mainTextAlphaRef.current;
 
       // Draw "Deel" - smaller text on top
       ctx.font = '500 42px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.shadowColor = `rgba(255, 107, 107, ${pulse * 0.4})`;
-      ctx.shadowBlur = 15 + pulse * 8;
+      ctx.shadowColor = `rgba(255, 107, 107, ${pulse * 0.5})`;
+      ctx.shadowBlur = isZoomedOut ? 8 : (15 + pulse * 8);
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
       ctx.fillStyle = '#ffffff';
-      ctx.fillText('Deel', centerX, centerY - 38);
+      ctx.fillText('Deel', 0, -38);
       
       // Draw "OS" - sized to match width of "Deel"
-      // Deel at 42px is about 85px wide, OS needs to match
       ctx.font = 'bold 68px Inter, system-ui, sans-serif';
-      ctx.shadowColor = `rgba(255, 255, 255, ${pulse * 0.3})`;
-      ctx.shadowBlur = 20 + pulse * 10;
+      ctx.shadowColor = `rgba(255, 255, 255, ${pulse * 0.4})`;
+      ctx.shadowBlur = isZoomedOut ? 10 : (20 + pulse * 10);
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
       ctx.fillStyle = '#ffffff';
-      ctx.fillText('OS', centerX, centerY + 30);
+      ctx.fillText('OS', 0, 30);
       
       ctx.restore();
 
-      // Draw floating cards (always fully visible, gentle float + mouse parallax)
-      cardsRef.current.forEach((card) => {
-        // Gentle floating motion
-        const floatX = Math.sin(time * 0.0006 + card.floatPhase) * 6;
-        const floatY = Math.cos(time * 0.0004 + card.floatPhase) * 4;
-
-        // Mouse parallax effect - cards shift slightly based on mouse position
-        const mouseOffsetX = (mouseRef.current.x - canvas.width / 2) / canvas.width;
-        const mouseOffsetY = (mouseRef.current.y - canvas.height / 2) / canvas.height;
+      // Draw pulse animations
+      pulsesRef.current = pulsesRef.current.filter(pulseAnim => {
+        const elapsed = time - pulseAnim.startTime;
+        const duration = 1500; // 1.5 seconds
+        const progress = elapsed / duration;
         
-        // Cards on opposite sides move in opposite directions for depth effect
-        const cardSide = card.baseX < canvas.width / 2 ? -1 : 1;
-        const parallaxX = mouseOffsetX * 15 * cardSide;
-        const parallaxY = mouseOffsetY * 10;
+        if (progress >= 1) return false;
+        
+        // Easing - starts fast, slows down
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        
+        const pulseScale = 1 + easeOut * 3; // Scale from 1x to 4x
+        const pulseAlpha = 1 - easeOut; // Fade out
+        
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.scale(pulseScale, pulseScale);
+        ctx.globalAlpha = pulseAlpha * 0.8;
+        
+        // Stroked "Deel"
+        ctx.font = '500 42px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeStyle = 'rgba(255, 107, 107, 0.9)';
+        ctx.lineWidth = 2 / pulseScale; // Keep consistent stroke width as it scales
+        ctx.strokeText('Deel', 0, -38);
+        
+        // Stroked "OS"
+        ctx.font = 'bold 68px Inter, system-ui, sans-serif';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.lineWidth = 2.5 / pulseScale;
+        ctx.strokeText('OS', 0, 30);
+        
+        ctx.restore();
+        
+        return true;
+      });
 
-        // Smooth movement to float position with parallax
-        const targetX = card.baseX + floatX + parallaxX;
-        const targetY = card.baseY + floatY + parallaxY;
-        card.x += (targetX - card.x) * 0.05;
-        card.y += (targetY - card.y) * 0.05;
+      // Calculate zoom out effect when a card is centered
+      const hasCardCentered = centeredCardIndex !== null;
 
-        card.rotation += card.rotationSpeed;
+      // Draw floating cards (always fully visible, gentle float + mouse parallax)
+      cardsRef.current.forEach((card, index) => {
+        const isCentered = centeredCardIndex === index;
+        
+        // Target position - center if centered, otherwise base position with effects
+        let targetX: number;
+        let targetY: number;
+        let targetRotation: number;
+        let targetScale: number;
+
+        if (isCentered) {
+          targetX = canvas.width / 2;
+          targetY = canvas.height / 2;
+          targetRotation = 0;
+          targetScale = 1.5; // Bigger when centered
+        } else {
+          // Gentle floating motion - continues even when zoomed out
+          const floatX = Math.sin(time * 0.0006 + card.floatPhase) * (hasCardCentered ? 8 : 6);
+          const floatY = Math.cos(time * 0.0004 + card.floatPhase) * (hasCardCentered ? 6 : 4);
+
+          // Mouse parallax effect (reduced when zoomed out)
+          const mouseOffsetX = (mouseRef.current.x - canvas.width / 2) / canvas.width;
+          const mouseOffsetY = (mouseRef.current.y - canvas.height / 2) / canvas.height;
+          const cardSide = card.baseX < canvas.width / 2 ? -1 : 1;
+          const parallaxStrength = hasCardCentered ? 0.5 : 1;
+          const parallaxX = mouseOffsetX * 15 * cardSide * parallaxStrength;
+          const parallaxY = mouseOffsetY * 10 * parallaxStrength;
+
+          // When another card is centered, push this card outward (zoom out effect)
+          const pushOutX = hasCardCentered ? (card.baseX - canvas.width / 2) * 0.2 : 0;
+          const pushOutY = hasCardCentered ? (card.baseY - canvas.height / 2) * 0.2 : 0;
+
+          targetX = card.baseX + floatX + parallaxX + pushOutX;
+          targetY = card.baseY + floatY + parallaxY + pushOutY;
+          targetRotation = card.rotation + card.rotationSpeed;
+          targetScale = hasCardCentered ? 0.7 : 1; // Normal when no card centered, smaller when in background
+        }
+
+        // Smooth movement
+        card.x += (targetX - card.x) * 0.08;
+        card.y += (targetY - card.y) * 0.08;
+        card.rotation += (targetRotation - card.rotation) * 0.1;
+        card.scale += (targetScale - card.scale) * 0.08;
 
         // Draw card
         ctx.save();
         ctx.translate(card.x, card.y);
         ctx.rotate(card.rotation);
-        ctx.globalAlpha = 0.92;
+        ctx.scale(card.scale, card.scale);
+        
+        const isInBackground = hasCardCentered && !isCentered;
+        // Full opacity when no card centered, reduced only for background cards
+        ctx.globalAlpha = isCentered ? 1 : (isInBackground ? 0.35 : 1);
 
         const cardWidth = 190;
-        const cardHeight = 85;
+        const cardHeight = 75;
         
-        // Card shadow
+        // Card shadow/glow
         ctx.shadowColor = card.value.color;
-        ctx.shadowBlur = 20;
-        ctx.shadowOffsetY = 6;
+        ctx.shadowBlur = isCentered ? 40 : (isInBackground ? 30 : 18);
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
 
         // Card background
-        ctx.fillStyle = 'rgba(18, 18, 18, 0.95)';
+        ctx.fillStyle = 'rgba(18, 18, 18, 0.98)';
         ctx.beginPath();
         ctx.roundRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12);
         ctx.fill();
+        
+        // Extra blur passes for background cards to simulate depth of field blur
+        if (isInBackground) {
+          ctx.shadowBlur = 20;
+          ctx.globalAlpha = 0.15;
+          ctx.fill();
+          ctx.shadowBlur = 35;
+          ctx.globalAlpha = 0.1;
+          ctx.fill();
+          ctx.globalAlpha = 0.35;
+        }
 
         // Border
         ctx.strokeStyle = card.value.color;
-        ctx.lineWidth = 1.5;
-        ctx.shadowBlur = 0;
+        ctx.lineWidth = isCentered ? 3 : 1.5;
+        ctx.shadowBlur = isInBackground ? 15 : 0;
         ctx.stroke();
 
         // Color accent bar
+        ctx.shadowBlur = 0;
         ctx.fillStyle = card.value.color;
         ctx.beginPath();
         ctx.roundRect(-cardWidth / 2, -cardHeight / 2, 4, cardHeight, [12, 0, 0, 12]);
         ctx.fill();
 
-        // Title
-        ctx.shadowBlur = 0;
+        // Title with colored glow
+        ctx.shadowColor = card.value.color;
+        ctx.shadowBlur = isCentered ? 10 : (isInBackground ? 8 : 5);
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 13px Inter, system-ui, sans-serif';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
-        ctx.fillText(card.value.title, -cardWidth / 2 + 16, -cardHeight / 2 + 14);
+        ctx.fillText(card.value.title, -cardWidth / 2 + 16, -cardHeight / 2 + 12);
 
-        // Description
-        ctx.fillStyle = '#999999';
+        // Description with subtle colored glow
+        ctx.shadowColor = card.value.color;
+        ctx.shadowBlur = isCentered ? 6 : (isInBackground ? 5 : 3);
+        ctx.fillStyle = isCentered ? '#dddddd' : '#cccccc';
         ctx.font = '11px Inter, system-ui, sans-serif';
         const words = card.value.description.split(' ');
         let line = '';
-        let y = -cardHeight / 2 + 34;
-        const maxY = cardHeight / 2 - 10;
+        let y = -cardHeight / 2 + 30;
+        const maxY = cardHeight / 2 - 8;
+        const lineHeight = 13;
         for (const word of words) {
           const testLine = line + word + ' ';
           if (ctx.measureText(testLine).width > cardWidth - 32) {
             if (y < maxY) {
               ctx.fillText(line.trim(), -cardWidth / 2 + 16, y);
               line = word + ' ';
-              y += 14;
+              y += lineHeight;
             }
           } else {
             line = testLine;
@@ -379,7 +497,7 @@ export function WelcomeView() {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [revealed]);
+  }, [revealed, centeredCardIndex]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -391,11 +509,59 @@ export function WelcomeView() {
     }
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    const canvas = canvasRef.current;
+    if (!rect || !canvas) return;
+    
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    // Check if clicking on centered card to dismiss it
+    if (centeredCardIndex !== null) {
+      setCenteredCardIndex(null);
+      return;
+    }
+
+    // Check if clicking on Deel OS text area (center of screen)
+    const textAreaWidth = 150;
+    const textAreaHeight = 120;
+    if (Math.abs(clickX - centerX) < textAreaWidth / 2 && Math.abs(clickY - centerY) < textAreaHeight / 2) {
+      // Trigger pulse animation
+      pulsesRef.current.push({
+        scale: 1,
+        alpha: 1,
+        startTime: performance.now()
+      });
+      return;
+    }
+
+    // Check if clicking on any card
+    const cardWidth = 190;
+    const cardHeight = 75;
+    
+    for (let i = 0; i < cardsRef.current.length; i++) {
+      const card = cardsRef.current[i];
+      const dx = clickX - card.x;
+      const dy = clickY - card.y;
+      
+      // Simple bounding box check (accounting for rotation would be more complex)
+      if (Math.abs(dx) < cardWidth / 2 && Math.abs(dy) < cardHeight / 2) {
+        setCenteredCardIndex(i);
+        return;
+      }
+    }
+  };
+
   return (
     <div 
       ref={containerRef}
       className="welcome-canvas-container"
       onMouseMove={handleMouseMove}
+      onClick={handleClick}
+      style={{ cursor: 'pointer' }}
     >
       <canvas ref={canvasRef} className="welcome-canvas" />
       <div className="welcome-hint">

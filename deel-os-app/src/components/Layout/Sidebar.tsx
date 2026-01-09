@@ -208,7 +208,7 @@ export function Sidebar() {
                 getLabel={(selected) => {
                   if (selected.length === 0) return 'Select roles...';
                   if (selected.length === availableRoles.length) return 'All roles';
-                  if (selected.length <= 2) return selected.join(', ');
+                  if (selected.length === 1) return selected[0];
                   return `${selected.length} roles selected`;
                 }}
               />
@@ -304,7 +304,7 @@ export function Sidebar() {
                 getLabel={(selected) => {
                   if (selected.length === 0) return 'Select roles...';
                   if (selected.length === levels.length) return 'All roles';
-                  if (selected.length <= 2) return selected.join(', ');
+                  if (selected.length === 1) return selected[0];
                   return `${selected.length} roles selected`;
                 }}
                 addAction={{

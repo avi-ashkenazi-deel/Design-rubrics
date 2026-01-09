@@ -42,7 +42,13 @@ export function getTextDiff(texts: string[]): string[] {
 // Get text diff for ladders comparison
 export function getLaddersTextDiff(texts: string[]): string[] {
   if (texts.length <= 1) {
-    return texts.map(t => t === '-' ? '<span class="empty-value">—</span>' : t);
+    return texts.map(t => {
+      if (t === '-' || !t) return '<span class="empty-value">—</span>';
+      // Add bullets to single text
+      const sentences = splitSentences(t);
+      if (sentences.length <= 1) return t;
+      return sentences.map(s => `• ${s}`).join(' ');
+    });
   }
 
   const nonEmptyTexts = texts.filter(t => t && t !== '-');
@@ -73,12 +79,14 @@ export function getLaddersTextDiff(texts: string[]): string[] {
     const sentences = sentencesPerText[idx];
     if (sentences.length === 0) return text;
 
+    // Add bullets and highlight unique sentences
     return sentences.map(sentence => {
       const isUnique = !isCommonSentence(normalize(sentence));
+      const bulletSentence = `• ${sentence}`;
       if (isUnique) {
-        return `<span class="diff-highlight">${sentence}</span>`;
+        return `<span class="diff-highlight">${bulletSentence}</span>`;
       }
-      return sentence;
+      return bulletSentence;
     }).join(' ');
   });
 }

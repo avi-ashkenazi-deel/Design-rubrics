@@ -133,11 +133,8 @@ export function CompetenciesView() {
               onClick={() => isClickable && handleCompetencyClick(name)}
             >
               <div className="competency-definition-header">
-                <div className="competency-name">{name}</div>
-                <div className="competency-header-actions">
-                  {isClickable && (
-                    <span className="view-rubric-link">View in Rubrics →</span>
-                  )}
+                <div className="competency-name-row">
+                  <div className="competency-name">{name}</div>
                   {useApi && (
                     <button 
                       className="edit-competency-btn"
@@ -151,6 +148,9 @@ export function CompetenciesView() {
                     </button>
                   )}
                 </div>
+                {isClickable && (
+                  <span className="view-rubric-link">View in Rubrics →</span>
+                )}
               </div>
               <div className="competency-definition-body">
                 {data.focusArea && (

@@ -705,13 +705,18 @@ select option {
 
 .view-rubric-link {
   font-size: 12px;
-  color: var(--accent-color);
+  color: var(--text-muted);
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .competency-definition-card.clickable:hover .view-rubric-link {
   opacity: 1;
+}
+
+.view-rubric-link:hover {
+  color: var(--neon-cyan);
 }
 
 .competency-definition-header {
@@ -722,6 +727,21 @@ select option {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.competency-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.competency-name-row .edit-competency-btn {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.competency-definition-card:hover .competency-name-row .edit-competency-btn {
+  opacity: 1;
 }
 
 .competency-definition-body {
@@ -1059,7 +1079,7 @@ select option {
 .checkbox-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 8px 12px;
   cursor: pointer;
   transition: background 0.15s ease;
@@ -1069,17 +1089,115 @@ select option {
   background: var(--bg-surface);
 }
 
-.checkbox-item input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  min-width: 16px;
-  accent-color: var(--neon-cyan);
-  cursor: pointer;
-}
-
 .checkbox-label {
   font-size: 14px;
   color: var(--text-primary);
+}
+
+/* Animated Circular Checkbox */
+.checkbox-wrapper-44 {
+  flex-shrink: 0;
+  pointer-events: none; /* Let clicks pass through to parent */
+}
+
+.checkbox-wrapper-44 input[type="checkbox"] {
+  display: none;
+  visibility: hidden;
+}
+
+.checkbox-wrapper-44 *,
+.checkbox-wrapper-44 *::before,
+.checkbox-wrapper-44 *::after {
+  box-sizing: border-box;
+}
+
+.checkbox-wrapper-44 .toggleButton {
+  cursor: pointer;
+  display: block;
+  transform-origin: 50% 50%;
+  transform-style: preserve-3d;
+  transition: transform 0.14s ease;
+  pointer-events: none; /* Let clicks pass through to parent */
+}
+
+.checkbox-item:active .checkbox-wrapper-44 .toggleButton {
+  transform: rotateX(30deg);
+}
+
+/* Unchecked state - dark border and circle */
+.checkbox-wrapper-44 .toggleButton input + div {
+  border: 2px solid #6a6a6a;
+  border-radius: 50%;
+  position: relative;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+/* SVG checkmark - hidden when unchecked */
+.checkbox-wrapper-44 .toggleButton input + div svg {
+  fill: none;
+  stroke-width: 3.6;
+  stroke: var(--neon-cyan);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  width: 24px;
+  height: 24px;
+  display: block;
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  right: -2px;
+  bottom: -2px;
+  z-index: 1;
+  stroke-dashoffset: 124.6;
+  stroke-dasharray: 0 162.6 133 29.6;
+  transition: all 0.4s ease 0s;
+}
+
+/* X mark lines - visible when unchecked (dark) */
+.checkbox-wrapper-44 .toggleButton input + div:before,
+.checkbox-wrapper-44 .toggleButton input + div:after {
+  content: "";
+  width: 2px;
+  height: 8px;
+  background: #6a6a6a;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+/* Static X position - no animation on load */
+.checkbox-wrapper-44 .toggleButton input + div:before {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.checkbox-wrapper-44 .toggleButton input + div:after {
+  opacity: 1;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Checked state - cyan border */
+.checkbox-wrapper-44 .toggleButton input:checked + div {
+  border-color: var(--neon-cyan);
+}
+
+/* Checked state - show checkmark */
+.checkbox-wrapper-44 .toggleButton input:checked + div svg {
+  stroke-dashoffset: 162.6;
+  stroke-dasharray: 0 162.6 28 134.6;
+  transition: all 0.4s ease 0.1s;
+}
+
+/* Checked state - hide X */
+.checkbox-wrapper-44 .toggleButton input:checked + div:before,
+.checkbox-wrapper-44 .toggleButton input:checked + div:after {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.3) rotate(45deg);
 }
 
 /* Empty State */
@@ -1225,6 +1343,7 @@ select option {
 /* Content Area */
 .content-area {
   max-width: 1400px;
+  position: relative;
 }
 
 /* Transcript Styles */
@@ -1336,7 +1455,7 @@ select option {
 /* Pencil button */
 .edit-pencil-btn {
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   right: 8px;
   width: 28px;
   height: 28px;
@@ -2156,7 +2275,8 @@ select option {
   margin-bottom: 12px;
 }
 
-.checkbox-item {
+/* Checkbox item in competency checklist inherits animated checkbox styles */
+.competency-checklist .checkbox-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -2166,19 +2286,11 @@ select option {
   transition: background 0.15s;
 }
 
-.checkbox-item:hover {
+.competency-checklist .checkbox-item:hover {
   background: var(--bg-elevated);
 }
 
-.checkbox-item input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--neon-cyan);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.checkbox-label {
+.competency-checklist .checkbox-label {
   font-size: 13px;
   color: var(--text-primary);
   line-height: 1.4;
@@ -2325,9 +2437,9 @@ select option:disabled {
 
 /* Competencies Actions */
 .competencies-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 16px;
+  position: absolute;
+  top: -80px;
+  right: 0;
 }
 
 .add-competency-btn {

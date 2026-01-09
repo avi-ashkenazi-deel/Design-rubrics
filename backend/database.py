@@ -105,11 +105,43 @@ def init_db():
             )
         ''')
         
+        # Ladder data table - for career progression/leveling
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS ladder_data (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                discipline TEXT NOT NULL,
+                level TEXT NOT NULL,
+                facet TEXT NOT NULL,
+                description TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(discipline, level, facet)
+            )
+        ''')
+        
+        # Competency mappings table - links hiring competencies to ladder facets
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS competency_mappings (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                discipline TEXT NOT NULL,
+                hiring_competency TEXT NOT NULL,
+                ladder_facet TEXT NOT NULL,
+                relationship_type TEXT NOT NULL DEFAULT 'direct',
+                notes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                UNIQUE(discipline, hiring_competency, ladder_facet)
+            )
+        ''')
+        
         # Create indexes for faster queries
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_rubric_discipline ON rubric_data(discipline)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_rubric_level ON rubric_data(level)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_history_rubric ON change_history(rubric_id)')
         cursor.execute('CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_ladder_discipline ON ladder_data(discipline)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_ladder_level ON ladder_data(level)')
+        cursor.execute('CREATE INDEX IF NOT EXISTS idx_mappings_discipline ON competency_mappings(discipline)')
         
         print("Database initialized successfully.")
 
@@ -392,6 +424,174 @@ def get_competencies_by_discipline_stage(discipline, stage=None):
                 ORDER BY competency
             ''', (discipline,))
         return [row['competency'] for row in cursor.fetchall()]
+
+
+# ============ Ladder Data Operations ============
+
+def get_ladders_by_discipline(discipline):
+    """Get all ladder data for a discipline."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT * FROM ladder_data 
+            WHERE discipline = ?
+            ORDER BY facet, level
+        ''', (discipline,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_ladder_by_id(ladder_id):
+    """Get a single ladder entry by ID."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM ladder_data WHERE id = ?', (ladder_id,))
+        row = cursor.fetchone()
+        return dict(row) if row else None
+
+
+def get_ladders_by_facet(discipline, facet):
+    """Get ladder data for a specific discipline and facet."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT * FROM ladder_data 
+            WHERE discipline = ? AND facet = ?
+            ORDER BY level
+        ''', (discipline, facet))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def create_ladder_entry(discipline, level, facet, description=''):
+    """Create a new ladder entry."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO ladder_data (discipline, level, facet, description)
+            VALUES (?, ?, ?, ?)
+            ON CONFLICT(discipline, level, facet) DO UPDATE SET 
+                description = excluded.description,
+                updated_at = CURRENT_TIMESTAMP
+        ''', (discipline, level, facet, description))
+        return cursor.lastrowid
+
+
+def update_ladder_entry(ladder_id, field, new_value):
+    """Update a ladder entry field."""
+    allowed_fields = ['description', 'facet', 'level']
+    if field not in allowed_fields:
+        raise ValueError(f"Field '{field}' is not editable")
+    
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f'''
+            UPDATE ladder_data 
+            SET {field} = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+        ''', (new_value, ladder_id))
+        return cursor.rowcount > 0
+
+
+def delete_ladder_entry(ladder_id):
+    """Delete a ladder entry."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM ladder_data WHERE id = ?', (ladder_id,))
+        return cursor.rowcount > 0
+
+
+def get_ladder_facets(discipline):
+    """Get all unique facets for a discipline's ladder."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT DISTINCT facet FROM ladder_data 
+            WHERE discipline = ?
+            ORDER BY facet
+        ''', (discipline,))
+        return [row['facet'] for row in cursor.fetchall()]
+
+
+def get_ladder_levels(discipline):
+    """Get all unique levels for a discipline's ladder."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT DISTINCT level FROM ladder_data 
+            WHERE discipline = ?
+            ORDER BY level
+        ''', (discipline,))
+        return [row['level'] for row in cursor.fetchall()]
+
+
+# ============ Competency Mapping Operations ============
+
+def get_competency_mappings(discipline):
+    """Get all competency mappings for a discipline."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT * FROM competency_mappings 
+            WHERE discipline = ?
+            ORDER BY hiring_competency
+        ''', (discipline,))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_mapping_by_hiring_competency(discipline, hiring_competency):
+    """Get mappings for a specific hiring competency."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT * FROM competency_mappings 
+            WHERE discipline = ? AND hiring_competency = ?
+        ''', (discipline, hiring_competency))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def get_mapping_by_ladder_facet(discipline, ladder_facet):
+    """Get mappings for a specific ladder facet."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT * FROM competency_mappings 
+            WHERE discipline = ? AND ladder_facet = ?
+        ''', (discipline, ladder_facet))
+        return [dict(row) for row in cursor.fetchall()]
+
+
+def create_competency_mapping(discipline, hiring_competency, ladder_facet, relationship_type='direct', notes=''):
+    """Create or update a competency mapping."""
+    valid_types = ['direct', 'partial', 'hiring_only', 'ladder_only']
+    if relationship_type not in valid_types:
+        raise ValueError(f"Invalid relationship type. Must be one of: {valid_types}")
+    
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            INSERT INTO competency_mappings (discipline, hiring_competency, ladder_facet, relationship_type, notes)
+            VALUES (?, ?, ?, ?, ?)
+            ON CONFLICT(discipline, hiring_competency, ladder_facet) DO UPDATE SET 
+                relationship_type = excluded.relationship_type,
+                notes = excluded.notes,
+                updated_at = CURRENT_TIMESTAMP
+        ''', (discipline, hiring_competency, ladder_facet, relationship_type, notes))
+        return cursor.lastrowid
+
+
+def delete_competency_mapping(mapping_id):
+    """Delete a competency mapping."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM competency_mappings WHERE id = ?', (mapping_id,))
+        return cursor.rowcount > 0
+
+
+def get_ladder_disciplines():
+    """Get all disciplines that have ladder data."""
+    with get_db() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT DISTINCT discipline FROM ladder_data ORDER BY discipline')
+        return [row['discipline'] for row in cursor.fetchall()]
 
 
 if __name__ == '__main__':

@@ -31,7 +31,23 @@ from database import (
     get_levels_by_discipline,
     get_stages_by_discipline,
     get_competencies_by_discipline_stage,
-    get_connection
+    get_connection,
+    # Ladder operations
+    get_ladders_by_discipline,
+    get_ladder_by_id,
+    get_ladders_by_facet,
+    create_ladder_entry,
+    update_ladder_entry,
+    delete_ladder_entry,
+    get_ladder_facets,
+    get_ladder_levels,
+    get_ladder_disciplines,
+    # Competency mapping operations
+    get_competency_mappings,
+    get_mapping_by_hiring_competency,
+    get_mapping_by_ladder_facet,
+    create_competency_mapping,
+    delete_competency_mapping
 )
 
 app = Flask(__name__)
@@ -750,6 +766,227 @@ def api_get_stage_competencies(discipline, stage):
     try:
         competencies = get_competencies_by_discipline_stage(discipline, stage)
         return jsonify({'competencies': competencies})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# ============ Ladders ============
+
+@app.route('/api/ladders', methods=['GET'])
+def api_get_ladder_disciplines():
+    """Get all disciplines that have ladder data."""
+    try:
+        disciplines = get_ladder_disciplines()
+        return jsonify({'disciplines': disciplines})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ladders/<discipline>', methods=['GET'])
+def api_get_ladders(discipline):
+    """Get all ladder data for a discipline."""
+    try:
+        facet = request.args.get('facet')
+        if facet:
+            ladders = get_ladders_by_facet(discipline, facet)
+        else:
+            ladders = get_ladders_by_discipline(discipline)
+        
+        # Transform to a more usable format: group by facet with levels
+        grouped = {}
+        for ladder in ladders:
+            facet_name = ladder['facet']
+            if facet_name not in grouped:
+                grouped[facet_name] = {
+                    'facet': facet_name,
+                    'levels': {}
+                }
+            grouped[facet_name]['levels'][ladder['level']] = {
+                'id': ladder['id'],
+                'description': ladder['description'] or ''
+            }
+        
+        return jsonify({
+            'discipline': discipline,
+            'facets': list(grouped.values()),
+            'raw': ladders  # Also include raw data for flexibility
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ladders/<discipline>/facets', methods=['GET'])
+def api_get_ladder_facets(discipline):
+    """Get all facets for a discipline's ladder."""
+    try:
+        facets = get_ladder_facets(discipline)
+        return jsonify({'facets': facets})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ladders/<discipline>/levels', methods=['GET'])
+def api_get_ladder_levels(discipline):
+    """Get all levels for a discipline's ladder."""
+    try:
+        levels = get_ladder_levels(discipline)
+        return jsonify({'levels': levels})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ladders/<discipline>', methods=['POST'])
+@require_role(['editor', 'admin'])
+def api_create_ladder_entry(discipline):
+    """Create a new ladder entry."""
+    try:
+        data = request.get_json()
+        level = data.get('level')
+        facet = data.get('facet')
+        description = data.get('description', '')
+        
+        if not level or not facet:
+            return jsonify({'error': 'Level and facet are required'}), 400
+        
+        ladder_id = create_ladder_entry(discipline, level, facet, description)
+        
+        return jsonify({
+            'id': ladder_id,
+            'discipline': discipline,
+            'level': level,
+            'facet': facet,
+            'description': description,
+            'success': True
+        }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ladders/<int:ladder_id>', methods=['PUT'])
+@require_role(['editor', 'admin'])
+def api_update_ladder_entry(ladder_id):
+    """Update a ladder entry."""
+    try:
+        data = request.get_json()
+        field = data.get('field')
+        value = data.get('value')
+        
+        if not field or value is None:
+            return jsonify({'error': 'Field and value are required'}), 400
+        
+        success = update_ladder_entry(ladder_id, field, value)
+        
+        if not success:
+            return jsonify({'error': 'Ladder entry not found'}), 404
+        
+        ladder = get_ladder_by_id(ladder_id)
+        return jsonify(ladder)
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/ladders/<int:ladder_id>', methods=['DELETE'])
+@require_role(['admin'])
+def api_delete_ladder_entry(ladder_id):
+    """Delete a ladder entry."""
+    try:
+        success = delete_ladder_entry(ladder_id)
+        
+        if not success:
+            return jsonify({'error': 'Ladder entry not found'}), 404
+        
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+# ============ Competency Mappings ============
+
+@app.route('/api/competency-mappings/<discipline>', methods=['GET'])
+def api_get_competency_mappings(discipline):
+    """Get all competency mappings for a discipline."""
+    try:
+        mappings = get_competency_mappings(discipline)
+        
+        # Also get lists of hiring competencies and ladder facets for reference
+        hiring_competencies = get_competencies_by_discipline_stage(discipline)
+        ladder_facets = get_ladder_facets(discipline)
+        
+        return jsonify({
+            'mappings': mappings,
+            'hiring_competencies': hiring_competencies,
+            'ladder_facets': ladder_facets
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/competency-mappings/<discipline>/by-hiring/<hiring_competency>', methods=['GET'])
+def api_get_mapping_by_hiring(discipline, hiring_competency):
+    """Get mappings for a specific hiring competency."""
+    try:
+        mappings = get_mapping_by_hiring_competency(discipline, hiring_competency)
+        return jsonify({'mappings': mappings})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/competency-mappings/<discipline>/by-ladder/<ladder_facet>', methods=['GET'])
+def api_get_mapping_by_ladder(discipline, ladder_facet):
+    """Get mappings for a specific ladder facet."""
+    try:
+        mappings = get_mapping_by_ladder_facet(discipline, ladder_facet)
+        return jsonify({'mappings': mappings})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/competency-mappings/<discipline>', methods=['POST'])
+@require_role(['editor', 'admin'])
+def api_create_competency_mapping(discipline):
+    """Create or update a competency mapping."""
+    try:
+        data = request.get_json()
+        hiring_competency = data.get('hiring_competency')
+        ladder_facet = data.get('ladder_facet')
+        relationship_type = data.get('relationship_type', 'direct')
+        notes = data.get('notes', '')
+        
+        if not hiring_competency or not ladder_facet:
+            return jsonify({'error': 'hiring_competency and ladder_facet are required'}), 400
+        
+        mapping_id = create_competency_mapping(
+            discipline, hiring_competency, ladder_facet, relationship_type, notes
+        )
+        
+        return jsonify({
+            'id': mapping_id,
+            'discipline': discipline,
+            'hiring_competency': hiring_competency,
+            'ladder_facet': ladder_facet,
+            'relationship_type': relationship_type,
+            'notes': notes,
+            'success': True
+        }), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/api/competency-mappings/<int:mapping_id>', methods=['DELETE'])
+@require_role(['admin'])
+def api_delete_competency_mapping(mapping_id):
+    """Delete a competency mapping."""
+    try:
+        success = delete_competency_mapping(mapping_id)
+        
+        if not success:
+            return jsonify({'error': 'Mapping not found'}), 404
+        
+        return jsonify({'success': True})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
