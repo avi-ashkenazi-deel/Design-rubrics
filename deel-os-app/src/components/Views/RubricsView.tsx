@@ -40,10 +40,19 @@ export function RubricsView() {
 
   const levels = selectedLevels.filter(Boolean);
 
-  // Get all stages and competencies
+  // Helper to normalize stage names (empty becomes "General")
+  const normalizeStage = (stage: string) => stage || 'General';
+  
+  // Helper to match stage (handles "General" matching empty string)
+  const stageMatches = (rubricStage: string, targetStage: string) => {
+    const normalizedRubric = normalizeStage(rubricStage);
+    return normalizedRubric === targetStage;
+  };
+
+  // Get all stages and competencies (include empty stages as "General")
   const stages = selectedStage 
     ? [selectedStage]
-    : [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
+    : [...new Set(rubricData.map(r => normalizeStage(r.interview_stage)))];
 
   // Toggle questions visibility
   const toggleQuestions = (stage: string, competency: string) => {
@@ -117,7 +126,7 @@ export function RubricsView() {
     // Get data for each level
     const levelData = levels.map(level => 
       rubricData.find(r => 
-        r.interview_stage === stage && 
+        stageMatches(r.interview_stage, stage) && 
         r.competency === competency && 
         r.designer_level === level
       )
@@ -254,7 +263,7 @@ export function RubricsView() {
   const getCompetenciesForStage = (stage: string): string[] => {
     let comps = [...new Set(
       rubricData
-        .filter(r => r.interview_stage === stage)
+        .filter(r => stageMatches(r.interview_stage, stage))
         .map(r => r.competency)
     )];
     
@@ -311,7 +320,7 @@ export function RubricsView() {
           {filteredCompetencies.map(comp => {
             // Find which stages have this competency
             const stagesWithComp = stages.filter(s => 
-              rubricData.some(r => r.interview_stage === s && r.competency === comp)
+              rubricData.some(r => stageMatches(r.interview_stage, s) && r.competency === comp)
             );
             
             if (stagesWithComp.length === 0) return null;
