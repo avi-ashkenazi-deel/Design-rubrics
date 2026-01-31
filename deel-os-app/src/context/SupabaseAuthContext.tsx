@@ -8,10 +8,11 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   role: 'viewer' | 'editor' | 'admin';
-  login: (password: string) => boolean;
+  login: (password: string, name: string) => boolean;
   logout: () => void;
   showError: (message: string) => void;
   error: string | null;
+  setUserName: (name: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -39,21 +40,26 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     // Auto-authenticate on localhost for development
     if (isLocalhost()) {
-      setUser({
-        name: 'Local Developer',
-        email: 'dev@localhost',
-        picture: ''
-      });
-      setRole('editor');
+      const storedName = sessionStorage.getItem('rubric_user_name');
+      if (storedName) {
+        setUser({
+          name: storedName,
+          email: 'dev@localhost',
+          picture: ''
+        });
+        setRole('editor');
+      }
+      // If no stored name on localhost, we'll prompt for it
       setIsLoading(false);
       return;
     }
     
     // Check for stored auth on production
     const storedAuth = sessionStorage.getItem('rubric_auth');
-    if (storedAuth === 'authenticated') {
+    const storedName = sessionStorage.getItem('rubric_user_name');
+    if (storedAuth === 'authenticated' && storedName) {
       setUser({
-        name: 'Deel User',
+        name: storedName,
         email: 'user@deel.com',
         picture: ''
       });
@@ -62,11 +68,12 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     setIsLoading(false);
   }, []);
 
-  const login = (password: string): boolean => {
+  const login = (password: string, name: string): boolean => {
     if (password === ACCESS_PASSWORD) {
       sessionStorage.setItem('rubric_auth', 'authenticated');
+      sessionStorage.setItem('rubric_user_name', name);
       setUser({
-        name: 'Deel User',
+        name: name,
         email: 'user@deel.com',
         picture: ''
       });
@@ -77,6 +84,17 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
       setError('Incorrect password');
       return false;
     }
+  };
+
+  // Set user name (for localhost name prompt)
+  const setUserName = (name: string) => {
+    sessionStorage.setItem('rubric_user_name', name);
+    setUser({
+      name: name,
+      email: isLocalhost() ? 'dev@localhost' : 'user@deel.com',
+      picture: ''
+    });
+    setRole('editor');
   };
 
   const logout = () => {
@@ -99,7 +117,8 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
         login,
         logout,
         showError,
-        error
+        error,
+        setUserName
       }}
     >
       {children}
@@ -115,5 +134,6 @@ export function useSupabaseAuth() {
   return context;
 }
 
-// Export for checking if Supabase is configured
+// Export for checking if Supabase is configured and localhost detection
 export { isSupabaseConfigured };
+export { isLocalhost };

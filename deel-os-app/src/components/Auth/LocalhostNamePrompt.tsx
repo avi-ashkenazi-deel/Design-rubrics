@@ -1,17 +1,15 @@
 import { useState } from 'react';
 import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 
-export function PasswordLogin() {
-  const [password, setPassword] = useState('');
+export function LocalhostNamePrompt() {
   const [name, setName] = useState('');
-  const { login, error } = useSupabaseAuth();
+  const { setUserName } = useSupabaseAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      return;
+    if (name.trim()) {
+      setUserName(name.trim());
     }
-    login(password, name.trim());
   };
 
   return (
@@ -42,11 +40,19 @@ export function PasswordLogin() {
           Design Rubrics
         </h1>
         <p style={{ 
+          marginBottom: '8px',
+          color: '#4f46e5',
+          fontSize: '12px',
+          fontWeight: 500
+        }}>
+          Local Development Mode
+        </p>
+        <p style={{ 
           marginBottom: '24px',
           color: '#666',
           fontSize: '14px'
         }}>
-          Enter your name and password to access
+          Enter your name for change tracking
         </p>
         
         <form onSubmit={handleSubmit}>
@@ -61,39 +67,12 @@ export function PasswordLogin() {
               fontSize: '16px',
               border: '1px solid #ddd',
               borderRadius: '8px',
-              marginBottom: '12px',
+              marginBottom: '16px',
               boxSizing: 'border-box',
               outline: 'none'
             }}
             autoFocus
           />
-          
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            style={{
-              width: '100%',
-              padding: '12px 16px',
-              fontSize: '16px',
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              marginBottom: '16px',
-              boxSizing: 'border-box',
-              outline: 'none'
-            }}
-          />
-          
-          {error && (
-            <p style={{ 
-              color: '#e53935',
-              marginBottom: '16px',
-              fontSize: '14px'
-            }}>
-              {error}
-            </p>
-          )}
           
           <button
             type="submit"
@@ -113,7 +92,7 @@ export function PasswordLogin() {
             onMouseOver={(e) => name.trim() && (e.currentTarget.style.backgroundColor = '#4338ca')}
             onMouseOut={(e) => name.trim() && (e.currentTarget.style.backgroundColor = '#4f46e5')}
           >
-            Access Rubrics
+            Continue
           </button>
         </form>
       </div>

@@ -1,7 +1,8 @@
-import { SupabaseAuthProvider, useSupabaseAuth } from './context/SupabaseAuthContext';
+import { SupabaseAuthProvider, useSupabaseAuth, isLocalhost } from './context/SupabaseAuthContext';
 import { AppProvider, useApp } from './context/AppContext';
 import { LaddersProvider } from './context/LaddersContext';
 import { PasswordLogin } from './components/Auth/PasswordLogin';
+import { LocalhostNamePrompt } from './components/Auth/LocalhostNamePrompt';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
 import { CompetenciesView } from './components/Views/CompetenciesView';
@@ -41,8 +42,13 @@ function AppContent() {
     );
   }
 
-  // Show password login if not authenticated
+  // Show login prompt if not authenticated
   if (!isAuthenticated) {
+    // On localhost, show simple name prompt (no password needed)
+    if (isLocalhost()) {
+      return <LocalhostNamePrompt />;
+    }
+    // On production, show password + name login
     return <PasswordLogin />;
   }
 
