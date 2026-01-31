@@ -1,6 +1,11 @@
 -- Supabase Data Import Script
 -- Generated from CSV files
 
+-- First, clear any existing test data
+TRUNCATE public.rubric_data CASCADE;
+TRUNCATE public.questions CASCADE;
+TRUNCATE public.competency_definitions CASCADE;
+
 -- Insert rubric data
 INSERT INTO public.rubric_data (discipline, level, stage, competency, score_1, score_2, score_3, score_4) VALUES
 ('Account Executive Expansion', 'Account Executive Expansion', '', 'Sales Acumen', 'Understands foundational sales concepts and can follow a defined sales process under guidance. Applies basic sales steps within simple cycles, relying on guidance to close straightforward deals.', 'Independently manages standard sales cycles and applies established methodologies to close deals in familiar segments.
@@ -194,10 +199,6 @@ R: Knows when to work with the team and when to handle tasks alone., Is veru act
 ', 'Reliable, ensures follow-through on tasks, takes initiative when needed, and delivers assigned work on time.
 ', 'Takes full ownership, proactively drives solutions, aligns with stakeholders, and removes blockers for the team.
 '),
-('Engineering', 'Backend Engineer', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Struggles to analyze and resolve problems, frequently introduces new bugs, requires constant guidance for debugging and troubleshooting.
-', 'Solves basic problems but lacks independent thinking, often applies quick fixes without addressing root causes.
-', 'Strong analytical thinker, resolves most issues independently, applies structured problem-solving approaches.
-', 'Proactively identifies potential issues, optimizes solutions, and improves system performance with minimal oversight.'),
 ('Engineering', 'Backend Engineer', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Weak technical skills, struggles with engineering fundamentals, writes inefficient or error-prone code, and frequently needs rework.
 ', 'Has a basic understanding of technical concepts but needs guidance for complex tasks, occasionally writes suboptimal or unscalable code.
 ', 'Strong technical skills, writes clean, maintainable, and efficient code, follows best practices, and designs robust solutions.
@@ -240,10 +241,6 @@ R: Knows when to work with the team and when to handle tasks alone., Is veru act
 ', 'Reliable, ensures follow-through on tasks, takes initiative when needed, and delivers assigned work on time.
 ', 'Takes full ownership, proactively drives solutions, aligns with stakeholders, and removes blockers for the team.
 '),
-('Engineering', 'DevOps Engineer', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Struggles to analyze and resolve problems, frequently introduces new bugs, requires constant guidance for debugging and troubleshooting.
-', 'Solves basic problems but lacks independent thinking, often applies quick fixes without addressing root causes.
-', 'Strong analytical thinker, resolves most issues independently, applies structured problem-solving approaches.
-', 'Proactively identifies potential issues, optimizes solutions, and improves system performance with minimal oversight.'),
 ('Engineering', 'DevOps Engineer', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Weak technical skills, struggles with engineering fundamentals, writes inefficient or error-prone code, and frequently needs rework.
 ', 'Has a basic understanding of technical concepts but needs guidance for complex tasks, occasionally writes suboptimal or unscalable code.
 ', 'Strong technical skills, writes clean, maintainable, and efficient code, follows best practices, and designs robust solutions.
@@ -265,10 +262,6 @@ R: Knows when to work with the team and when to handle tasks alone., Is veru act
 ', 'Reliable, ensures follow-through on tasks, takes initiative when needed, and delivers assigned work on time.
 ', 'Takes full ownership, proactively drives solutions, aligns with stakeholders, and removes blockers for the team.
 '),
-('Engineering', 'Staff Engineer', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Struggles to analyze and resolve problems, frequently introduces new bugs, requires constant guidance for debugging and troubleshooting.
-', 'Solves basic problems but lacks independent thinking, often applies quick fixes without addressing root causes.
-', 'Strong analytical thinker, resolves most issues independently, applies structured problem-solving approaches.
-', 'Proactively identifies potential issues, optimizes solutions, and improves system performance with minimal oversight.'),
 ('Engineering', 'Staff Engineer', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Weak technical skills, struggles with engineering fundamentals, writes inefficient or error-prone code, and frequently needs rework.
 ', 'Has a basic understanding of technical concepts but needs guidance for complex tasks, occasionally writes suboptimal or unscalable code.
 ', 'Strong technical skills, writes clean, maintainable, and efficient code, follows best practices, and designs robust solutions.
@@ -300,10 +293,6 @@ Example: Creates a culture of open feedback where people feel safe to express co
 ', 'Reliable, ensures follow-through on tasks, takes initiative when needed, and delivers assigned work on time.
 ', 'Takes full ownership, proactively drives solutions, aligns with stakeholders, and removes blockers for the team.
 '),
-('Engineering', 'Tech Lead', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Struggles to analyze and resolve problems, frequently introduces new bugs, requires constant guidance for debugging and troubleshooting.
-', 'Solves basic problems but lacks independent thinking, often applies quick fixes without addressing root causes.
-', 'Strong analytical thinker, resolves most issues independently, applies structured problem-solving approaches.
-', 'Proactively identifies potential issues, optimizes solutions, and improves system performance with minimal oversight.'),
 ('Engineering', 'Tech Lead', '', 'TECHNICAL CRITICAL THINKING (Code Quality & System Design)', 'Weak technical skills, struggles with engineering fundamentals, writes inefficient or error-prone code, and frequently needs rework.
 ', 'Has a basic understanding of technical concepts but needs guidance for complex tasks, occasionally writes suboptimal or unscalable code.
 ', 'Strong technical skills, writes clean, maintainable, and efficient code, follows best practices, and designs robust solutions.

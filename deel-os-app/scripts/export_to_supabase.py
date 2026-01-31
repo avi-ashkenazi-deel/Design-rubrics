@@ -20,7 +20,8 @@ def escape_sql(value):
 
 def export_rubrics():
     """Export rubric data from CSV files."""
-    sql_statements = []
+    # Use dict to deduplicate by unique key (discipline, level, stage, competency)
+    unique_rubrics = {}
     
     # Get all disciplines
     index_file = BASE_DIR / "index.json"
@@ -92,14 +93,17 @@ def export_rubrics():
                             elif 'Level 4' in key:
                                 score_4 = escape_sql(row[key])
                     
+                    # Use unique key to deduplicate
+                    unique_key = (discipline, level, stage, competency)
                     sql = f"('{escape_sql(discipline)}', '{escape_sql(level)}', '{escape_sql(stage)}', '{escape_sql(competency)}', '{score_1}', '{score_2}', '{score_3}', '{score_4}')"
-                    sql_statements.append(sql)
+                    unique_rubrics[unique_key] = sql
     
-    return sql_statements
+    return list(unique_rubrics.values())
 
 def export_questions():
     """Export questions from CSV files."""
-    sql_statements = []
+    # Use dict to deduplicate by unique key (discipline, stage, competency)
+    unique_questions = {}
     
     index_file = BASE_DIR / "index.json"
     if index_file.exists():
@@ -124,14 +128,16 @@ def export_questions():
                 questions = row.get('Questions', '').strip()
                 
                 if stage and competency and questions:
+                    unique_key = (discipline, stage, competency)
                     sql = f"('{escape_sql(discipline)}', '{escape_sql(stage)}', '{escape_sql(competency)}', '{escape_sql(questions)}')"
-                    sql_statements.append(sql)
+                    unique_questions[unique_key] = sql
     
-    return sql_statements
+    return list(unique_questions.values())
 
 def export_competencies():
     """Export competency definitions from CSV files."""
-    sql_statements = []
+    # Use dict to deduplicate by unique key (discipline, competency)
+    unique_competencies = {}
     
     index_file = BASE_DIR / "index.json"
     if index_file.exists():
@@ -155,10 +161,11 @@ def export_competencies():
                 definition = row.get('Definition', row.get('Description', '')).strip()
                 
                 if competency:
+                    unique_key = (discipline, competency)
                     sql = f"('{escape_sql(discipline)}', '{escape_sql(competency)}', '{escape_sql(definition)}')"
-                    sql_statements.append(sql)
+                    unique_competencies[unique_key] = sql
     
-    return sql_statements
+    return list(unique_competencies.values())
 
 def main():
     print("-- Supabase Data Import Script")
