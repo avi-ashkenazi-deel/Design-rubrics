@@ -697,26 +697,23 @@ select option {
   transition: all 0.2s ease;
 }
 
-.competency-definition-card.clickable:hover {
-  border-color: var(--neon-purple);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
 .view-rubric-link {
   font-size: 12px;
   color: var(--text-muted);
   opacity: 0;
   transition: all 0.2s ease;
   cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
-.competency-definition-card.clickable:hover .view-rubric-link {
+.competency-definition-card:hover .view-rubric-link {
   opacity: 1;
 }
 
-.view-rubric-link:hover {
+.view-rubric-link.clickable:hover {
   color: var(--neon-cyan);
+  background: rgba(0, 255, 255, 0.1);
 }
 
 .competency-definition-header {

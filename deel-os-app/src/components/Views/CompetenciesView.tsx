@@ -125,12 +125,11 @@ export function CompetenciesView() {
       <AddButton />
       <div className="competencies-grid">
         {uniqueDefinitions.map(([name, data]) => {
-          const isClickable = hasRubricData(name);
+          const hasRubric = hasRubricData(name);
           return (
             <div 
               key={name} 
-              className={`competency-definition-card ${isClickable ? 'clickable' : ''}`}
-              onClick={() => isClickable && handleCompetencyClick(name)}
+              className="competency-definition-card"
             >
               <div className="competency-definition-header">
                 <div className="competency-name-row">
@@ -148,8 +147,13 @@ export function CompetenciesView() {
                     </button>
                   )}
                 </div>
-                {isClickable && (
-                  <span className="view-rubric-link">View in Rubrics →</span>
+                {hasRubric && (
+                  <span 
+                    className="view-rubric-link clickable"
+                    onClick={() => handleCompetencyClick(name)}
+                  >
+                    View in Rubrics →
+                  </span>
                 )}
               </div>
               <div className="competency-definition-body">
