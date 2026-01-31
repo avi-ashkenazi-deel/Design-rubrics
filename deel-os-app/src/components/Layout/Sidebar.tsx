@@ -21,6 +21,7 @@ export function Sidebar() {
     currentDiscipline,
     setCurrentDiscipline,
     rubricData,
+    competencyDefinitions,
     selectedScores,
     setSelectedScores,
     selectedLevels,
@@ -30,7 +31,7 @@ export function Sidebar() {
     selectedCompetency,
     setSelectedCompetency,
     dataStatus,
-    statusMessage,
+    useApi,
     reloadData
   } = useApp();
 
@@ -53,6 +54,32 @@ export function Sidebar() {
   const stages = [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
   const competencies = [...new Set(rubricData.map(r => r.competency))].filter(Boolean);
   const levels = [...new Set(rubricData.map(r => r.designer_level))].filter(Boolean);
+
+  // Get unique competency definitions count (filter duplicates like in CompetenciesView)
+  const uniqueCompetencyCount = (() => {
+    const seenDescriptions = new Set<string>();
+    let count = 0;
+    Object.values(competencyDefinitions).forEach(data => {
+      if (data.description && !seenDescriptions.has(data.description)) {
+        seenDescriptions.add(data.description);
+        count++;
+      }
+    });
+    return count;
+  })();
+
+  // Get contextual status message based on current view
+  const getStatusMessage = () => {
+    const source = useApi ? 'from database' : 'from CSV';
+    switch (currentView) {
+      case 'definitions':
+        return `${uniqueCompetencyCount} competencies loaded ${source}`;
+      case 'rubric':
+        return `${rubricData.length} entries loaded ${source}`;
+      default:
+        return `Data loaded ${source}`;
+    }
+  };
 
   const handleNavClick = (view: ViewType) => {
     setCurrentView(view);
@@ -326,7 +353,7 @@ export function Sidebar() {
               <span className="status-dot" />
               {dataStatus === 'loading' ? 'Loading...' : dataStatus === 'loaded' ? 'Loaded' : 'Error'}
             </span>
-            <span className="data-info">{statusMessage}</span>
+            <span className="data-info">{getStatusMessage()}</span>
           </div>
           <button className="btn" onClick={reloadData}>
             Reload Data
