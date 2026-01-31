@@ -19,6 +19,12 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Simple password for access
 const ACCESS_PASSWORD = 'only-design-rubric-magic';
 
+// Check if running on localhost (skip password)
+const isLocalhost = () => {
+  const hostname = window.location.hostname;
+  return hostname === 'localhost' || hostname === '127.0.0.1';
+};
+
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -29,8 +35,21 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
   const [role, setRole] = useState<'viewer' | 'editor' | 'admin'>('editor'); // Default to editor for password access
   const [error, setError] = useState<string | null>(null);
 
-  // Check for existing session on mount
+  // Check for existing session on mount, auto-auth on localhost
   useEffect(() => {
+    // Auto-authenticate on localhost for development
+    if (isLocalhost()) {
+      setUser({
+        name: 'Local Developer',
+        email: 'dev@localhost',
+        picture: ''
+      });
+      setRole('editor');
+      setIsLoading(false);
+      return;
+    }
+    
+    // Check for stored auth on production
     const storedAuth = sessionStorage.getItem('rubric_auth');
     if (storedAuth === 'authenticated') {
       setUser({
