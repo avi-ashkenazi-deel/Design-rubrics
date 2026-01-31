@@ -199,23 +199,32 @@ export function AppProvider({ children }: AppProviderProps) {
     async function init() {
       // Check if API is available
       const apiAvailable = await checkHealth();
-      setUseApi(apiAvailable);
       
       let loadedDisciplines: string[] = [];
+      let useApiForData = apiAvailable;
       
       if (apiAvailable) {
-        console.log('✅ Using PostgreSQL API');
+        console.log('✅ Supabase connection available');
         try {
           loadedDisciplines = await fetchDisciplines();
+          // If Supabase is empty, fall back to CSV
+          if (loadedDisciplines.length === 0) {
+            console.log('📁 Supabase is empty, falling back to CSV files');
+            loadedDisciplines = await loadDisciplinesIndex();
+            useApiForData = false;
+          }
         } catch (error) {
           console.error('API fetch failed, falling back to CSV:', error);
-          setUseApi(false);
+          useApiForData = false;
           loadedDisciplines = await loadDisciplinesIndex();
         }
       } else {
-        console.log('📁 Using CSV files (API not available)');
+        console.log('📁 Using CSV files (Supabase not configured)');
         loadedDisciplines = await loadDisciplinesIndex();
+        useApiForData = false;
       }
+      
+      setUseApi(useApiForData);
       
       setDisciplines(loadedDisciplines);
       
