@@ -1728,7 +1728,7 @@ select option {
   backdrop-filter: blur(4px);
   display: flex;
   justify-content: flex-end;
-  z-index: 1500;
+  z-index: 10000;
   animation: fadeIn 0.2s ease;
 }
 
