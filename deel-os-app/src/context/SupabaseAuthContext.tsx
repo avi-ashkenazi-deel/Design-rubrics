@@ -1,25 +1,23 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import type { User as SupabaseUser, Session } from '@supabase/supabase-js';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { isSupabaseConfigured } from '../lib/supabase';
 import type { User } from '../types';
 
 interface AuthContextType {
   user: User | null;
-  supabaseUser: SupabaseUser | null;
-  session: Session | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   role: 'viewer' | 'editor' | 'admin';
-  login: () => Promise<void>;
-  logout: () => Promise<void>;
+  login: (password: string) => boolean;
+  logout: () => void;
   showError: (message: string) => void;
   error: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ALLOWED_DOMAIN = 'deel.com';
+// Simple password for access
+const ACCESS_PASSWORD = 'only-design-rubric-magic';
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -27,111 +25,44 @@ interface AuthProviderProps {
 
 export function SupabaseAuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
-  const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [role, setRole] = useState<'viewer' | 'editor' | 'admin'>('viewer');
+  const [role, setRole] = useState<'viewer' | 'editor' | 'admin'>('editor'); // Default to editor for password access
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize auth state
+  // Check for existing session on mount
   useEffect(() => {
-    if (!supabase) {
-      setIsLoading(false);
-      return;
+    const storedAuth = sessionStorage.getItem('rubric_auth');
+    if (storedAuth === 'authenticated') {
+      setUser({
+        name: 'Deel User',
+        email: 'user@deel.com',
+        picture: ''
+      });
+      setRole('editor');
     }
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      handleSessionChange(session);
-      setIsLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        handleSessionChange(session);
-      }
-    );
-
-    return () => subscription.unsubscribe();
+    setIsLoading(false);
   }, []);
 
-  const handleSessionChange = async (session: Session | null) => {
-    setSession(session);
-    setSupabaseUser(session?.user || null);
-
-    if (session?.user) {
-      const email = session.user.email || '';
-      const domain = email.split('@')[1];
-
-      // Check domain restriction
-      if (domain !== ALLOWED_DOMAIN) {
-        setError(`Access denied. Only @${ALLOWED_DOMAIN} accounts are allowed.`);
-        await supabase?.auth.signOut();
-        setUser(null);
-        return;
-      }
-
-      // Set user info
+  const login = (password: string): boolean => {
+    if (password === ACCESS_PASSWORD) {
+      sessionStorage.setItem('rubric_auth', 'authenticated');
       setUser({
-        name: session.user.user_metadata?.full_name || session.user.email || '',
-        email: session.user.email || '',
-        picture: session.user.user_metadata?.avatar_url || ''
+        name: 'Deel User',
+        email: 'user@deel.com',
+        picture: ''
       });
-
-      // Fetch role from profiles table
-      if (supabase) {
-        const { data } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-        
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const profileData = data as any;
-        if (profileData?.role) {
-          setRole(profileData.role as 'viewer' | 'editor' | 'admin');
-        }
-      }
-
+      setRole('editor');
       setError(null);
+      return true;
     } else {
-      setUser(null);
-      setRole('viewer');
+      setError('Incorrect password');
+      return false;
     }
   };
 
-  const login = async () => {
-    if (!supabase) {
-      setError('Authentication not configured. Please set up Supabase.');
-      return;
-    }
-
-    setError(null);
-    
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        queryParams: {
-          hd: ALLOWED_DOMAIN, // Restrict to deel.com domain
-          prompt: 'select_account'
-        },
-        redirectTo: window.location.origin
-      }
-    });
-
-    if (error) {
-      setError(error.message);
-    }
-  };
-
-  const logout = async () => {
-    if (supabase) {
-      await supabase.auth.signOut();
-    }
+  const logout = () => {
+    sessionStorage.removeItem('rubric_auth');
     setUser(null);
-    setSupabaseUser(null);
-    setSession(null);
     setRole('viewer');
   };
 
@@ -143,8 +74,6 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         user,
-        supabaseUser,
-        session,
         isAuthenticated: !!user,
         isLoading,
         role,

@@ -337,10 +337,10 @@ def api_get_questions(discipline):
     try:
         questions = get_questions(discipline)
         
-        # Transform to expected format: { [stage|competency]: { id, text } }
+        # Transform to expected format: { [stage_competency]: { id, text } }
         result = {}
         for q in questions:
-            key = f"{q['stage']}|{q['competency']}"
+            key = f"{q['stage']}_{q['competency']}"
             result[key] = {
                 'id': q['id'],
                 'text': q['question']
