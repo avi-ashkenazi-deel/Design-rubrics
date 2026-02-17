@@ -18,7 +18,7 @@ export interface RubricRow {
 }
 
 export interface CompetencyDefinitionWithId {
-  id: number;
+  id?: number;
   focusArea: string;
   description: string;
 }
