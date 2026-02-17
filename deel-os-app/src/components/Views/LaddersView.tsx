@@ -147,9 +147,6 @@ export function LaddersView() {
 
       return (
         <div key={`${item.focusArea}_${item.competency}`} className="ladders-competency-row">
-          <div className="ladders-competency-header">
-            <div className="ladders-competency-name">{item.competency}</div>
-          </div>
           <div className="ladders-compare-table-wrapper">
             <div className="ladders-compare-table">
               <div className="ladders-compare-table-header">
