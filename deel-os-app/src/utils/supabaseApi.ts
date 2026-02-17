@@ -21,6 +21,7 @@ export interface CompetencyDefinitionWithId {
   id?: number;
   focusArea: string;
   description: string;
+  subCompetencies?: string[];
 }
 
 export interface CompetencyDefinitionsResponse {
