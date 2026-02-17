@@ -278,23 +278,25 @@ export function AppProvider({ children }: AppProviderProps) {
       fetchQuestions(discipline)
     ]);
 
-    // Enrich with sub-competencies and Deel competencies from CSV
-    // (Supabase doesn't store sub-competencies, so we always pull them from CSV)
+    // Enrich with focus areas, sub-competencies, and Deel competencies from CSV
+    // (Supabase doesn't store focus areas or sub-competencies, so we always pull them from CSV)
     try {
       const csvDefs = await loadCompetencyDefinitions(discipline);
       for (const [name, csvData] of Object.entries(csvDefs)) {
         if (definitions[name]) {
-          // Enrich existing entry with sub-competencies from CSV
-          if (csvData.subCompetencies && csvData.subCompetencies.length > 0) {
-            definitions[name] = { ...definitions[name], subCompetencies: csvData.subCompetencies };
-          }
+          // Enrich existing entry with focus area and sub-competencies from CSV
+          definitions[name] = {
+            ...definitions[name],
+            focusArea: csvData.focusArea || definitions[name].focusArea,
+            subCompetencies: csvData.subCompetencies
+          };
         } else {
-          // Add missing competencies (e.g. Deel IC/Manager competencies)
+          // Add missing competencies (e.g. Deel Manager competencies)
           definitions[name] = { focusArea: csvData.focusArea, description: csvData.description, subCompetencies: csvData.subCompetencies };
         }
       }
     } catch {
-      // CSV enrichment failed, continue without sub-competencies
+      // CSV enrichment failed, continue without enrichment
     }
 
     // Transform rubrics to match existing format

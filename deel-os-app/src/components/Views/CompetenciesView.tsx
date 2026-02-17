@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { EditCompetencyModal } from '../shared/EditCompetencyModal';
+import { subCompetencyDescriptions } from '../../data/subCompetencyDescriptions';
 
 interface EditingCompetency {
   id?: number;
@@ -12,6 +13,11 @@ interface EditingCompetency {
 
 export function CompetenciesView() {
   const [editingCompetency, setEditingCompetency] = useState<EditingCompetency | null>(null);
+  const [expandedSub, setExpandedSub] = useState<string | null>(null);
+
+  const toggleSubCompetency = (sub: string) => {
+    setExpandedSub(prev => prev === sub ? null : sub);
+  };
   
   const { 
     competencyDefinitions, 
@@ -56,18 +62,33 @@ export function CompetenciesView() {
     groupedByFocusArea[area].push([name, data]);
   });
 
+  // Sort sections: Deel Competencies first, then IC, then Manager, then Other
+  const getSectionOrder = (area: string): number => {
+    const lower = area.toLowerCase();
+    if (lower === 'deel competencies') return 0;
+    if (lower.includes('deel ic') || lower.includes('craft')) return 1;
+    if (lower.includes('manager')) return 2;
+    return 3;
+  };
+
+  const sortedSections = Object.entries(groupedByFocusArea).sort(
+    ([a], [b]) => getSectionOrder(a) - getSectionOrder(b)
+  );
+
   // Short label for focus area headers
   const getFocusAreaLabel = (area: string): string => {
-    if (area.toLowerCase().includes('craft')) return 'Craft-specific Competencies';
-    if (area.toLowerCase().includes('ic competencies')) return 'Deel IC Competencies';
-    if (area.toLowerCase().includes('manager')) return 'Deel Manager Competencies';
+    const lower = area.toLowerCase();
+    if (lower === 'deel competencies') return 'Deel Competencies';
+    if (lower.includes('deel ic') || lower.includes('craft')) return 'Deel IC Competencies';
+    if (lower.includes('manager')) return 'Deel Manager Competencies';
     return area;
   };
 
   const getFocusAreaDescription = (area: string): string | null => {
-    if (area.toLowerCase().includes('craft')) return 'Design skills that define how designers deliver quality work';
-    if (area.toLowerCase().includes('ic competencies')) return 'Company-wide competencies that apply to all individual contributors';
-    if (area.toLowerCase().includes('manager')) return 'Company-wide competencies that apply to all people managers';
+    const lower = area.toLowerCase();
+    if (lower === 'deel competencies') return 'Company-wide competencies that apply to all individual contributors';
+    if (lower.includes('deel ic') || lower.includes('craft')) return 'Craft-specific competencies for design';
+    if (lower.includes('manager')) return 'Company-wide competencies that apply to all people managers';
     return null;
   };
 
@@ -181,11 +202,33 @@ export function CompetenciesView() {
           <div className="competency-definition-text">{data.description}</div>
           {data.subCompetencies && data.subCompetencies.length > 0 && (
             <div className="sub-competencies">
-              <span className="sub-competencies-label">Includes:</span>
+              <span className="sub-competencies-label">Factored:</span>
               <div className="sub-competencies-tags">
-                {data.subCompetencies.map((sub: string) => (
-                  <span key={sub} className="sub-competency-tag">{sub}</span>
-                ))}
+                {data.subCompetencies.map((sub: string) => {
+                  const description = subCompetencyDescriptions[sub];
+                  const isExpanded = expandedSub === `${name}:${sub}`;
+                  return (
+                    <div key={sub} className="sub-competency-wrapper">
+                      <span 
+                        className={`sub-competency-tag ${description ? 'clickable' : ''} ${isExpanded ? 'expanded' : ''}`}
+                        onClick={() => description && toggleSubCompetency(`${name}:${sub}`)}
+                        title={description ? 'Click to expand' : ''}
+                      >
+                        {sub}
+                        {description && (
+                          <svg className="sub-competency-chevron" viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                          </svg>
+                        )}
+                      </span>
+                      {isExpanded && description && (
+                        <div className="sub-competency-description">
+                          {description}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -198,7 +241,7 @@ export function CompetenciesView() {
     <>
       <AddButton />
       <div className="competencies-sections">
-        {Object.entries(groupedByFocusArea).map(([area, items]) => (
+        {sortedSections.map(([area, items]) => (
           <div key={area} className="competencies-section">
             <div className="competencies-section-header">
               <h3 className="competencies-section-title">{getFocusAreaLabel(area)}</h3>

@@ -250,7 +250,7 @@ export async function fetchCompetencies(discipline: string): Promise<CompetencyD
   // Determine focus area label for discipline-specific competencies
   const craftLabel = discipline === 'Deel' 
     ? '' 
-    : `Craft-specific Competencies: ${discipline.toLowerCase()} skills`;
+    : '';
   
   for (const d of ((data || []) as AnyData[])) {
     result[d.competency] = {

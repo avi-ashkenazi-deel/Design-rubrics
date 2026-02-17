@@ -18,6 +18,21 @@ const LEVEL_LABELS: Record<number, string> = {
   4: 'Expert'
 };
 
+const ROLE_SUMMARIES: Record<string, string> = {
+  // IC roles
+  'Product Designer': 'Executes well-scoped work with guidance. Impact is on their own deliverables.',
+  'Senior Designer': 'Operates independently, owns end-to-end projects, and elevates their team\'s quality.',
+  'Staff Designer': 'Leads a vertical\'s design direction and systems. Guides teams without formal authority.',
+  'Senior Staff Designer': 'Works cross-vertically, drives impact through others, and aligns teams at scale.',
+  'Principal Designer': 'Sells and executes a company-wide design vision. Runs small teams, gains resources, and shapes culture.',
+  // Manager roles
+  'Lead Product Designer (M1)': 'First-line manager balancing hands-on craft with people leadership in a single product area.',
+  'Group Design Manager (M2)': 'Leads multiple teams, scales design impact, and builds capability across a vertical.',
+  'Director (M3)': 'Owns design strategy across a major business area. Drives cross-functional alignment.',
+  'Senior Director (M4)': 'Leads design across multiple areas. Sets strategic direction and builds leadership capability.',
+  'VP Design (E1)': 'Owns the design function end-to-end. Defines vision, shapes culture, and drives transformational change.',
+};
+
 const LEVEL_COLORS: Record<number, string> = {
   1: '#e8f0fe',
   2: '#e6f4ea',
@@ -46,6 +61,17 @@ export function LaddersView() {
   } = useLadders();
 
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
+  const [roleSummaryOverrides, setRoleSummaryOverrides] = useState<Record<string, string>>({});
+  const [editingRoleSummary, setEditingRoleSummary] = useState<{ role: string; value: string } | null>(null);
+
+  const getRoleSummary = (role: string): string => {
+    return roleSummaryOverrides[role] ?? ROLE_SUMMARIES[role] ?? '';
+  };
+
+  const handleSaveRoleSummary = async (newValue: string) => {
+    if (!editingRoleSummary) return;
+    setRoleSummaryOverrides(prev => ({ ...prev, [editingRoleSummary.role]: newValue }));
+  };
 
   if (isLoading) {
     return (
@@ -191,8 +217,39 @@ export function LaddersView() {
       );
     };
 
+    // Render role summary banner at the top (once, above all competencies)
+    const renderRoleSummaries = () => {
+      if (selectedRoles.length === 0) return null;
+      return (
+        <div className="ladders-role-summaries">
+          {selectedRoles.map(role => {
+            const summary = getRoleSummary(role);
+            return (
+              <div 
+                key={role} 
+                className="ladders-role-summary-card ladders-cell-editable"
+                onClick={() => setEditingRoleSummary({ role, value: summary })}
+                title="Click to edit"
+              >
+                <div className="ladders-role-summary-name">{role}</div>
+                {summary && (
+                  <div className="ladders-role-summary-text">{summary}</div>
+                )}
+                <div className="ladders-cell-edit-icon">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                  </svg>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      );
+    };
+
     return (
       <>
+        {renderRoleSummaries()}
         <div className="ladders-comparison-grid">
           {Object.entries(groupedByFocusArea).map(([focusArea, items]) => (
             <div key={focusArea} className="ladders-focus-area-group">
@@ -209,6 +266,15 @@ export function LaddersView() {
           initialValue={editingCell?.value || ''}
           title={`Edit: ${editingCell?.competency || ''}`}
           subtitle={editingCell?.role || ''}
+        />
+
+        <EditCellModal
+          isOpen={editingRoleSummary !== null}
+          onClose={() => setEditingRoleSummary(null)}
+          onSave={handleSaveRoleSummary}
+          initialValue={editingRoleSummary?.value || ''}
+          title={`Edit Role Summary`}
+          subtitle={editingRoleSummary?.role || ''}
         />
       </>
     );
