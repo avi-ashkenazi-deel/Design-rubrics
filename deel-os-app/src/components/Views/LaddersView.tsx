@@ -76,9 +76,15 @@ export function LaddersView() {
   }
 
   // Helper: get the proficiency level number for a role + competency
-  const getRoleLevel = (role: string, competency: string): number => {
+  // The mapping CSV uses the focus area name (e.g. "Problem Solving") as column headers,
+  // while proficiency data items have both focusArea and competency (sub-label).
+  // We try focusArea first, then competency as fallback.
+  const getRoleLevel = (role: string, competency: string, focusArea?: string): number => {
     const mapping = roleMappings.find(m => m.role === role);
     if (!mapping) return 1;
+    if (focusArea && mapping.competencyLevels[focusArea]) {
+      return mapping.competencyLevels[focusArea];
+    }
     return mapping.competencyLevels[competency] || 1;
   };
 
@@ -110,7 +116,7 @@ export function LaddersView() {
     }, {} as Record<string, ProficiencyLevel[]>);
 
     const handleProficiencyCellClick = (item: ProficiencyLevel, role: string) => {
-      const levelNum = getRoleLevel(role, item.competency);
+      const levelNum = getRoleLevel(role, item.competency, item.focusArea);
       const content = getProficiencyContent(item.competency, levelNum);
       setEditingCell({
         focusArea: item.focusArea,
@@ -128,7 +134,7 @@ export function LaddersView() {
     const renderProficiencyRow = (item: ProficiencyLevel) => {
       // For each selected role, get their level and the content at that level
       const roleContents = selectedRoles.map(role => {
-        const levelNum = getRoleLevel(role, item.competency);
+        const levelNum = getRoleLevel(role, item.competency, item.focusArea);
         const content = getProficiencyContent(item.competency, levelNum);
         return { role, levelNum, content };
       });

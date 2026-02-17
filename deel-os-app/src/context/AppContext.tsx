@@ -277,6 +277,26 @@ export function AppProvider({ children }: AppProviderProps) {
       fetchQuestions(discipline)
     ]);
 
+    // If Deel competencies weren't found in DB, supplement from CSV
+    if (discipline !== 'Deel') {
+      const knownDeelCompetencies = ['Adaptability', 'Drives High Performance', 'Develops Talent', 'Execution & Impact'];
+      const hasDeelCompetencies = knownDeelCompetencies.some(c => c in definitions);
+      
+      if (!hasDeelCompetencies) {
+        try {
+          const csvDeel = await loadCompetencyDefinitions('Deel');
+          // Only add Deel competencies that don't already exist
+          for (const [name, data] of Object.entries(csvDeel)) {
+            if (!definitions[name]) {
+              definitions[name] = { focusArea: data.focusArea, description: data.description };
+            }
+          }
+        } catch {
+          // CSV fallback failed, continue without Deel competencies
+        }
+      }
+    }
+
     // Transform rubrics to match existing format
     const transformedRubrics: RubricDataWithId[] = rubrics.map((r: RubricRow) => ({
       id: r.id,

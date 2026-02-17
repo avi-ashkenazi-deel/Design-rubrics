@@ -119,13 +119,14 @@ export async function loadRubricData(discipline: string, config: DisciplineConfi
 }
 
 // Load competency definitions
-export async function loadCompetencyDefinitions(discipline: string): Promise<CompetencyDefinitions> {
+// Helper to parse a single competencies CSV into a definitions object
+async function parseCompetencyCsv(url: string): Promise<CompetencyDefinitions> {
   const definitions: CompetencyDefinitions = {};
-  
+
   try {
-    const response = await fetch(`${BASE_URL}disciplines/${discipline}/Competencies.csv`);
+    const response = await fetch(url);
     if (!response.ok) return definitions;
-    
+
     const csvText = await response.text();
     const parsed = Papa.parse<Record<string, string>>(csvText, {
       header: true,
@@ -140,38 +141,51 @@ export async function loadCompetencyDefinitions(discipline: string): Promise<Com
       const description = row['Description']?.trim() || '';
       const subCompetenciesRaw = row['Sub-competencies']?.trim() || '';
 
-      // Parse sub-competencies from comma-separated string
       const subCompetencies = subCompetenciesRaw
         ? subCompetenciesRaw.split(',').map(s => s.trim()).filter(Boolean)
         : undefined;
 
-      // Track current focus area for rows that don't repeat it
       if (focusArea) currentFocusArea = focusArea;
 
       competency = competency.replace(/:\s*$/, '').replace(/:$/, '').trim();
-      
+
       if (competency) {
-        // If there's a Description column, use it
         if (description) {
           definitions[competency] = { focusArea: currentFocusArea, description, subCompetencies };
         } else {
-          // Otherwise, try to extract description from Level 1 column or create a placeholder
-          const level1 = row['Level 1'] || row['Level 1:'] || 
+          const level1 = row['Level 1'] || row['Level 1:'] ||
                         Object.entries(row).find(([k]) => k.startsWith('Level 1'))?.[1] || '';
-          
-          // Use focus area as description if no other description available
-          definitions[competency] = { 
-            focusArea: currentFocusArea, 
+
+          definitions[competency] = {
+            focusArea: currentFocusArea,
             description: level1 ? `Level 1 criteria: ${level1.substring(0, 200)}...` : currentFocusArea || 'No description available'
           };
         }
       }
     }
   } catch (error) {
-    console.error('Failed to load competency definitions:', error);
+    console.error('Failed to parse competency CSV:', error);
   }
 
   return definitions;
+}
+
+export async function loadCompetencyDefinitions(discipline: string): Promise<CompetencyDefinitions> {
+  // Load the discipline's own competencies
+  const disciplineDefs = await parseCompetencyCsv(`${BASE_URL}disciplines/${discipline}/Competencies.csv`);
+
+  // For non-Deel disciplines, also load and merge Deel competencies (IC + Manager)
+  if (discipline !== 'Deel') {
+    const deelDefs = await parseCompetencyCsv(`${BASE_URL}disciplines/Deel/Competencies.csv`);
+    // Merge Deel definitions, but don't overwrite discipline-specific ones
+    for (const [name, data] of Object.entries(deelDefs)) {
+      if (!disciplineDefs[name]) {
+        disciplineDefs[name] = data;
+      }
+    }
+  }
+
+  return disciplineDefs;
 }
 
 // Load questions

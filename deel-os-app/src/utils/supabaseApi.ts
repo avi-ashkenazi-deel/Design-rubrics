@@ -235,6 +235,7 @@ export async function updateRubric(
 export async function fetchCompetencies(discipline: string): Promise<CompetencyDefinitionsResponse> {
   if (!supabase) throw new Error('Supabase not configured');
   
+  // Fetch discipline-specific competencies
   const { data, error } = await supabase
     .from('competency_definitions')
     .select('*')
@@ -244,12 +245,47 @@ export async function fetchCompetencies(discipline: string): Promise<CompetencyD
   if (error) throw error;
   
   const result: CompetencyDefinitionsResponse = {};
+  
+  // Determine focus area label for discipline-specific competencies
+  const craftLabel = discipline === 'Deel' 
+    ? '' 
+    : `Craft-specific Competencies: ${discipline.toLowerCase()} skills`;
+  
   for (const d of ((data || []) as AnyData[])) {
     result[d.competency] = {
       id: d.id,
-      focusArea: '',
+      focusArea: craftLabel,
       description: d.definition || ''
     };
+  }
+  
+  // For non-Deel disciplines, also fetch Deel competencies (IC + Manager)
+  if (discipline !== 'Deel') {
+    const { data: deelData, error: deelError } = await supabase
+      .from('competency_definitions')
+      .select('*')
+      .eq('discipline', 'Deel')
+      .order('competency');
+    
+    if (!deelError && deelData) {
+      // Known Deel Manager competencies
+      const managerCompetencies = ['Drives High Performance', 'Develops Talent', 'Execution & Impact'];
+      
+      for (const d of (deelData as AnyData[])) {
+        const compName = d.competency as string;
+        // Don't overwrite discipline-specific definitions
+        if (!result[compName]) {
+          const isManager = managerCompetencies.includes(compName);
+          result[compName] = {
+            id: d.id,
+            focusArea: isManager 
+              ? 'Deel Manager Competencies: company-wide competencies for people managers'
+              : 'Deel IC Competencies: company-wide competencies for all individual contributors',
+            description: d.definition || ''
+          };
+        }
+      }
+    }
   }
   
   return result;
