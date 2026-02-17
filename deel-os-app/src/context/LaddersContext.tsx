@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { LadderData, LaddersConfig } from '../types';
-import { loadLaddersDisciplines, loadLaddersConfig, loadLaddersData } from '../utils/csvParser';
+import type { LadderData, LaddersConfig, ProficiencyLevel, RoleMappingEntry } from '../types';
+import { loadLaddersDisciplines, loadLaddersConfig, loadLaddersData, loadProficiencyData, loadRoleMapping } from '../utils/csvParser';
 
 interface LaddersContextType {
   // Discipline state
@@ -12,9 +12,16 @@ interface LaddersContextType {
   // Config
   config: LaddersConfig | null;
   
-  // Data
+  // Legacy data (role-based)
   laddersData: LadderData[];
   availableRoles: string[];
+  
+  // Proficiency data (level-based)
+  proficiencyData: ProficiencyLevel[];
+  levelNames: string[];
+  roleMappings: RoleMappingEntry[];
+  mappedRoles: string[];
+  hasProficiencyData: boolean;
   
   // Selection
   selectedRoles: string[];
@@ -32,6 +39,9 @@ interface LaddersContextType {
   
   // Focus areas
   focusAreas: string[];
+  
+  // Editing
+  updateLadderCell: (focusArea: string, competency: string, role: string, value: string) => void;
 }
 
 const LaddersContext = createContext<LaddersContextType | undefined>(undefined);
@@ -50,6 +60,13 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
   const [selectedFocusArea, setSelectedFocusArea] = useState<string>('');
   const [selectedFile, setSelectedFileState] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Proficiency state
+  const [proficiencyData, setProficiencyData] = useState<ProficiencyLevel[]>([]);
+  const [levelNames, setLevelNames] = useState<string[]>([]);
+  const [roleMappings, setRoleMappings] = useState<RoleMappingEntry[]>([]);
+  const [mappedRoles, setMappedRoles] = useState<string[]>([]);
+  const [hasProficiencyData, setHasProficiencyData] = useState(false);
 
   // Load disciplines on mount
   useEffect(() => {
@@ -87,15 +104,48 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
       setIsLoading(true);
       const basePath = import.meta.env.BASE_URL || '/';
       const filePath = `${basePath}Ladders/${currentDiscipline}/${selectedFile}`;
-      const result = await loadLaddersData(filePath);
       
+      // Load legacy data
+      const result = await loadLaddersData(filePath);
       setLaddersData(result.data);
       setAvailableRoles(result.roles);
+
+      // Check for proficiency + mapping files
+      const currentFileConfig = config?.files?.find(f => f.file === selectedFile);
+      
+      if (currentFileConfig?.proficiencyFile && currentFileConfig?.mappingFile) {
+        const profPath = `${basePath}Ladders/${currentDiscipline}/${currentFileConfig.proficiencyFile}`;
+        const mapPath = `${basePath}Ladders/${currentDiscipline}/${currentFileConfig.mappingFile}`;
+        
+        const [profResult, mapResult] = await Promise.all([
+          loadProficiencyData(profPath),
+          loadRoleMapping(mapPath)
+        ]);
+
+        if (profResult.data.length > 0 && mapResult.mappings.length > 0) {
+          setProficiencyData(profResult.data);
+          setLevelNames(profResult.levelNames);
+          setRoleMappings(mapResult.mappings);
+          setMappedRoles(mapResult.roles);
+          setHasProficiencyData(true);
+          // Use mapped roles for selection
+          setSelectedRoles(mapResult.roles.slice(0, 2));
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Fallback: no proficiency data, use legacy
+      setProficiencyData([]);
+      setLevelNames([]);
+      setRoleMappings([]);
+      setMappedRoles([]);
+      setHasProficiencyData(false);
       setSelectedRoles(result.roles.slice(0, 2));
       setIsLoading(false);
     }
     loadData();
-  }, [currentDiscipline, selectedFile]);
+  }, [currentDiscipline, selectedFile, config]);
 
   const setCurrentDiscipline = useCallback((discipline: string) => {
     setCurrentDisciplineState(discipline);
@@ -104,6 +154,11 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
     setSelectedRoles([]);
     setSelectedFocusArea('');
     setSelectedFileState('');
+    setProficiencyData([]);
+    setLevelNames([]);
+    setRoleMappings([]);
+    setMappedRoles([]);
+    setHasProficiencyData(false);
   }, []);
 
   const setSelectedFile = useCallback((file: string) => {
@@ -119,7 +174,34 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
     );
   }, []);
 
-  const focusAreas = [...new Set(laddersData.map(d => d.focusArea))].filter(Boolean);
+  const updateLadderCell = useCallback((focusArea: string, competency: string, role: string, value: string) => {
+    if (hasProficiencyData) {
+      // In proficiency mode, the "role" is actually a level name
+      setProficiencyData(prev => prev.map(item => {
+        if (item.focusArea === focusArea && item.competency === competency) {
+          return {
+            ...item,
+            levels: { ...item.levels, [role]: value }
+          };
+        }
+        return item;
+      }));
+    } else {
+      setLaddersData(prev => prev.map(item => {
+        if (item.focusArea === focusArea && item.competency === competency) {
+          return {
+            ...item,
+            roles: { ...item.roles, [role]: value }
+          };
+        }
+        return item;
+      }));
+    }
+  }, [hasProficiencyData]);
+
+  const focusAreas = hasProficiencyData 
+    ? [...new Set(proficiencyData.map(d => d.focusArea))].filter(Boolean)
+    : [...new Set(laddersData.map(d => d.focusArea))].filter(Boolean);
 
   return (
     <LaddersContext.Provider value={{
@@ -129,6 +211,11 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
       config,
       laddersData,
       availableRoles,
+      proficiencyData,
+      levelNames,
+      roleMappings,
+      mappedRoles,
+      hasProficiencyData,
       selectedRoles,
       setSelectedRoles,
       toggleRole,
@@ -137,7 +224,8 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
       selectedFile,
       setSelectedFile,
       isLoading,
-      focusAreas
+      focusAreas,
+      updateLadderCell
     }}>
       {children}
     </LaddersContext.Provider>
@@ -151,4 +239,3 @@ export function useLadders() {
   }
   return context;
 }
-

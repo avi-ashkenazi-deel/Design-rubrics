@@ -1,0 +1,11 @@
+{
+  "files": [
+    { "file": "PD.csv", "level": "Product Designer" },
+    { "file": "SPD.csv", "level": "Senior Product Designer" },
+    { "file": "SSPD.csv", "level": "Staff Product Designer" },
+    { "file": "SSSPD.csv", "level": "Senior Staff Product Designer" }
+  ]
+}
+
+
+

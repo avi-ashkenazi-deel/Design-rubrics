@@ -2,7 +2,15 @@
   "files": [
     {
       "file": "Ladders.csv",
-      "name": "Design Career Ladder"
+      "name": "Design IC Ladder",
+      "proficiencyFile": "IC-Proficiency.csv",
+      "mappingFile": "IC-Mapping.csv"
+    },
+    {
+      "file": "Management.csv",
+      "name": "Design Manager Ladder",
+      "proficiencyFile": "Mgmt-Proficiency.csv",
+      "mappingFile": "Mgmt-Mapping.csv"
     }
   ]
 }

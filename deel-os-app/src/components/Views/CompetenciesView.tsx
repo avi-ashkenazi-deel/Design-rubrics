@@ -36,7 +36,7 @@ export function CompetenciesView() {
   const definitions = Object.entries(competencyDefinitions);
   
   // Filter out duplicates
-  const uniqueDefinitions: [string, { id?: number; focusArea: string; description: string }][] = [];
+  const uniqueDefinitions: [string, { id?: number; focusArea: string; description: string; subCompetencies?: string[] }][] = [];
   const seenDescriptions = new Set<string>();
   
   definitions.forEach(([name, data]) => {
@@ -161,6 +161,16 @@ export function CompetenciesView() {
                   <div className="focus-area-badge">{data.focusArea}</div>
                 )}
                 <div className="competency-definition-text">{data.description}</div>
+                {data.subCompetencies && data.subCompetencies.length > 0 && (
+                  <div className="sub-competencies">
+                    <span className="sub-competencies-label">Includes:</span>
+                    <div className="sub-competencies-tags">
+                      {data.subCompetencies.map((sub: string) => (
+                        <span key={sub} className="sub-competency-tag">{sub}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           );

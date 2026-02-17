@@ -8,7 +8,11 @@ import type {
   DisciplineConfig,
   LaddersConfig,
   DisciplinesIndex,
-  LaddersIndex
+  LaddersIndex,
+  ProficiencyDataResult,
+  ProficiencyLevel,
+  RoleMappingResult,
+  RoleMappingEntry
 } from '../types';
 
 // Get base URL from Vite
@@ -134,6 +138,12 @@ export async function loadCompetencyDefinitions(discipline: string): Promise<Com
       const focusArea = row['Focus Area']?.trim() || '';
       let competency = row['Competency']?.trim() || '';
       const description = row['Description']?.trim() || '';
+      const subCompetenciesRaw = row['Sub-competencies']?.trim() || '';
+
+      // Parse sub-competencies from comma-separated string
+      const subCompetencies = subCompetenciesRaw
+        ? subCompetenciesRaw.split(',').map(s => s.trim()).filter(Boolean)
+        : undefined;
 
       // Track current focus area for rows that don't repeat it
       if (focusArea) currentFocusArea = focusArea;
@@ -143,7 +153,7 @@ export async function loadCompetencyDefinitions(discipline: string): Promise<Com
       if (competency) {
         // If there's a Description column, use it
         if (description) {
-          definitions[competency] = { focusArea: currentFocusArea, description };
+          definitions[competency] = { focusArea: currentFocusArea, description, subCompetencies };
         } else {
           // Otherwise, try to extract description from Level 1 column or create a placeholder
           const level1 = row['Level 1'] || row['Level 1:'] || 
@@ -267,6 +277,88 @@ export async function loadLaddersData(filePath: string): Promise<LaddersDataResu
   } catch (error) {
     console.error('Failed to load ladders data:', error);
     return { data: [], roles: [] };
+  }
+}
+
+// Load proficiency-based ladder data (4 levels per competency)
+export async function loadProficiencyData(filePath: string): Promise<ProficiencyDataResult> {
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) return { data: [], levelNames: [] };
+    
+    const csvText = await response.text();
+    const parsed = Papa.parse<string[]>(csvText, {
+      header: false,
+      skipEmptyLines: true
+    });
+
+    const headers = parsed.data[0] || [];
+    const levelNames = headers.slice(2).filter(h => h && h.trim());
+
+    const data: ProficiencyLevel[] = [];
+    let currentFocusArea = '';
+
+    for (let i = 1; i < parsed.data.length; i++) {
+      const row = parsed.data[i];
+      if (!row || row.length < 2) continue;
+
+      const focusArea = row[0]?.trim() || '';
+      const competency = row[1]?.trim() || '';
+
+      if (focusArea) currentFocusArea = focusArea;
+      if (!competency) continue;
+
+      const levels: Record<string, string> = {};
+      levelNames.forEach((level, idx) => {
+        levels[level] = row[idx + 2]?.trim() || '-';
+      });
+
+      data.push({
+        focusArea: currentFocusArea,
+        competency,
+        levels
+      });
+    }
+
+    return { data, levelNames };
+  } catch (error) {
+    console.error('Failed to load proficiency data:', error);
+    return { data: [], levelNames: [] };
+  }
+}
+
+// Load role-to-level mapping CSV
+export async function loadRoleMapping(filePath: string): Promise<RoleMappingResult> {
+  try {
+    const response = await fetch(filePath);
+    if (!response.ok) return { mappings: [], roles: [], competencies: [] };
+    
+    const csvText = await response.text();
+    const parsed = Papa.parse<Record<string, string>>(csvText, {
+      header: true,
+      skipEmptyLines: true
+    });
+
+    const competencies = Object.keys(parsed.data[0] || {}).filter(k => k !== 'Role');
+    const mappings: RoleMappingEntry[] = [];
+    const roles: string[] = [];
+
+    for (const row of parsed.data) {
+      const role = row['Role']?.trim();
+      if (!role) continue;
+
+      roles.push(role);
+      const competencyLevels: Record<string, number> = {};
+      for (const comp of competencies) {
+        competencyLevels[comp] = parseInt(row[comp] || '1', 10);
+      }
+      mappings.push({ role, competencyLevels });
+    }
+
+    return { mappings, roles, competencies };
+  } catch (error) {
+    console.error('Failed to load role mapping:', error);
+    return { mappings: [], roles: [], competencies: [] };
   }
 }
 

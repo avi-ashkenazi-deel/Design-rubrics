@@ -47,8 +47,13 @@ export function Sidebar() {
     toggleRole,
     focusAreas,
     selectedFocusArea,
-    setSelectedFocusArea
+    setSelectedFocusArea,
+    hasProficiencyData,
+    mappedRoles
   } = useLadders();
+
+  // In proficiency mode, use mapped roles; otherwise use legacy availableRoles
+  const laddersRoleOptions = hasProficiencyData ? mappedRoles : availableRoles;
 
   // Get unique values from rubric data
   const stages = [...new Set(rubricData.map(r => r.interview_stage))].filter(Boolean);
@@ -228,13 +233,13 @@ export function Sidebar() {
             <div className="filter-group">
               <label>Compare Roles</label>
               <MultiSelect
-                options={availableRoles.map(r => ({ value: r, label: r }))}
+                options={laddersRoleOptions.map(r => ({ value: r, label: r }))}
                 selected={selectedRoles}
                 onChange={toggleRole}
                 placeholder="Select roles..."
                 getLabel={(selected) => {
                   if (selected.length === 0) return 'Select roles...';
-                  if (selected.length === availableRoles.length) return 'All roles';
+                  if (selected.length === laddersRoleOptions.length) return 'All roles';
                   if (selected.length === 1) return selected[0];
                   return `${selected.length} roles selected`;
                 }}

@@ -42,6 +42,7 @@ export interface RubricData {
 export interface CompetencyDefinition {
   focusArea: string;
   description: string;
+  subCompetencies?: string[];
 }
 
 export interface CompetencyDefinitions {
@@ -57,6 +58,8 @@ export interface QuestionsData {
 export interface LadderFile {
   file: string;
   name: string;
+  proficiencyFile?: string;
+  mappingFile?: string;
 }
 
 export interface LaddersConfig {
@@ -80,6 +83,29 @@ export interface LadderData {
 export interface LaddersDataResult {
   data: LadderData[];
   roles: string[];
+}
+
+// Proficiency-based ladder types
+export interface ProficiencyLevel {
+  focusArea: string;
+  competency: string;
+  levels: Record<string, string>; // e.g. { "1-Foundational": "...", "2-Intermediate": "..." }
+}
+
+export interface ProficiencyDataResult {
+  data: ProficiencyLevel[];
+  levelNames: string[]; // e.g. ["1-Foundational", "2-Intermediate", "3-Advanced", "4-Expert"]
+}
+
+export interface RoleMappingEntry {
+  role: string;
+  competencyLevels: Record<string, number>; // e.g. { "Problem Solving": 3, "Craft Excellence": 4 }
+}
+
+export interface RoleMappingResult {
+  mappings: RoleMappingEntry[];
+  roles: string[];
+  competencies: string[];
 }
 
 // Transcript Analysis types

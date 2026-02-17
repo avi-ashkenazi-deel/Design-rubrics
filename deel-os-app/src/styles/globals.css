@@ -752,6 +752,44 @@ select option {
   color: var(--text-secondary);
 }
 
+.sub-competencies {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sub-competencies-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.sub-competencies-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.sub-competency-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 12px;
+  background: rgba(139, 233, 253, 0.1);
+  color: var(--neon-cyan);
+  border: 1px solid rgba(139, 233, 253, 0.2);
+  transition: all 0.2s ease;
+}
+
+.sub-competency-tag:hover {
+  background: rgba(139, 233, 253, 0.18);
+  border-color: rgba(139, 233, 253, 0.35);
+}
+
 .focus-area-badge {
   display: inline-block;
   padding: 4px 10px;
@@ -1295,6 +1333,51 @@ select option {
   background: rgba(189, 147, 249, 0.1);
   border-radius: 6px;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.ladders-role-name {
+  display: block;
+}
+
+.proficiency-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ladders-cell-editable {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ladders-cell-editable:hover {
+  outline: 1px solid rgba(189, 147, 249, 0.4);
+  border-radius: 8px;
+}
+
+.ladders-cell-edit-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  color: var(--neon-purple);
+  transition: opacity 0.2s ease;
+  background: var(--bg-surface);
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.ladders-cell-editable:hover .ladders-cell-edit-icon {
+  opacity: 1;
 }
 
 .ladders-cell-text {
