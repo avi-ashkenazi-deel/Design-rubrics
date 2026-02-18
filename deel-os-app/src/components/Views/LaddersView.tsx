@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useLadders } from '../../context/LaddersContext';
 import { getLaddersTextDiff, formatCellText } from '../../utils/textDiff';
 import { EditCellModal } from '../shared/EditCellModal';
@@ -34,17 +34,17 @@ const ROLE_SUMMARIES: Record<string, string> = {
 };
 
 const LEVEL_COLORS: Record<number, string> = {
-  1: '#e8f0fe',
-  2: '#e6f4ea',
-  3: '#fef7e0',
-  4: '#fce8e6'
+  1: 'rgba(108, 211, 217, 0.18)',
+  2: 'rgba(98, 216, 98, 0.18)',
+  3: 'rgba(121, 77, 252, 0.18)',
+  4: 'rgba(204, 86, 233, 0.22)'
 };
 
 const LEVEL_TEXT_COLORS: Record<number, string> = {
-  1: '#1967d2',
-  2: '#137333',
-  3: '#b05e00',
-  4: '#c5221f'
+  1: '#6CD3D9',
+  2: '#62D862',
+  3: '#794DFC',
+  4: '#CC56E9'
 };
 
 export function LaddersView() {
@@ -54,6 +54,7 @@ export function LaddersView() {
     selectedFocusArea,
     isLoading,
     updateLadderCell,
+    updateRoleMapping,
     proficiencyData,
     levelNames,
     roleMappings,
@@ -63,6 +64,20 @@ export function LaddersView() {
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const [roleSummaryOverrides, setRoleSummaryOverrides] = useState<Record<string, string>>({});
   const [editingRoleSummary, setEditingRoleSummary] = useState<{ role: string; value: string } | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<{ role: string; competency: string } | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    if (openDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openDropdown]);
 
   const getRoleSummary = (role: string): string => {
     return roleSummaryOverrides[role] ?? ROLE_SUMMARIES[role] ?? '';
@@ -196,14 +211,16 @@ export function LaddersView() {
                   <div 
                     key={idx} 
                     className="ladders-compare-table-cell ladders-cell-editable"
-                    onClick={() => handleProficiencyCellClick(item, selectedRoles[idx])}
-                    title="Click to edit"
                   >
                     <div 
                       className="ladders-cell-text"
                       dangerouslySetInnerHTML={{ __html: formatCellText(value) }}
                     />
-                    <div className="ladders-cell-edit-icon">
+                    <div 
+                      className="ladders-cell-edit-icon"
+                      onClick={() => handleProficiencyCellClick(item, selectedRoles[idx])}
+                      title="Click to edit"
+                    >
                       <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                       </svg>
@@ -217,39 +234,100 @@ export function LaddersView() {
       );
     };
 
-    // Render role summary banner at the top (once, above all competencies)
-    const renderRoleSummaries = () => {
+    const handleLevelChange = (role: string, competency: string, newLevel: number) => {
+      updateRoleMapping(role, competency, newLevel);
+      setOpenDropdown(null);
+    };
+
+    const renderOverviewPanel = () => {
       if (selectedRoles.length === 0) return null;
+      const competencies = [...new Set(proficiencyData.map(d => d.focusArea))].filter(Boolean);
+      const showGrid = roleMappings.length > 0;
+
       return (
-        <div className="ladders-role-summaries">
-          {selectedRoles.map(role => {
-            const summary = getRoleSummary(role);
-            return (
-              <div 
-                key={role} 
-                className="ladders-role-summary-card ladders-cell-editable"
-                onClick={() => setEditingRoleSummary({ role, value: summary })}
-                title="Click to edit"
-              >
-                <div className="ladders-role-summary-name">{role}</div>
-                {summary && (
-                  <div className="ladders-role-summary-text">{summary}</div>
-                )}
-                <div className="ladders-cell-edit-icon">
-                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                  </svg>
-                </div>
-              </div>
-            );
-          })}
+        <div className="ladders-overview-panel">
+          <table className="overview-table">
+            <thead>
+              <tr>
+                <th className="overview-label-cell">Key Differentiator</th>
+                {selectedRoles.map(role => {
+                  const summary = getRoleSummary(role);
+                  return (
+                    <th key={role} className="overview-role-cell">
+                      <div className="ladders-role-summary-card ladders-cell-editable">
+                        <div className="ladders-role-summary-name">{role}</div>
+                        {summary && (
+                          <div className="ladders-role-summary-text">{summary}</div>
+                        )}
+                        <div 
+                          className="ladders-cell-edit-icon"
+                          onClick={() => setEditingRoleSummary({ role, value: summary })}
+                          title="Click to edit"
+                        >
+                          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                          </svg>
+                        </div>
+                      </div>
+                    </th>
+                  );
+                })}
+              </tr>
+            </thead>
+            {showGrid && (
+              <tbody>
+                {competencies.map(comp => (
+                  <tr key={comp}>
+                    <td className="mapping-competency-name">{comp}</td>
+                    {selectedRoles.map(role => {
+                      const levelNum = getRoleLevel(role, '', comp);
+                      const label = LEVEL_LABELS[levelNum] || '';
+                      const isOpen = openDropdown?.role === role && openDropdown?.competency === comp;
+                      return (
+                        <td key={role} className="mapping-level-cell-wrapper">
+                          <div
+                            className="mapping-level-cell"
+                            style={{
+                              backgroundColor: LEVEL_COLORS[levelNum],
+                              color: LEVEL_TEXT_COLORS[levelNum]
+                            }}
+                            onClick={() => setOpenDropdown(isOpen ? null : { role, competency: comp })}
+                          >
+                            {label}
+                            <svg className="mapping-dropdown-arrow" viewBox="0 0 12 12" width="10" height="10" fill="currentColor">
+                              <path d="M3 5l3 3 3-3z" />
+                            </svg>
+                          </div>
+                          {isOpen && (
+                            <div className="mapping-dropdown" ref={dropdownRef}>
+                              {[1, 2, 3, 4].map(lvl => (
+                                <div
+                                  key={lvl}
+                                  className={`mapping-dropdown-option ${lvl === levelNum ? 'active' : ''}`}
+                                  style={{ color: LEVEL_TEXT_COLORS[lvl] }}
+                                  onClick={() => handleLevelChange(role, comp, lvl)}
+                                >
+                                  <span className="mapping-dropdown-dot" style={{ backgroundColor: LEVEL_TEXT_COLORS[lvl] }} />
+                                  {LEVEL_LABELS[lvl]}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            )}
+          </table>
         </div>
       );
     };
 
     return (
       <>
-        {renderRoleSummaries()}
+        {renderOverviewPanel()}
         <div className="ladders-comparison-grid">
           {Object.entries(groupedByFocusArea).map(([focusArea, items]) => (
             <div key={focusArea} className="ladders-focus-area-group">
@@ -333,14 +411,16 @@ export function LaddersView() {
                 <div 
                   key={idx} 
                   className="ladders-compare-table-cell ladders-cell-editable"
-                  onClick={() => handleCellClick(item, selectedRoles[idx])}
-                  title="Click to edit"
                 >
                   <div 
                     className="ladders-cell-text"
                     dangerouslySetInnerHTML={{ __html: formatCellText(value) }}
                   />
-                  <div className="ladders-cell-edit-icon">
+                  <div 
+                    className="ladders-cell-edit-icon"
+                    onClick={() => handleCellClick(item, selectedRoles[idx])}
+                    title="Click to edit"
+                  >
                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                     </svg>

@@ -42,6 +42,7 @@ interface LaddersContextType {
   
   // Editing
   updateLadderCell: (focusArea: string, competency: string, role: string, value: string) => void;
+  updateRoleMapping: (role: string, competency: string, newLevel: number) => void;
 }
 
 const LaddersContext = createContext<LaddersContextType | undefined>(undefined);
@@ -199,6 +200,18 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
     }
   }, [hasProficiencyData]);
 
+  const updateRoleMapping = useCallback((role: string, competency: string, newLevel: number) => {
+    setRoleMappings(prev => prev.map(m => {
+      if (m.role === role) {
+        return {
+          ...m,
+          competencyLevels: { ...m.competencyLevels, [competency]: newLevel }
+        };
+      }
+      return m;
+    }));
+  }, []);
+
   const focusAreas = hasProficiencyData 
     ? [...new Set(proficiencyData.map(d => d.focusArea))].filter(Boolean)
     : [...new Set(laddersData.map(d => d.focusArea))].filter(Boolean);
@@ -225,7 +238,8 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
       setSelectedFile,
       isLoading,
       focusAreas,
-      updateLadderCell
+      updateLadderCell,
+      updateRoleMapping
     }}>
       {children}
     </LaddersContext.Provider>
