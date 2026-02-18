@@ -1,8 +1,26 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLadders } from '../../context/LaddersContext';
 import { getLaddersTextDiff, formatCellText } from '../../utils/textDiff';
 import { EditCellModal } from '../shared/EditCellModal';
 import type { LadderData, ProficiencyLevel } from '../../types';
+
+function useCardGlow() {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    el.style.setProperty('--glow-x', `${x}px`);
+    el.style.setProperty('--glow-y', `${y}px`);
+    el.style.setProperty('--glow-opacity', '1');
+  }, []);
+
+  const handleMouseLeave = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    e.currentTarget.style.setProperty('--glow-opacity', '0');
+  }, []);
+
+  return { onMouseMove: handleMouseMove, onMouseLeave: handleMouseLeave };
+}
 
 interface EditingCell {
   focusArea: string;
@@ -12,6 +30,7 @@ interface EditingCell {
 }
 
 const LEVEL_LABELS: Record<number, string> = {
+  0: 'TBD',
   1: 'Foundational',
   2: 'Intermediate',
   3: 'Advanced',
@@ -26,14 +45,15 @@ const ROLE_SUMMARIES: Record<string, string> = {
   'Senior Staff Designer': 'Works cross-vertically, drives impact through others, and aligns teams at scale.',
   'Principal Designer': 'Sells and executes a company-wide design vision. Runs small teams, gains resources, and shapes culture.',
   // Manager roles
-  'Lead Product Designer (M1)': 'First-line manager balancing hands-on craft with people leadership in a single product area.',
-  'Group Design Manager (M2)': 'Leads multiple teams, scales design impact, and builds capability across a vertical.',
-  'Director (M3)': 'Owns design strategy across a major business area. Drives cross-functional alignment.',
-  'Senior Director (M4)': 'Leads design across multiple areas. Sets strategic direction and builds leadership capability.',
-  'VP Design (E1)': 'Owns the design function end-to-end. Defines vision, shapes culture, and drives transformational change.',
+  'Lead Product Designer': 'Responsible for one vertical and 5–7 people. Balances hands-on craft with people leadership.',
+  'Group Design Manager': 'Responsible for two verticals. Leads report to them. Scales design impact and builds capability.',
+  'Director': 'Responsible for 2–3 verticals depending on size, managing leads and senior ICs. Drives cross-functional alignment.',
+  'Senior Director': 'Manages multiple Group Design Managers, leads, and senior ICs. Sets strategic direction across a wide area.',
+  'VP Design': 'Executive role. Manages across a wider range of designers (QA, front-end, marketing). Influences beyond verticals and beyond the R&D org.',
 };
 
 const LEVEL_COLORS: Record<number, string> = {
+  0: 'rgba(255, 255, 255, 0.05)',
   1: 'rgba(108, 211, 217, 0.18)',
   2: 'rgba(98, 216, 98, 0.18)',
   3: 'rgba(121, 77, 252, 0.18)',
@@ -41,13 +61,15 @@ const LEVEL_COLORS: Record<number, string> = {
 };
 
 const LEVEL_TEXT_COLORS: Record<number, string> = {
+  0: '#555555',
   1: '#6CD3D9',
   2: '#62D862',
-  3: '#794DFC',
-  4: '#CC56E9'
+  3: '#DACEFD',
+  4: '#F0A0D0'
 };
 
 export function LaddersView() {
+  const glow = useCardGlow();
   const { 
     laddersData, 
     selectedRoles, 
@@ -65,7 +87,12 @@ export function LaddersView() {
   const [roleSummaryOverrides, setRoleSummaryOverrides] = useState<Record<string, string>>({});
   const [editingRoleSummary, setEditingRoleSummary] = useState<{ role: string; value: string } | null>(null);
   const [openDropdown, setOpenDropdown] = useState<{ role: string; competency: string } | null>(null);
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const toggleSection = (section: string) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -123,10 +150,10 @@ export function LaddersView() {
   const getRoleLevel = (role: string, competency: string, focusArea?: string): number => {
     const mapping = roleMappings.find(m => m.role === role);
     if (!mapping) return 1;
-    if (focusArea && mapping.competencyLevels[focusArea]) {
+    if (focusArea && mapping.competencyLevels[focusArea] !== undefined) {
       return mapping.competencyLevels[focusArea];
     }
-    return mapping.competencyLevels[competency] || 1;
+    return mapping.competencyLevels[competency] ?? 1;
   };
 
   // Helper: get level name from number (e.g. 3 -> "3-Advanced")
@@ -136,6 +163,7 @@ export function LaddersView() {
 
   // Helper: get proficiency content for a competency at a given level
   const getProficiencyContent = (competency: string, levelNum: number): string => {
+    if (levelNum === 0) return 'To be defined individually for this executive role.';
     const levelName = getLevelNameFromNumber(levelNum);
     const item = proficiencyData.find(d => d.competency === competency);
     if (!item) return '-';
@@ -213,7 +241,9 @@ export function LaddersView() {
                     className="ladders-compare-table-cell ladders-cell-editable"
                   >
                     <div 
-                      className="ladders-cell-text"
+                      className="ladders-cell-text glow-card"
+                      {...glow}
+                      style={{ '--level-color': LEVEL_TEXT_COLORS[roleContents[idx].levelNum] + '40' } as React.CSSProperties}
                       dangerouslySetInnerHTML={{ __html: formatCellText(value) }}
                     />
                     <div 
@@ -239,10 +269,74 @@ export function LaddersView() {
       setOpenDropdown(null);
     };
 
+    const COMPETENCY_GROUPS: { label: string; competencies: string[] }[] = (() => {
+      const allComps = [...new Set(proficiencyData.map(d => d.focusArea))].filter(Boolean);
+      const deelCore = ['Problem Solving', 'Adaptability', 'Customer Focus', 'Ownership'];
+      const deelIC = ['Craft Excellence', 'Communication', 'Collaboration'];
+      const deelMgr = ['Drives High Performance', 'Develops Talent', 'Execution & Impact'];
+
+      const groups: { label: string; competencies: string[] }[] = [];
+      const coreFiltered = deelCore.filter(c => allComps.includes(c));
+      const icFiltered = deelIC.filter(c => allComps.includes(c));
+      const mgrFiltered = deelMgr.filter(c => allComps.includes(c));
+      const rest = allComps.filter(c => !deelCore.includes(c) && !deelIC.includes(c) && !deelMgr.includes(c));
+
+      if (coreFiltered.length > 0) groups.push({ label: 'Deel Competencies', competencies: coreFiltered });
+      if (icFiltered.length > 0) groups.push({ label: 'Deel IC Competencies', competencies: icFiltered });
+      if (mgrFiltered.length > 0) groups.push({ label: 'Deel Manager Competencies', competencies: mgrFiltered });
+      if (rest.length > 0) groups.push({ label: 'Other', competencies: rest });
+      return groups;
+    })();
+
+    const renderMappingRow = (comp: string) => {
+      return (
+        <tr key={comp}>
+          <td className="mapping-competency-name">{comp}</td>
+          {selectedRoles.map(role => {
+            const levelNum = getRoleLevel(role, '', comp);
+            const label = LEVEL_LABELS[levelNum] || '';
+            const isOpen = openDropdown?.role === role && openDropdown?.competency === comp;
+            return (
+              <td key={role} className="mapping-level-cell-wrapper">
+                <div
+                  className="mapping-level-cell"
+                  style={{
+                    backgroundColor: LEVEL_COLORS[levelNum],
+                    color: LEVEL_TEXT_COLORS[levelNum]
+                  }}
+                  onClick={() => setOpenDropdown(isOpen ? null : { role, competency: comp })}
+                >
+                  {label}
+                  <svg className="mapping-dropdown-arrow" viewBox="0 0 12 12" width="10" height="10" fill="currentColor">
+                    <path d="M3 5l3 3 3-3z" />
+                  </svg>
+                </div>
+                {isOpen && (
+                  <div className="mapping-dropdown" ref={dropdownRef}>
+                    {[0, 1, 2, 3, 4].map(lvl => (
+                      <div
+                        key={lvl}
+                        className={`mapping-dropdown-option ${lvl === levelNum ? 'active' : ''}`}
+                        style={{ color: LEVEL_TEXT_COLORS[lvl] }}
+                        onClick={() => handleLevelChange(role, comp, lvl)}
+                      >
+                        <span className="mapping-dropdown-dot" style={{ backgroundColor: LEVEL_TEXT_COLORS[lvl] }} />
+                        {LEVEL_LABELS[lvl]}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </td>
+            );
+          })}
+        </tr>
+      );
+    };
+
     const renderOverviewPanel = () => {
       if (selectedRoles.length === 0) return null;
-      const competencies = [...new Set(proficiencyData.map(d => d.focusArea))].filter(Boolean);
       const showGrid = roleMappings.length > 0;
+      const colSpan = selectedRoles.length + 1;
 
       return (
         <div className="ladders-overview-panel">
@@ -254,7 +348,7 @@ export function LaddersView() {
                   const summary = getRoleSummary(role);
                   return (
                     <th key={role} className="overview-role-cell">
-                      <div className="ladders-role-summary-card ladders-cell-editable">
+                      <div className="ladders-role-summary-card ladders-cell-editable glow-card" {...glow}>
                         <div className="ladders-role-summary-name">{role}</div>
                         {summary && (
                           <div className="ladders-role-summary-text">{summary}</div>
@@ -276,48 +370,24 @@ export function LaddersView() {
             </thead>
             {showGrid && (
               <tbody>
-                {competencies.map(comp => (
-                  <tr key={comp}>
-                    <td className="mapping-competency-name">{comp}</td>
-                    {selectedRoles.map(role => {
-                      const levelNum = getRoleLevel(role, '', comp);
-                      const label = LEVEL_LABELS[levelNum] || '';
-                      const isOpen = openDropdown?.role === role && openDropdown?.competency === comp;
-                      return (
-                        <td key={role} className="mapping-level-cell-wrapper">
-                          <div
-                            className="mapping-level-cell"
-                            style={{
-                              backgroundColor: LEVEL_COLORS[levelNum],
-                              color: LEVEL_TEXT_COLORS[levelNum]
-                            }}
-                            onClick={() => setOpenDropdown(isOpen ? null : { role, competency: comp })}
-                          >
-                            {label}
-                            <svg className="mapping-dropdown-arrow" viewBox="0 0 12 12" width="10" height="10" fill="currentColor">
-                              <path d="M3 5l3 3 3-3z" />
-                            </svg>
-                          </div>
-                          {isOpen && (
-                            <div className="mapping-dropdown" ref={dropdownRef}>
-                              {[1, 2, 3, 4].map(lvl => (
-                                <div
-                                  key={lvl}
-                                  className={`mapping-dropdown-option ${lvl === levelNum ? 'active' : ''}`}
-                                  style={{ color: LEVEL_TEXT_COLORS[lvl] }}
-                                  onClick={() => handleLevelChange(role, comp, lvl)}
-                                >
-                                  <span className="mapping-dropdown-dot" style={{ backgroundColor: LEVEL_TEXT_COLORS[lvl] }} />
-                                  {LEVEL_LABELS[lvl]}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
+                {COMPETENCY_GROUPS.map(group => {
+                  const isCollapsed = collapsedSections[group.label] ?? false;
+                  return [
+                    <tr key={`header-${group.label}`}>
+                      <td 
+                        colSpan={colSpan} 
+                        className="mapping-section-header"
+                        onClick={() => toggleSection(group.label)}
+                      >
+                        {group.label}
+                        <svg className={`mapping-chevron ${isCollapsed ? 'collapsed' : ''}`} viewBox="0 0 12 12" width="10" height="10" fill="currentColor">
+                          <path d="M3 4.5l3 3 3-3z" />
+                        </svg>
+                      </td>
+                    </tr>,
+                    ...(!isCollapsed ? group.competencies.map(comp => renderMappingRow(comp)) : [])
+                  ];
+                })}
               </tbody>
             )}
           </table>
@@ -329,12 +399,21 @@ export function LaddersView() {
       <>
         {renderOverviewPanel()}
         <div className="ladders-comparison-grid">
-          {Object.entries(groupedByFocusArea).map(([focusArea, items]) => (
-            <div key={focusArea} className="ladders-focus-area-group">
-              <div className="ladders-focus-area-header">{focusArea}</div>
-              {items.map(item => renderProficiencyRow(item))}
-            </div>
-          ))}
+          {Object.entries(groupedByFocusArea).map(([focusArea, items]) => {
+            const key = `ladder-${focusArea}`;
+            const isCollapsed = collapsedSections[key] ?? false;
+            return (
+              <div key={focusArea} className="ladders-focus-area-group">
+                <div className="ladders-focus-area-header" onClick={() => toggleSection(key)}>
+                  {focusArea}
+                  <svg className={`mapping-chevron ${isCollapsed ? 'collapsed' : ''}`} viewBox="0 0 12 12" width="14" height="14" fill="currentColor">
+                    <path d="M3 4.5l3 3 3-3z" />
+                  </svg>
+                </div>
+                {!isCollapsed && items.map(item => renderProficiencyRow(item))}
+              </div>
+            );
+          })}
         </div>
 
         <EditCellModal
@@ -413,7 +492,8 @@ export function LaddersView() {
                   className="ladders-compare-table-cell ladders-cell-editable"
                 >
                   <div 
-                    className="ladders-cell-text"
+                    className="ladders-cell-text glow-card"
+                    {...glow}
                     dangerouslySetInnerHTML={{ __html: formatCellText(value) }}
                   />
                   <div 
