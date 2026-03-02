@@ -2,6 +2,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLadders } from '../../context/LaddersContext';
 import { getLaddersTextDiff, formatCellText } from '../../utils/textDiff';
 import { EditCellModal } from '../shared/EditCellModal';
+import { ExamplesModal } from '../shared/ExamplesModal';
+import { getExampleKey, getDefaultExamples, type TrafficLightExamples } from '../../data/ladderExampleTemplates';
 import type { LadderData, ProficiencyLevel } from '../../types';
 
 function useCardGlow() {
@@ -88,6 +90,8 @@ export function LaddersView() {
   const [editingRoleSummary, setEditingRoleSummary] = useState<{ role: string; value: string } | null>(null);
   const [openDropdown, setOpenDropdown] = useState<{ role: string; competency: string } | null>(null);
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [allExamples, setAllExamples] = useState<Record<string, TrafficLightExamples>>({});
+  const [examplesModal, setExamplesModal] = useState<{ focusArea: string; role: string } | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleSection = (section: string) => {
@@ -113,6 +117,26 @@ export function LaddersView() {
   const handleSaveRoleSummary = async (newValue: string) => {
     if (!editingRoleSummary) return;
     setRoleSummaryOverrides(prev => ({ ...prev, [editingRoleSummary.role]: newValue }));
+  };
+
+  const getExamplesForCell = (focusArea: string, role: string): TrafficLightExamples => {
+    const key = getExampleKey(focusArea, role);
+    return allExamples[key] || getDefaultExamples(focusArea, role);
+  };
+
+  const handleOpenExamples = (focusArea: string, role: string) => {
+    setExamplesModal({ focusArea, role });
+  };
+
+  const handleSaveExamples = (examples: TrafficLightExamples) => {
+    if (!examplesModal) return;
+    const key = getExampleKey(examplesModal.focusArea, examplesModal.role);
+    setAllExamples(prev => ({ ...prev, [key]: examples }));
+  };
+
+  const hasExamples = (focusArea: string, role: string): boolean => {
+    const key = getExampleKey(focusArea, role);
+    return key in allExamples;
   };
 
   if (isLoading) {
@@ -244,8 +268,15 @@ export function LaddersView() {
                       className="ladders-cell-text glow-card"
                       {...glow}
                       style={{ '--level-color': LEVEL_TEXT_COLORS[roleContents[idx].levelNum] + '40' } as React.CSSProperties}
-                      dangerouslySetInnerHTML={{ __html: formatCellText(value) }}
-                    />
+                    >
+                      <div dangerouslySetInnerHTML={{ __html: formatCellText(value) }} />
+                      <div
+                        className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
+                        onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                      >
+                        Examples →
+                      </div>
+                    </div>
                     <div 
                       className="ladders-cell-edit-icon"
                       onClick={() => handleProficiencyCellClick(item, selectedRoles[idx])}
@@ -433,6 +464,15 @@ export function LaddersView() {
           title={`Edit Role Summary`}
           subtitle={editingRoleSummary?.role || ''}
         />
+
+        <ExamplesModal
+          isOpen={examplesModal !== null}
+          onClose={() => setExamplesModal(null)}
+          onSave={handleSaveExamples}
+          initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { red: [''], yellow: [''], green: [''] }}
+          focusArea={examplesModal?.focusArea || ''}
+          role={examplesModal?.role || ''}
+        />
       </>
     );
   }
@@ -494,8 +534,15 @@ export function LaddersView() {
                   <div 
                     className="ladders-cell-text glow-card"
                     {...glow}
-                    dangerouslySetInnerHTML={{ __html: formatCellText(value) }}
-                  />
+                  >
+                    <div dangerouslySetInnerHTML={{ __html: formatCellText(value) }} />
+                    <div
+                      className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
+                      onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                    >
+                      Examples →
+                    </div>
+                  </div>
                   <div 
                     className="ladders-cell-edit-icon"
                     onClick={() => handleCellClick(item, selectedRoles[idx])}
@@ -532,6 +579,15 @@ export function LaddersView() {
         initialValue={editingCell?.value || ''}
         title={`Edit: ${editingCell?.competency || ''}`}
         subtitle={editingCell?.role || ''}
+      />
+
+      <ExamplesModal
+        isOpen={examplesModal !== null}
+        onClose={() => setExamplesModal(null)}
+        onSave={handleSaveExamples}
+        initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { red: [''], yellow: [''], green: [''] }}
+        focusArea={examplesModal?.focusArea || ''}
+        role={examplesModal?.role || ''}
       />
     </>
   );

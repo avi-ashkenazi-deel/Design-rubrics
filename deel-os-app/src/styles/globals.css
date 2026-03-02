@@ -1683,6 +1683,42 @@ select option {
   opacity: 1;
 }
 
+/* "Examples →" link inside the glow card, fades in after 2s hover */
+.ladders-cell-examples-link {
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: opacity 0.4s ease, max-height 0.4s ease, margin-top 0.4s ease, color 0.2s ease;
+  pointer-events: none;
+  position: relative;
+  z-index: 2;
+}
+
+.ladders-cell-text:hover .ladders-cell-examples-link {
+  opacity: 1;
+  max-height: 24px;
+  margin-top: 8px;
+  pointer-events: auto;
+  transition: opacity 0.4s ease 1s, max-height 0.4s ease 1s, margin-top 0.4s ease 1s, color 0.2s ease;
+}
+
+.ladders-cell-examples-link:hover {
+  color: var(--neon-cyan);
+}
+
+.ladders-cell-examples-link.has-examples {
+  color: var(--neon-green);
+}
+
+.ladders-cell-examples-link.has-examples:hover {
+  color: #7fffab;
+}
+
 .ladders-cell-text {
   font-size: 13px;
   font-weight: 400;
@@ -2913,5 +2949,153 @@ select option:disabled {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
   }
+}
+
+/* =====================================
+   Examples Modal Styles
+   ===================================== */
+
+.examples-modal {
+  max-width: 640px;
+}
+
+.examples-modal-body {
+  padding: 16px 24px 20px;
+  overflow-y: auto;
+  max-height: calc(85vh - 140px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.examples-section {
+  border-radius: 10px;
+  background: var(--section-bg);
+  border: 1px solid var(--section-border);
+  transition: border-color 0.2s ease;
+}
+
+.examples-section:focus-within {
+  border-color: var(--section-focus-border);
+}
+
+.examples-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px 0;
+}
+
+.examples-section-emoji {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.examples-section-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+.examples-list {
+  padding: 8px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.examples-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  position: relative;
+}
+
+.examples-bullet {
+  flex-shrink: 0;
+  width: 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 1px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.examples-inline-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-left: 2px solid transparent;
+  padding: 1px 4px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: none;
+  overflow: hidden;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.examples-inline-input:focus {
+  outline: none;
+  color: var(--text-primary);
+  border-left-color: var(--input-accent);
+}
+
+.examples-inline-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.examples-inline-input::selection {
+  background: var(--input-accent);
+  color: #000;
+}
+
+.examples-remove-btn {
+  position: absolute;
+  right: -4px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.examples-item:hover .examples-remove-btn {
+  color: var(--text-muted);
+}
+
+.examples-remove-btn:hover {
+  color: var(--neon-red) !important;
+  background: rgba(255, 92, 92, 0.1);
+}
+
+.examples-add-btn {
+  padding: 2px 4px;
+  margin-left: 16px;
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+}
+
+.examples-add-btn:hover {
+  opacity: 0.8;
 }
 
