@@ -3099,3 +3099,345 @@ select option:disabled {
   opacity: 0.8;
 }
 
+/* ───────── Admin View ───────── */
+
+.admin-view {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 8px 0;
+  position: relative;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.admin-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.admin-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.admin-loading {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px 0;
+}
+
+.admin-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #1e1e2e;
+  border: 1px solid #2a2a3a;
+  color: var(--text-primary);
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  z-index: 1000;
+  animation: admin-toast-in 0.3s ease;
+}
+
+@keyframes admin-toast-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-card,
+.admin-card-new {
+  background: #141418;
+  border: 1px solid #222230;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.admin-card:hover {
+  border-color: #333344;
+}
+
+.admin-card-new {
+  border-color: #8be9fd44;
+  margin-bottom: 12px;
+}
+
+.admin-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-card-new .admin-card-header {
+  cursor: default;
+  padding-bottom: 8px;
+}
+
+.admin-card-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-card-email {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.admin-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8be9fd;
+}
+
+.admin-role-badge {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.admin-role-viewer       { background: #2a2a3a; color: #8a8a9a; }
+.admin-role-super_viewer { background: rgba(189, 147, 249, 0.12); color: #bd93f9; }
+.admin-role-editor       { background: rgba(80, 250, 123, 0.12); color: #50fa7b; }
+.admin-role-admin        { background: rgba(139, 233, 253, 0.12); color: #8be9fd; }
+
+.admin-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-meta-item {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.admin-chevron {
+  color: var(--text-muted);
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+  transition: transform 0.2s;
+}
+
+/* Permission editor inside card */
+
+.admin-perm-editor {
+  padding: 4px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border-top: 1px solid #1e1e2e;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-field label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.admin-field input,
+.admin-field select {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: #0d0d12;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-field input:focus,
+.admin-field select:focus {
+  border-color: #8be9fd66;
+}
+
+.admin-field input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-pill {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: inherit;
+  border-radius: 8px;
+  border: 1px solid #2a2a3a;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.admin-pill:hover {
+  border-color: #444;
+  color: var(--text-primary);
+}
+
+.admin-pill.active {
+  background: rgba(139, 233, 253, 0.1);
+  border-color: #8be9fd66;
+  color: #8be9fd;
+}
+
+.admin-editor-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.admin-btn {
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.admin-btn-save {
+  background: #8be9fd;
+  color: #0d0d0d;
+}
+
+.admin-btn-save:hover {
+  background: #a5efff;
+}
+
+.admin-btn-cancel {
+  background: transparent;
+  border: 1px solid #2a2a3a;
+  color: var(--text-muted);
+}
+
+.admin-btn-cancel:hover {
+  border-color: #444;
+  color: var(--text-primary);
+}
+
+.admin-btn-delete {
+  background: transparent;
+  border: 1px solid rgba(255, 92, 92, 0.3);
+  color: #ff5c5c;
+  margin-left: auto;
+}
+
+.admin-btn-delete:hover {
+  background: rgba(255, 92, 92, 0.1);
+}
+
+.admin-btn-add {
+  background: transparent;
+  border: 1px solid #8be9fd44;
+  color: #8be9fd;
+  padding: 8px 16px;
+}
+
+.admin-btn-add:hover {
+  background: rgba(139, 233, 253, 0.08);
+}
+
+.admin-btn-add:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ───────── Impersonation Banner ───────── */
+
+.impersonation-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 6px 16px;
+  background: linear-gradient(90deg, #8b5cf6, #6d28d9);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.impersonation-banner strong {
+  font-weight: 700;
+}
+
+.impersonation-banner button {
+  padding: 3px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.impersonation-banner button:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* Push app content down when banner is visible */
+.app:has(.impersonation-banner) {
+  padding-top: 32px;
+}
+
+.app:has(.impersonation-banner) .sidebar {
+  top: 32px;
+  height: calc(100vh - 32px);
+}
+
+/* ───────── View As (sidebar) ───────── */
+
+.admin-viewas-section {
+  margin-top: auto !important;
+  border-top: 1px solid #1e1e2e;
+  padding-top: 16px;
+}
+

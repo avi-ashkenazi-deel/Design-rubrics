@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useApp, type RubricDataWithId } from '../../context/AppContext';
+import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 import { getTextDiff, formatCellText } from '../../utils/textDiff';
 import { EditCellModal } from '../shared/EditCellModal';
 
@@ -13,6 +14,8 @@ interface EditState {
 }
 
 export function RubricsView() {
+  const { permissions } = useSupabaseAuth();
+  const hasEditPermission = permissions.canEdit;
   const { 
     rubricData, 
     competencyDefinitions,
@@ -206,7 +209,7 @@ export function RubricsView() {
                       const level = levels[idx];
                       const field = `score_${score}`;
                       const originalValue = rubric?.[field as keyof typeof rubric] as string || '';
-                      const canEdit = useApi && rubric?.id;
+                      const canEdit = useApi && rubric?.id && hasEditPermission;
 
                       return (
                         <div 

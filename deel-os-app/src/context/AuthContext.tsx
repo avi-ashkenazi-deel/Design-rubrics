@@ -1,10 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from '../types';
+import { getAllowedDisciplines } from '../data/disciplineAccess';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  allowedDisciplines: string[] | null;
   login: (user: User) => void;
   logout: () => void;
   showError: (message: string) => void;
@@ -104,10 +106,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setError(message);
   };
 
+  const allowedDisciplines = useMemo(
+    () => (user ? getAllowedDisciplines(user.email) : null),
+    [user]
+  );
+
   return (
     <AuthContext.Provider value={{ 
       user, 
       isAuthenticated: !!user, 
+      allowedDisciplines,
       login, 
       logout, 
       showError,

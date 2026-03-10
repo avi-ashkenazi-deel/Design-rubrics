@@ -16,6 +16,10 @@ const VIEW_TITLES: Record<string, { title: string; subtitle: string }> = {
   ladders: {
     title: 'Career Ladders',
     subtitle: 'Compare role expectations across competencies and career levels'
+  },
+  admin: {
+    title: 'Admin',
+    subtitle: 'Manage user permissions and platform access'
   }
 };
 

@@ -625,7 +625,7 @@ export async function checkHealth(): Promise<boolean> {
   }
 }
 
-// ============ User Role ============
+// ============ User Role (legacy) ============
 
 export async function getUserRole(userId: string): Promise<string> {
   if (!supabase) return 'viewer';
@@ -647,6 +647,91 @@ export async function setUserRole(email: string, role: string): Promise<void> {
     .update({ role } as AnyData)
     .eq('email', email);
   
+  if (error) throw error;
+}
+
+// ============ User Permissions ============
+
+import type { UserPermissions } from '../types';
+
+interface UserPermissionsRow {
+  email: string;
+  role: 'viewer' | 'super_viewer' | 'editor' | 'admin';
+  can_edit: boolean;
+  visible_views: string[];
+  visible_tracks: string[];
+  allowed_disciplines: string[] | null;
+  designer_level: string | null;
+}
+
+function rowToPermissions(row: UserPermissionsRow): UserPermissions {
+  return {
+    email: row.email,
+    role: row.role,
+    canEdit: row.can_edit,
+    visibleViews: row.visible_views as UserPermissions['visibleViews'],
+    visibleTracks: row.visible_tracks,
+    allowedDisciplines: row.allowed_disciplines,
+    designerLevel: row.designer_level,
+  };
+}
+
+function permissionsToRow(perms: UserPermissions): Omit<UserPermissionsRow, 'email'> & { email: string } {
+  return {
+    email: perms.email,
+    role: perms.role,
+    can_edit: perms.canEdit,
+    visible_views: perms.visibleViews,
+    visible_tracks: perms.visibleTracks,
+    allowed_disciplines: perms.allowedDisciplines,
+    designer_level: perms.designerLevel,
+  };
+}
+
+export async function fetchUserPermissions(email: string): Promise<UserPermissions | null> {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from('user_permissions')
+    .select('*')
+    .eq('email', email.toLowerCase().trim())
+    .single();
+
+  if (error || !data) return null;
+  return rowToPermissions(data as AnyData);
+}
+
+export async function fetchAllUserPermissions(): Promise<UserPermissions[]> {
+  if (!supabase) return [];
+
+  const { data, error } = await supabase
+    .from('user_permissions')
+    .select('*')
+    .order('email');
+
+  if (error || !data) return [];
+  return (data as AnyData[]).map(rowToPermissions);
+}
+
+export async function upsertUserPermissions(perms: UserPermissions): Promise<void> {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const row = permissionsToRow(perms);
+  const { error } = await supabase
+    .from('user_permissions')
+    .upsert(row as AnyData, { onConflict: 'email' });
+
+  if (error) throw error;
+}
+
+export async function deleteUserPermissions(email: string): Promise<void> {
+  if (!supabase) throw new Error('Supabase not configured');
+
+  const { error } = await supabase
+    .from('user_permissions')
+    .delete()
+    .eq('email', email.toLowerCase().trim());
+
   if (error) throw error;
 }
 

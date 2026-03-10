@@ -11,7 +11,30 @@ export interface AuthState {
 }
 
 // View types
-export type ViewType = 'definitions' | 'rubric' | 'ladders' | null;
+export type ViewType = 'definitions' | 'rubric' | 'ladders' | 'admin' | null;
+
+// Permissions types
+export type VisibleView = 'competencies' | 'rubrics' | 'ladders' | 'admin';
+
+export interface UserPermissions {
+  email: string;
+  role: 'viewer' | 'super_viewer' | 'editor' | 'admin';
+  canEdit: boolean;
+  visibleViews: VisibleView[];
+  visibleTracks: string[];
+  allowedDisciplines: string[] | null;
+  designerLevel: string | null;
+}
+
+export const DEFAULT_PERMISSIONS: UserPermissions = {
+  email: '',
+  role: 'viewer',
+  canEdit: false,
+  visibleViews: ['competencies', 'ladders'],
+  visibleTracks: ['IC'],
+  allowedDisciplines: null,
+  designerLevel: null,
+};
 
 // Discipline types
 export interface DisciplineFile {

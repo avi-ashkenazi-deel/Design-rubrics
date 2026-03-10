@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // import { UserProfile } from '../Auth/GoogleAuth';
 import { useApp } from '../../context/AppContext';
 import { useLadders } from '../../context/LaddersContext';
+import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 import { MultiSelect } from '../shared/MultiSelect';
 import { HistoryPanel } from '../shared/HistoryPanel';
 import { AddDisciplineModal } from '../shared/AddDisciplineModal';
@@ -52,6 +53,51 @@ export function Sidebar() {
     mappedRoles
   } = useLadders();
 
+  const {
+    allowedDisciplines,
+    permissions,
+    realPermissions,
+    isImpersonating,
+    impersonatingEmail,
+    impersonate,
+    stopImpersonating,
+    allUsers,
+    loadAllUsers,
+  } = useSupabaseAuth();
+
+  // Filter disciplines based on user access
+  const visibleDisciplines = allowedDisciplines
+    ? disciplines.filter(d => allowedDisciplines.includes(d))
+    : disciplines;
+  const visibleLaddersDisciplines = allowedDisciplines
+    ? laddersDisciplines.filter(d => allowedDisciplines.includes(d))
+    : laddersDisciplines;
+
+  // Auto-switch discipline if current selection is outside the user's allowed list
+  useEffect(() => {
+    if (allowedDisciplines) {
+      if (currentDiscipline && !allowedDisciplines.includes(currentDiscipline) && visibleDisciplines.length > 0) {
+        setCurrentDiscipline(visibleDisciplines[0]);
+      }
+      if (laddersCurrentDiscipline && !allowedDisciplines.includes(laddersCurrentDiscipline) && visibleLaddersDisciplines.length > 0) {
+        setLaddersCurrentDiscipline(visibleLaddersDisciplines[0]);
+      }
+    }
+  }, [allowedDisciplines, currentDiscipline, laddersCurrentDiscipline, visibleDisciplines, visibleLaddersDisciplines, setCurrentDiscipline, setLaddersCurrentDiscipline]);
+
+  // Filter ladder tracks based on permissions
+  const visibleTrackFiles = laddersConfig?.files?.filter(f => {
+    const lower = f.name.toLowerCase();
+    return permissions.visibleTracks.some(t => lower.includes(t.toLowerCase()));
+  }) ?? [];
+
+  // Auto-select the only visible track
+  useEffect(() => {
+    if (visibleTrackFiles.length === 1 && laddersSelectedFile !== visibleTrackFiles[0].file) {
+      setLaddersSelectedFile(visibleTrackFiles[0].file);
+    }
+  }, [visibleTrackFiles, laddersSelectedFile, setLaddersSelectedFile]);
+
   // In proficiency mode, use mapped roles; otherwise use legacy availableRoles
   const laddersRoleOptions = hasProficiencyData ? mappedRoles : availableRoles;
 
@@ -99,7 +145,7 @@ export function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <div className="logo">
+      <div className="logo" onClick={handleBack} style={{ cursor: 'pointer' }}>
         <span>Deel OS</span>
       </div>
 
@@ -109,31 +155,58 @@ export function Sidebar() {
         {/* Main Menu - shown when not in a view */}
         {!isInView && (
           <>
-            <div className="nav-section-header">
-              <div className="nav-section-title">Hiring</div>
-              <div className="nav-divider" />
-            </div>
-            <div className="nav-menu">
-              <div className="nav-item" onClick={() => handleNavClick('definitions')}>
-                <span className="nav-item-text">Competencies</span>
-                <span className="nav-chevron">›</span>
-              </div>
-              <div className="nav-item" onClick={() => handleNavClick('rubric')}>
-                <span className="nav-item-text">Rubrics</span>
-                <span className="nav-chevron">›</span>
-              </div>
-            </div>
+            {(permissions.visibleViews.includes('competencies') || permissions.visibleViews.includes('rubrics')) && (
+              <>
+                <div className="nav-section-header">
+                  <div className="nav-section-title">Hiring</div>
+                  <div className="nav-divider" />
+                </div>
+                <div className="nav-menu">
+                  {permissions.visibleViews.includes('competencies') && (
+                    <div className="nav-item" onClick={() => handleNavClick('definitions')}>
+                      <span className="nav-item-text">Competencies</span>
+                      <span className="nav-chevron">›</span>
+                    </div>
+                  )}
+                  {permissions.visibleViews.includes('rubrics') && (
+                    <div className="nav-item" onClick={() => handleNavClick('rubric')}>
+                      <span className="nav-item-text">Rubrics</span>
+                      <span className="nav-chevron">›</span>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
 
-            <div className="nav-section-header" style={{ marginTop: '24px' }}>
-              <div className="nav-section-title">Ladders</div>
-              <div className="nav-divider" />
-            </div>
-            <div className="nav-menu">
-              <div className="nav-item" onClick={() => handleNavClick('ladders')}>
-                <span className="nav-item-text">Ladders</span>
-                <span className="nav-chevron">›</span>
-              </div>
-            </div>
+            {permissions.visibleViews.includes('ladders') && (
+              <>
+                <div className="nav-section-header" style={{ marginTop: '24px' }}>
+                  <div className="nav-section-title">Ladders</div>
+                  <div className="nav-divider" />
+                </div>
+                <div className="nav-menu">
+                  <div className="nav-item" onClick={() => handleNavClick('ladders')}>
+                    <span className="nav-item-text">Ladders</span>
+                    <span className="nav-chevron">›</span>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {permissions.role === 'admin' && (
+              <>
+                <div className="nav-section-header" style={{ marginTop: '24px' }}>
+                  <div className="nav-section-title">Settings</div>
+                  <div className="nav-divider" />
+                </div>
+                <div className="nav-menu">
+                  <div className="nav-item" onClick={() => handleNavClick('admin')}>
+                    <span className="nav-item-text">Permissions</span>
+                    <span className="nav-chevron">›</span>
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )}
 
@@ -148,8 +221,8 @@ export function Sidebar() {
         )}
       </nav>
 
-      {/* Discipline selector - for non-ladders views */}
-      {isInView && !isLaddersView && (
+      {/* Discipline selector - for non-ladders views (hidden if user has access to only one) */}
+      {isInView && !isLaddersView && visibleDisciplines.length > 1 && (
         <div className="section">
           <div className="section-title">Discipline</div>
           <div className="filter-group">
@@ -165,11 +238,13 @@ export function Sidebar() {
                     }
                   }}
                 >
-                  {disciplines.map(d => (
+                  {visibleDisciplines.map(d => (
                     <option key={d} value={d}>{d}</option>
                   ))}
+                  {!allowedDisciplines && <>
                   <option disabled>────────────</option>
                   <option value="__add_new__" className="add-option">Add new discipline</option>
+                  </>}
                 </select>
             </div>
           </div>
@@ -179,38 +254,42 @@ export function Sidebar() {
       {/* Ladders-specific controls */}
       {isLaddersView && (
         <>
-          <div className="section">
-            <div className="section-title">Discipline</div>
-            <div className="filter-group">
-              <div className="select-wrapper">
-                <select 
-                  value={laddersCurrentDiscipline} 
-                  onChange={(e) => setLaddersCurrentDiscipline(e.target.value)}
-                >
-                  {laddersDisciplines.map(d => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
+          {visibleLaddersDisciplines.length > 1 && (
+            <div className="section">
+              <div className="section-title">Discipline</div>
+              <div className="filter-group">
+                <div className="select-wrapper">
+                  <select 
+                    value={laddersCurrentDiscipline} 
+                    onChange={(e) => setLaddersCurrentDiscipline(e.target.value)}
+                  >
+                    {visibleLaddersDisciplines.map(d => (
+                      <option key={d} value={d}>{d}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
-          <div className="section">
-            <div className="section-title">Ladder Track</div>
-            <div className="filter-group">
-              <div className="select-wrapper">
-                <select 
-                  value={laddersSelectedFile} 
-                  onChange={(e) => setLaddersSelectedFile(e.target.value)}
-                >
-                  <option value="">Select a track...</option>
-                  {laddersConfig?.files?.map(f => (
-                    <option key={f.file} value={f.file}>{f.name}</option>
-                  ))}
-                </select>
+          {visibleTrackFiles.length > 1 && (
+            <div className="section">
+              <div className="section-title">Ladder Track</div>
+              <div className="filter-group">
+                <div className="select-wrapper">
+                  <select 
+                    value={laddersSelectedFile} 
+                    onChange={(e) => setLaddersSelectedFile(e.target.value)}
+                  >
+                    <option value="">Select a track...</option>
+                    {visibleTrackFiles.map(f => (
+                      <option key={f.file} value={f.file}>{f.name}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="section">
             <div className="filter-group">
@@ -372,6 +451,36 @@ export function Sidebar() {
             </svg>
             <span>Version History</span>
           </button>
+        </div>
+      )}
+
+      {/* Admin: View as another user */}
+      {realPermissions.role === 'admin' && (
+        <div className="section admin-viewas-section">
+          <div className="section-title">View as</div>
+          <div className="filter-group">
+            <div className="select-wrapper">
+              <select
+                value={impersonatingEmail ?? ''}
+                onChange={async (e) => {
+                  const val = e.target.value;
+                  if (!val) { stopImpersonating(); return; }
+                  await impersonate(val);
+                }}
+                onFocus={() => { if (allUsers.length === 0) loadAllUsers(); }}
+              >
+                <option value="">Myself (admin)</option>
+                {allUsers
+                  .filter(u => u.email !== realPermissions.email)
+                  .map(u => (
+                    <option key={u.email} value={u.email}>
+                      {u.email.split('@')[0]} ({u.role})
+                    </option>
+                  ))
+                }
+              </select>
+            </div>
+          </div>
         </div>
       )}
 

@@ -13,21 +13,21 @@ export interface Database {
         Row: {
           id: string
           email: string
-          role: 'viewer' | 'editor' | 'admin'
+          role: 'viewer' | 'super_viewer' | 'editor' | 'admin'
           created_at: string
           updated_at: string
         }
         Insert: {
           id: string
           email: string
-          role?: 'viewer' | 'editor' | 'admin'
+          role?: 'viewer' | 'super_viewer' | 'editor' | 'admin'
           created_at?: string
           updated_at?: string
         }
         Update: {
           id?: string
           email?: string
-          role?: 'viewer' | 'editor' | 'admin'
+          role?: 'viewer' | 'super_viewer' | 'editor' | 'admin'
           created_at?: string
           updated_at?: string
         }
@@ -182,6 +182,44 @@ export interface Database {
           level?: string
           facet?: string
           description?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      user_permissions: {
+        Row: {
+          id: string
+          email: string
+          role: 'viewer' | 'super_viewer' | 'editor' | 'admin'
+          can_edit: boolean
+          visible_views: string[]
+          visible_tracks: string[]
+          allowed_disciplines: string[] | null
+          designer_level: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          email: string
+          role?: 'viewer' | 'super_viewer' | 'editor' | 'admin'
+          can_edit?: boolean
+          visible_views?: string[]
+          visible_tracks?: string[]
+          allowed_disciplines?: string[] | null
+          designer_level?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          email?: string
+          role?: 'viewer' | 'super_viewer' | 'editor' | 'admin'
+          can_edit?: boolean
+          visible_views?: string[]
+          visible_tracks?: string[]
+          allowed_disciplines?: string[] | null
+          designer_level?: string | null
           created_at?: string
           updated_at?: string
         }

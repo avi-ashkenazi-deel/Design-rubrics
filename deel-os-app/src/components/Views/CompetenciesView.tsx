@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 import { EditCompetencyModal } from '../shared/EditCompetencyModal';
 import { subCompetencyDescriptions } from '../../data/subCompetencyDescriptions';
 
@@ -12,6 +13,8 @@ interface EditingCompetency {
 }
 
 export function CompetenciesView() {
+  const { permissions } = useSupabaseAuth();
+  const canEdit = permissions.canEdit;
   const [editingCompetency, setEditingCompetency] = useState<EditingCompetency | null>(null);
   const [expandedSub, setExpandedSub] = useState<string | null>(null);
 
@@ -128,9 +131,8 @@ export function CompetenciesView() {
     setEditingCompetency(null);
   };
 
-  // Add button component
   const AddButton = () => {
-    if (!useApi) return null;
+    if (!useApi || !canEdit) return null;
     return (
       <div className="competencies-actions">
         <button className="add-competency-btn" onClick={openAddModal}>
@@ -176,7 +178,7 @@ export function CompetenciesView() {
         <div className="competency-definition-header">
           <div className="competency-name-row">
             <div className="competency-name">{name}</div>
-            {useApi && (
+            {useApi && canEdit && (
               <button 
                 className="edit-competency-btn"
                 onClick={(e) => handleEditCompetency(e, name, data)}

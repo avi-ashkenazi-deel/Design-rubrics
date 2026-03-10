@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useLadders } from '../../context/LaddersContext';
+import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 import { getLaddersTextDiff, formatCellText } from '../../utils/textDiff';
 import { EditCellModal } from '../shared/EditCellModal';
 import { ExamplesModal } from '../shared/ExamplesModal';
@@ -72,6 +73,8 @@ const LEVEL_TEXT_COLORS: Record<number, string> = {
 
 export function LaddersView() {
   const glow = useCardGlow();
+  const { permissions } = useSupabaseAuth();
+  const canEdit = permissions.canEdit;
   const { 
     laddersData, 
     selectedRoles, 
@@ -270,22 +273,26 @@ export function LaddersView() {
                       style={{ '--level-color': LEVEL_TEXT_COLORS[roleContents[idx].levelNum] + '40' } as React.CSSProperties}
                     >
                       <div dangerouslySetInnerHTML={{ __html: formatCellText(value) }} />
-                      <div
-                        className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
-                        onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                      {canEdit && (
+                        <div
+                          className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
+                          onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                        >
+                          Examples →
+                        </div>
+                      )}
+                    </div>
+                    {canEdit && (
+                      <div 
+                        className="ladders-cell-edit-icon"
+                        onClick={() => handleProficiencyCellClick(item, selectedRoles[idx])}
+                        title="Click to edit"
                       >
-                        Examples →
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        </svg>
                       </div>
-                    </div>
-                    <div 
-                      className="ladders-cell-edit-icon"
-                      onClick={() => handleProficiencyCellClick(item, selectedRoles[idx])}
-                      title="Click to edit"
-                    >
-                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                      </svg>
-                    </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -384,7 +391,7 @@ export function LaddersView() {
                         {summary && (
                           <div className="ladders-role-summary-text">{summary}</div>
                         )}
-                        <div 
+                        {canEdit && <div 
                           className="ladders-cell-edit-icon"
                           onClick={() => setEditingRoleSummary({ role, value: summary })}
                           title="Click to edit"
@@ -392,7 +399,7 @@ export function LaddersView() {
                           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                           </svg>
-                        </div>
+                        </div>}
                       </div>
                     </th>
                   );
@@ -536,22 +543,26 @@ export function LaddersView() {
                     {...glow}
                   >
                     <div dangerouslySetInnerHTML={{ __html: formatCellText(value) }} />
-                    <div
-                      className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
-                      onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                    {canEdit && (
+                      <div
+                        className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
+                        onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                      >
+                        Examples →
+                      </div>
+                    )}
+                  </div>
+                  {canEdit && (
+                    <div 
+                      className="ladders-cell-edit-icon"
+                      onClick={() => handleCellClick(item, selectedRoles[idx])}
+                      title="Click to edit"
                     >
-                      Examples →
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                      </svg>
                     </div>
-                  </div>
-                  <div 
-                    className="ladders-cell-edit-icon"
-                    onClick={() => handleCellClick(item, selectedRoles[idx])}
-                    title="Click to edit"
-                  >
-                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                    </svg>
-                  </div>
+                  )}
                 </div>
               ))}
             </div>

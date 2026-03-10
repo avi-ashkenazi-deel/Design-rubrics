@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 
 export function LocalhostNamePrompt() {
-  const [name, setName] = useState('');
-  const { setUserName } = useSupabaseAuth();
+  const [email, setEmail] = useState('');
+  const { setUserEmail, error } = useSupabaseAuth();
+
+  const isValidEmail = email.trim().toLowerCase().endsWith('@deel.com');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim()) {
-      setUserName(name.trim());
+    if (isValidEmail) {
+      setUserEmail(email.trim().toLowerCase());
     }
   };
 
@@ -37,7 +39,7 @@ export function LocalhostNamePrompt() {
           fontWeight: 600,
           color: '#333'
         }}>
-          Design Rubrics
+          Deel OS
         </h1>
         <p style={{ 
           marginBottom: '8px',
@@ -52,15 +54,15 @@ export function LocalhostNamePrompt() {
           color: '#666',
           fontSize: '14px'
         }}>
-          Enter your name for change tracking
+          Enter your Deel email for access and change tracking
         </p>
         
         <form onSubmit={handleSubmit}>
           <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@deel.com"
             style={{
               width: '100%',
               padding: '12px 16px',
@@ -74,23 +76,36 @@ export function LocalhostNamePrompt() {
             autoFocus
           />
           
+          {error && (
+            <p style={{
+              color: '#dc2626',
+              marginBottom: '16px',
+              fontSize: '13px',
+              padding: '10px',
+              background: 'rgba(220, 38, 38, 0.08)',
+              borderRadius: '8px',
+            }}>
+              {error}
+            </p>
+          )}
+
           <button
             type="submit"
-            disabled={!name.trim()}
+            disabled={!isValidEmail}
             style={{
               width: '100%',
               padding: '12px 24px',
               fontSize: '16px',
               fontWeight: 500,
               color: 'white',
-              backgroundColor: name.trim() ? '#4f46e5' : '#a5a5a5',
+              backgroundColor: isValidEmail ? '#4f46e5' : '#a5a5a5',
               border: 'none',
               borderRadius: '8px',
-              cursor: name.trim() ? 'pointer' : 'not-allowed',
+              cursor: isValidEmail ? 'pointer' : 'not-allowed',
               transition: 'background-color 0.2s'
             }}
-            onMouseOver={(e) => name.trim() && (e.currentTarget.style.backgroundColor = '#4338ca')}
-            onMouseOut={(e) => name.trim() && (e.currentTarget.style.backgroundColor = '#4f46e5')}
+            onMouseOver={(e) => isValidEmail && (e.currentTarget.style.backgroundColor = '#4338ca')}
+            onMouseOut={(e) => isValidEmail && (e.currentTarget.style.backgroundColor = '#4f46e5')}
           >
             Continue
           </button>
