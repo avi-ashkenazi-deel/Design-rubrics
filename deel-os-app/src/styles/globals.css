@@ -2959,6 +2959,18 @@ select option:disabled {
   max-width: 640px;
 }
 
+.examples-framing {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  padding: 12px 16px;
+  background: rgba(139, 233, 253, 0.04);
+  border: 1px solid rgba(139, 233, 253, 0.08);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
 .examples-modal-body {
   padding: 16px 24px 20px;
   overflow-y: auto;

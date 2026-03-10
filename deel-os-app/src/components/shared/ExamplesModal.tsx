@@ -72,26 +72,28 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
 
   if (!isOpen) return null;
 
-  const updateExample = (color: keyof TrafficLightExamples, index: number, value: string) => {
+  type ColorKey = 'red' | 'yellow' | 'green';
+
+  const updateExample = (color: ColorKey, index: number, value: string) => {
     setExamples(prev => ({
       ...prev,
-      [color]: prev[color].map((ex, i) => i === index ? value : ex),
+      [color]: prev[color].map((ex: string, i: number) => i === index ? value : ex),
     }));
   };
 
-  const addExample = (color: keyof TrafficLightExamples) => {
-    if (examples[color].length >= 3) return;
+  const addExample = (color: ColorKey) => {
+    if (examples[color].length >= 6) return;
     setExamples(prev => ({
       ...prev,
       [color]: [...prev[color], ''],
     }));
   };
 
-  const removeExample = (color: keyof TrafficLightExamples, index: number) => {
+  const removeExample = (color: ColorKey, index: number) => {
     if (examples[color].length <= 1) return;
     setExamples(prev => ({
       ...prev,
-      [color]: prev[color].filter((_, i) => i !== index),
+      [color]: prev[color].filter((_: string, i: number) => i !== index),
     }));
   };
 
@@ -100,6 +102,7 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
       red: examples.red.filter(e => e.trim() !== ''),
       yellow: examples.yellow.filter(e => e.trim() !== ''),
       green: examples.green.filter(e => e.trim() !== ''),
+      framing: examples.framing,
     };
     if (cleaned.red.length === 0) cleaned.red = [''];
     if (cleaned.yellow.length === 0) cleaned.yellow = [''];
@@ -122,6 +125,11 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
         </div>
 
         <div className="examples-modal-body">
+          {examples.framing && (
+            <div className="examples-framing">
+              {examples.framing}
+            </div>
+          )}
           {TRAFFIC_LIGHTS.map(({ key, emoji, label, color, bg, border, focusBorder }) => (
             <div
               key={key}
@@ -154,7 +162,7 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
                     )}
                   </div>
                 ))}
-                {examples[key].length < 3 && (
+                {examples[key].length < 6 && (
                   <button className="examples-add-btn" onClick={() => addExample(key)} style={{ color }}>
                     + Add example
                   </button>

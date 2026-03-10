@@ -2,9 +2,11 @@ export interface TrafficLightExamples {
   red: string[];
   yellow: string[];
   green: string[];
+  framing?: string;
 }
 
 // Key format: "focusArea::role"
+// Role names match the IC-Mapping.csv: Product Designer, Senior Designer, Staff Designer, Senior Staff Designer, Principal Designer
 export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
 
   // ═══════════════════════════════════════════
@@ -12,152 +14,67 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
   // ═══════════════════════════════════════════
 
   'Problem Solving::Product Designer': {
-    red: [
-      'Waits for others to define the problem before starting any work.',
-      'Jumps to the first solution without exploring alternatives or gathering context.',
-    ],
-    yellow: [
-      'Identifies obvious problems but misses underlying root causes.',
-      'Proposes solutions that work but doesn\'t consider edge cases or constraints.',
-    ],
+    framing: 'As a Product Designer it is expected that you\'re building your problem-solving foundations. You\'re learning to connect your design work to user needs and business goals, and beginning to question default solutions rather than accepting the first obvious answer.',
+    red: [],
+    yellow: [],
     green: [
-      'Breaks down ambiguous problems into clear, actionable steps with minimal guidance.',
-      'Considers multiple approaches and validates assumptions with data before committing.',
+      'Align your work with broader strategy and articulate how it supports user needs and business goals',
+      'Connect your day-to-day design decisions to the strategic intent behind the work',
+      'Explore multiple approaches before settling on a direction rather than defaulting to the obvious solution',
+      'Question assumptions in your brief and bring fresh perspectives to the problem',
+      'Articulate clearly what problem you are solving and why it matters to the user',
     ],
   },
 
   'Problem Solving::Senior Designer': {
-    red: [
-      'Relies on familiar patterns without adapting to new problem contexts.',
-      'Escalates problems that are well within their scope to solve independently.',
-    ],
-    yellow: [
-      'Solves problems effectively but rarely challenges the problem framing itself.',
-      'Considers constraints but doesn\'t proactively seek new information to reframe.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you operate independently on problem framing and help your team stay focused on the right challenges. You use insight to guide prioritisation and can reframe problems to open up better solutions.',
+    red: [],
+    yellow: [],
     green: [
-      'Reframes problems to uncover better opportunities and higher-impact outcomes.',
-      'Brings structure to ambiguity and helps the team navigate complex tradeoffs.',
+      'Clarify the problem space and help the team focus on the most meaningful opportunities',
+      'Translate user and business insights into clear problem framing',
+      'Reframe challenges to introduce fresh perspectives and challenge conventional thinking',
+      'Use insights to influence which problems the team prioritises',
+      'Demonstrate multiple approaches and articulate the trade-offs between them',
     ],
   },
 
   'Problem Solving::Staff Designer': {
-    red: [
-      'Focuses on tactical fixes without connecting solutions to broader product strategy.',
-      'Doesn\'t proactively identify systemic issues that span multiple product areas.',
-    ],
-    yellow: [
-      'Identifies cross-team problems but defers ownership to others.',
-      'Proposes solutions that work locally but miss system-wide implications.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you influence the strategy of your vertical through strong problem definition. You use design vision, narratives, and experience principles to shape direction and uncover opportunity spaces that others haven\'t yet seen.',
+    red: [],
+    yellow: [],
     green: [
-      'Identifies and addresses systemic problems that affect multiple teams and products.',
-      'Creates reusable frameworks that help others solve similar problems independently.',
+      'Define the design direction and strategic approach for your vertical',
+      'Shape strategic conversations using insights, design vision, and experience principles',
+      'Unlock new opportunities by reframing complex problem spaces',
+      'Imagine alternative models, workflows, or experiences that challenge the status quo',
+      'Influence cross-functional prioritisation by bringing a clear, evidence-backed point of view on the problem',
     ],
   },
 
   'Problem Solving::Senior Staff Designer': {
-    red: [
-      'Gets pulled into tactical problem-solving instead of driving strategic clarity.',
-      'Misses opportunities to connect problems across verticals into unified solutions.',
-    ],
-    yellow: [
-      'Sees cross-vertical problems but struggles to align diverse stakeholders on solutions.',
-      'Provides strong analysis but doesn\'t consistently drive decisions forward.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you co-create strategy across verticals. You shape long-term experience vision and organisational priorities through customer insight and a compelling design-led narrative. You identify high-leverage problems others overlook.',
+    red: [],
+    yellow: [],
     green: [
-      'Connects problems across verticals and drives alignment on strategic solutions at scale.',
-      'Builds shared mental models that help the org understand and tackle complex challenges.',
+      'Co-create design direction and long-term experience vision across multiple verticals',
+      'Identify high-leverage problems that others may overlook',
+      'Set new paradigms for problem framing and creative thinking across the organisation',
+      'Use storytelling and compelling narrative to influence organisational priorities',
+      'Ensure design meaningfully influences long-term business strategy',
     ],
   },
 
   'Problem Solving::Principal Designer': {
-    red: [
-      'Focuses on individual problems rather than shaping the company\'s problem-solving culture.',
-      'Doesn\'t leverage seniority to influence how the organization approaches challenges.',
-    ],
-    yellow: [
-      'Identifies company-level problems but struggles to mobilize resources and sponsorship.',
-      'Drives good solutions locally but doesn\'t scale them across the organization.',
-    ],
+    framing: 'As a Principal Designer it is expected that you define the company-wide experience vision and set the standard for how the organisation identifies and frames problems. You see what others cannot yet see and establish new ways of thinking that elevate the entire design function.',
+    red: [],
+    yellow: [],
     green: [
-      'Shapes how the company approaches design problems at a cultural and methodological level.',
-      'Identifies and resolves company-wide design challenges with lasting, scalable impact.',
-    ],
-  },
-
-  'Problem Solving::Lead Product Designer': {
-    red: [
-      'Solves problems for their team rather than coaching them to solve problems independently.',
-      'Focuses only on design problems and ignores broader cross-functional challenges.',
-    ],
-    yellow: [
-      'Helps the team solve problems but doesn\'t systematically improve their problem-solving skills.',
-      'Addresses problems as they arise but doesn\'t anticipate issues before they surface.',
-    ],
-    green: [
-      'Creates an environment where the team tackles ambiguous problems with confidence.',
-      'Anticipates problems early and coaches the team to develop strong analytical habits.',
-    ],
-  },
-
-  'Problem Solving::Group Design Manager': {
-    red: [
-      'Lets problems escalate across teams before intervening or providing direction.',
-      'Doesn\'t connect problem-solving approaches across the teams they manage.',
-    ],
-    yellow: [
-      'Resolves cross-team problems when raised but doesn\'t proactively detect them.',
-      'Supports teams in problem-solving but doesn\'t set systematic standards.',
-    ],
-    green: [
-      'Establishes problem-solving rituals and standards across multiple teams.',
-      'Proactively identifies cross-team friction points and resolves them before they escalate.',
-    ],
-  },
-
-  'Problem Solving::Director': {
-    red: [
-      'Gets too deep into individual problems instead of setting strategic direction.',
-      'Doesn\'t create systems for teams to escalate and resolve problems efficiently.',
-    ],
-    yellow: [
-      'Addresses cross-functional problems well but doesn\'t institutionalize solutions.',
-      'Provides guidance on complex problems but only when asked.',
-    ],
-    green: [
-      'Creates decision-making frameworks that empower leads to solve problems autonomously.',
-      'Drives cross-functional alignment on complex, multi-vertical challenges proactively.',
-    ],
-  },
-
-  'Problem Solving::Senior Director': {
-    red: [
-      'Focuses on tactical problem resolution instead of building org-wide problem-solving capability.',
-      'Doesn\'t connect patterns across their areas of responsibility.',
-    ],
-    yellow: [
-      'Sees org-wide patterns but takes too long to mobilize solutions.',
-      'Solves strategic problems well but doesn\'t develop leaders to do the same.',
-    ],
-    green: [
-      'Builds organizational capability so complex problems are resolved at the right level.',
-      'Connects patterns across multiple areas and drives preemptive strategic action.',
-    ],
-  },
-
-  'Problem Solving::VP Design': {
-    red: [
-      'Doesn\'t set a clear problem-solving philosophy for the design organization.',
-      'Gets involved in operational problems that should be handled by directors.',
-    ],
-    yellow: [
-      'Sets good direction for problem-solving but doesn\'t ensure consistent execution.',
-      'Identifies industry-level challenges but doesn\'t translate them into actionable strategy.',
-    ],
-    green: [
-      'Establishes a problem-solving culture that attracts top talent and drives innovation.',
-      'Anticipates market and organizational challenges and positions the team to address them proactively.',
+      'Define and champion the company-wide experience vision',
+      'Identify paradigm-shifting problems and reframe them in ways that unlock strategic value',
+      'Establish new standards for problem framing that the whole organisation adopts',
+      'Shape long-term business strategy through design-led thinking and insight',
+      'Mentor Senior Staff and Staff designers on strategic problem definition and vision-setting',
     ],
   },
 
@@ -166,152 +83,67 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
   // ═══════════════════════════════════════════
 
   'Adaptability::Product Designer': {
-    red: [
-      'Struggles when requirements change and needs significant support to re-orient.',
-      'Resists feedback and sticks rigidly to initial design direction.',
-    ],
-    yellow: [
-      'Adjusts to changes when clearly communicated but doesn\'t anticipate them.',
-      'Accepts feedback but takes time to incorporate it into their workflow.',
-    ],
+    framing: 'As a Product Designer it is expected that you\'re building the habits of an adaptable designer. You align with Deel values, contribute to team culture, and show curiosity by experimenting with new ideas, tools, and approaches — including AI — to improve your work.',
+    red: [],
+    yellow: [],
     green: [
-      'Pivots quickly when priorities shift and maintains quality under changing conditions.',
-      'Actively seeks feedback and iterates rapidly based on new information.',
+      'Align with Deel values and apply them consistently in your day-to-day work',
+      'Participate actively in team rituals, critiques, and shared practices',
+      'Show curiosity by experimenting with new ideas, inspiration, and tools including AI',
+      'Respond constructively when priorities shift and seek guidance on how to adjust',
+      'Reflect openly on what\'s working and what isn\'t in your approach',
     ],
   },
 
   'Adaptability::Senior Designer': {
-    red: [
-      'Becomes frustrated or disengaged when project scope shifts significantly.',
-      'Applies the same process regardless of context or project needs.',
-    ],
-    yellow: [
-      'Adapts to change but doesn\'t help others on the team adjust.',
-      'Modifies approach when asked but doesn\'t proactively anticipate needed changes.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you reinforce Deel values through your decisions and help shape and evolve team culture. You respond to shifting priorities with minimal supervision and apply new tools or approaches where they genuinely improve how the team works.',
+    red: [],
+    yellow: [],
     green: [
-      'Thrives in ambiguity and helps the team stay productive during pivots.',
-      'Adjusts design processes and methods to fit the unique needs of each project.',
+      'Reinforce Deel values consistently through your decisions and how you collaborate',
+      'Actively help shape, maintain, and evolve team rituals, norms, and ways of working',
+      'Apply new tools or technologies where they meaningfully improve team output',
+      'Respond effectively to shifting priorities with minimal supervision',
+      'Share what you\'ve learned from experiments with the wider team',
     ],
   },
 
   'Adaptability::Staff Designer': {
-    red: [
-      'Pushes for process consistency even when the situation calls for flexibility.',
-      'Doesn\'t adjust their leadership approach across different team dynamics.',
-    ],
-    yellow: [
-      'Adapts their own work well but doesn\'t scale adaptability practices to teams.',
-      'Recognizes when change is needed but is slow to drive organizational shifts.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you shape design org culture within your vertical. You identify cultural gaps, invest in coaching others, and turn successful experiments into repeatable approaches. You thrive in ambiguous or rapidly changing contexts.',
+    red: [],
+    yellow: [],
     green: [
-      'Models adaptive behavior that influences how multiple teams respond to change.',
-      'Designs flexible systems and processes that can evolve with shifting priorities.',
+      'Drive initiatives that improve how designers in your vertical work and grow',
+      'Identify cultural gaps across teams and lead efforts to address them',
+      'Invest consistent time in coaching and supporting designers',
+      'Turn successful experiments into repeatable approaches others can build on',
+      'Thrive in ambiguous or rapidly evolving contexts and help others do the same',
     ],
   },
 
   'Adaptability::Senior Staff Designer': {
-    red: [
-      'Clings to established strategies even when market or org conditions have changed.',
-      'Doesn\'t adjust cross-vertical plans when new information emerges.',
-    ],
-    yellow: [
-      'Adjusts strategy when prompted but doesn\'t lead proactive pivots.',
-      'Adapts well in their domain but doesn\'t help other verticals adapt.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you shape design org culture across your vertical and influence how teams adapt and evolve their practices. You drive ongoing cultural initiatives and ensure the lessons from experimentation are embedded into how teams operate.',
+    red: [],
+    yellow: [],
     green: [
-      'Proactively shifts cross-vertical strategy when conditions change, bringing others along.',
-      'Builds organizational resilience by preparing teams for multiple possible futures.',
+      'Shape design org culture across your vertical through deliberate, sustained effort',
+      'Lead cultural initiatives that address gaps and improve how designers work',
+      'Influence how teams adapt and evolve their practices through consistent example',
+      'Ensure successful experiments become embedded practice rather than one-off wins',
+      'Coach designers to thrive in ambiguity rather than wait for clarity',
     ],
   },
 
   'Adaptability::Principal Designer': {
-    red: [
-      'Holds onto a vision too rigidly when the company or market has moved on.',
-      'Doesn\'t model adaptability for the organization during major shifts.',
-    ],
-    yellow: [
-      'Adapts personal approach but doesn\'t systematically help the org become more adaptive.',
-      'Recognizes major shifts but response is slower than the pace of change.',
-    ],
+    framing: 'As a Principal Designer it is expected that you define the long-term design org culture alongside design leaders. You embed adaptability, experimentation, and learning into how the organisation operates at every level — from hiring through to leadership expectations.',
+    red: [],
+    yellow: [],
     green: [
-      'Leads the organization through major transitions with clarity and composure.',
-      'Creates a culture where adaptability is a core competency, not just a reaction.',
-    ],
-  },
-
-  'Adaptability::Lead Product Designer': {
-    red: [
-      'Shields the team from change rather than helping them build resilience.',
-      'Doesn\'t adjust team processes when project conditions evolve.',
-    ],
-    yellow: [
-      'Communicates changes to the team but doesn\'t coach them through transitions.',
-      'Adjusts plans when needed but creates unnecessary churn for the team.',
-    ],
-    green: [
-      'Helps the team embrace change by providing context and adjusting workstreams smoothly.',
-      'Builds a team culture where pivots are handled with minimal disruption and high morale.',
-    ],
-  },
-
-  'Adaptability::Group Design Manager': {
-    red: [
-      'Applies the same management approach to all teams regardless of their maturity.',
-      'Resists organizational changes that affect their teams\' established workflows.',
-    ],
-    yellow: [
-      'Adapts to change personally but doesn\'t ensure leads and teams follow suit.',
-      'Adjusts priorities when directed but doesn\'t proactively reallocate resources.',
-    ],
-    green: [
-      'Quickly reallocates resources and adjusts team structures when priorities shift.',
-      'Coaches leads to be adaptive and builds change-readiness across all their teams.',
-    ],
-  },
-
-  'Adaptability::Director': {
-    red: [
-      'Commits to plans too rigidly and doesn\'t course-correct based on results.',
-      'Creates processes that are too rigid for the pace of organizational change.',
-    ],
-    yellow: [
-      'Adjusts direction when data clearly shows the need, but not before.',
-      'Adapts strategy well but doesn\'t communicate the "why" effectively to teams.',
-    ],
-    green: [
-      'Builds adaptive planning processes that allow for rapid pivots without losing direction.',
-      'Leads cross-functional partners through change with clear rationale and minimal friction.',
-    ],
-  },
-
-  'Adaptability::Senior Director': {
-    red: [
-      'Doesn\'t anticipate organizational shifts and is caught flat-footed by changes.',
-      'Struggles to realign multiple teams when company strategy evolves.',
-    ],
-    yellow: [
-      'Manages change well within their org but doesn\'t influence cross-org adaptability.',
-      'Responds to change effectively but doesn\'t build systems for ongoing adaptability.',
-    ],
-    green: [
-      'Anticipates major shifts and pre-positions the organization to respond effectively.',
-      'Creates organizational structures that are inherently adaptable to changing conditions.',
-    ],
-  },
-
-  'Adaptability::VP Design': {
-    red: [
-      'Doesn\'t evolve the design organization\'s strategy as the company scales.',
-      'Is too committed to a specific operating model and resists evolution.',
-    ],
-    yellow: [
-      'Adapts the team\'s strategy but doesn\'t do it quickly enough to stay ahead.',
-      'Recognizes the need for change but implementation is inconsistent.',
-    ],
-    green: [
-      'Continuously evolves the design organization to match the company\'s growth stage.',
-      'Anticipates industry and market shifts and positions design as a strategic advantage.',
+      'Define and evolve the long-term design org culture alongside design leadership',
+      'Embed culture into hiring, progression, recognition, and leadership expectations',
+      'Build a culture where experimentation, learning, and reimagining the possible are core to how design operates',
+      'Evolve culture across domains as the organisation scales and changes',
+      'Model adaptability at the highest level, demonstrating how to lead through uncertainty',
     ],
   },
 
@@ -320,152 +152,67 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
   // ═══════════════════════════════════════════
 
   'Customer Focus::Product Designer': {
-    red: [
-      'Designs based on assumptions without seeking direct user input or data.',
-      'Focuses on visual polish over solving actual user problems.',
-    ],
-    yellow: [
-      'Incorporates user feedback when provided but doesn\'t proactively seek it out.',
-      'Understands user needs for their features but not the broader user journey.',
-    ],
+    framing: 'As a Product Designer it is expected that you\'re developing your customer empathy foundations. You engage regularly with the product, conduct basic research with guidance, and ground your design decisions in real user needs rather than assumptions.',
+    red: [],
+    yellow: [],
     green: [
-      'Proactively conducts user research and brings insights into every design decision.',
-      'Advocates for the user in cross-functional discussions with supporting evidence.',
+      'Build customer empathy by regularly dogfooding the product and engaging with user feedback',
+      'Conduct basic user research with guidance — usability tests, interviews, competitor reviews',
+      'Identify pain points and edge cases by thinking through user workflows',
+      'Reference customer insights shared by the team to inform your design decisions',
+      'Ground your decisions in user needs rather than assumption or personal preference',
     ],
   },
 
   'Customer Focus::Senior Designer': {
-    red: [
-      'Makes design decisions based on personal preference rather than user evidence.',
-      'Doesn\'t connect individual feature work to broader customer outcomes.',
-    ],
-    yellow: [
-      'Uses existing research effectively but doesn\'t identify gaps in understanding.',
-      'Considers the user but doesn\'t push back on requirements that harm user experience.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you plan and conduct user research independently and act as the voice of the customer within your product team. You dogfood end-to-end, advocate for user needs in prioritisation discussions, and develop a real understanding of your customer segments.',
+    red: [],
+    yellow: [],
     green: [
-      'Identifies unmet user needs that inform product strategy, not just feature design.',
-      'Champions customer-centric thinking across the team and influences prioritization.',
+      'Plan and conduct user research independently including usability testing, interviews, and competitor analysis',
+      'Act as the voice of the customer in prioritisation and trade-off discussions',
+      'Dogfood the product end-to-end to surface quality issues and friction points before they reach customers',
+      'Develop a working understanding of your customer segments and their distinct needs',
+      'Ensure your design decisions are evidence-based, not assumption-based',
     ],
   },
 
   'Customer Focus::Staff Designer': {
-    red: [
-      'Gets disconnected from actual users as they focus on systems and strategy.',
-      'Doesn\'t ensure that design systems and patterns serve real user needs.',
-    ],
-    yellow: [
-      'Maintains user focus in their own work but doesn\'t scale it across teams.',
-      'Understands customer segments but doesn\'t drive cross-product customer journey thinking.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you establish user research and customer insight practices within your vertical. You ensure empathy and evidence are embedded from problem framing through delivery, and you coach others to do the same.',
+    red: [],
+    yellow: [],
     green: [
-      'Drives customer journey thinking across multiple product areas and teams.',
-      'Ensures design systems and standards are grounded in validated user needs.',
+      'Establish user research and customer insight practices within your vertical',
+      'Drive competitor and market analysis that shapes design direction and strategic priorities',
+      'Define dogfooding rituals and feedback loops that surface issues early and raise experience quality',
+      'Coach designers on research methods and ensure the voice of the customer reaches cross-functional decisions',
+      'Ensure empathy and evidence are embedded from problem framing all the way through to delivery',
     ],
   },
 
   'Customer Focus::Senior Staff Designer': {
-    red: [
-      'Loses touch with customer reality while focusing on organizational strategy.',
-      'Doesn\'t connect cross-vertical work back to customer impact.',
-    ],
-    yellow: [
-      'Considers customer impact in strategy but doesn\'t systematically measure it.',
-      'Advocates for customers at a high level but doesn\'t ensure follow-through.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you champion customer insight practices across your vertical, ensure the voice of the customer is represented in all key decisions, and build the feedback loops that keep quality high at scale.',
+    red: [],
+    yellow: [],
     green: [
-      'Connects cross-vertical strategy directly to measurable customer outcomes.',
-      'Builds organizational capabilities to continuously deepen customer understanding.',
+      'Champion customer insight practices across your vertical and adjacent teams',
+      'Ensure the voice of the customer is represented in high-stakes cross-functional decisions',
+      'Build feedback loops and dogfooding rituals that surface issues early across teams',
+      'Coach designers on research methods and customer-centered decision-making',
+      'Use market and competitor analysis to shape design direction at a vertical level',
     ],
   },
 
   'Customer Focus::Principal Designer': {
-    red: [
-      'Sets design vision disconnected from customer reality or market needs.',
-      'Doesn\'t establish customer-centric principles for the broader organization.',
-    ],
-    yellow: [
-      'Incorporates customer thinking into vision but doesn\'t drive accountability for outcomes.',
-      'Understands customer trends but doesn\'t translate them into actionable direction.',
-    ],
+    framing: 'As a Principal Designer it is expected that you define the company-wide approach to customer insight. You set the standard for dogfooding culture, pioneer new research methodologies, and elevate Deel\'s reputation for customer-centricity through evidence-driven advocacy and external thought leadership.',
+    red: [],
+    yellow: [],
     green: [
-      'Sets a customer-centric design vision that influences company product strategy.',
-      'Establishes practices that keep the entire design org deeply connected to customers.',
-    ],
-  },
-
-  'Customer Focus::Lead Product Designer': {
-    red: [
-      'Doesn\'t ensure the team regularly engages with users or uses research.',
-      'Prioritizes delivery speed over customer quality without making conscious tradeoffs.',
-    ],
-    yellow: [
-      'Encourages user research but doesn\'t build it into team workflows.',
-      'Reviews designs for user impact but doesn\'t coach the team to self-assess.',
-    ],
-    green: [
-      'Builds a team culture where every designer regularly engages with users.',
-      'Ensures design decisions are consistently validated with customer evidence.',
-    ],
-  },
-
-  'Customer Focus::Group Design Manager': {
-    red: [
-      'Teams under their management lack consistent customer research practices.',
-      'Doesn\'t connect customer insights across the teams they manage.',
-    ],
-    yellow: [
-      'Some teams have strong customer focus but it\'s not consistent across all.',
-      'Shares customer insights across teams but doesn\'t drive unified customer strategy.',
-    ],
-    green: [
-      'Establishes consistent customer research practices across all teams they manage.',
-      'Drives cross-team customer journey mapping and ensures holistic user experience.',
-    ],
-  },
-
-  'Customer Focus::Director': {
-    red: [
-      'Customer insights don\'t meaningfully influence cross-functional planning.',
-      'Doesn\'t establish metrics or processes to track customer satisfaction.',
-    ],
-    yellow: [
-      'Uses customer data in planning but doesn\'t systematically drive customer outcomes.',
-      'Advocates for customers in leadership forums but impact is inconsistent.',
-    ],
-    green: [
-      'Makes customer impact a core metric in cross-functional planning and resource allocation.',
-      'Drives organizational alignment around customer outcomes with measurable results.',
-    ],
-  },
-
-  'Customer Focus::Senior Director': {
-    red: [
-      'Customer strategy is reactive rather than proactive across their scope.',
-      'Doesn\'t build organizational capabilities for deep customer understanding.',
-    ],
-    yellow: [
-      'Has a customer strategy but execution is inconsistent across verticals.',
-      'Champions customer focus but doesn\'t allocate sufficient resources to research.',
-    ],
-    green: [
-      'Builds and funds a customer research capability that serves the entire organization.',
-      'Drives strategic decisions based on deep, cross-vertical customer insights.',
-    ],
-  },
-
-  'Customer Focus::VP Design': {
-    red: [
-      'The design org lacks a unified customer research strategy or capability.',
-      'Customer focus is treated as a team-level concern, not an organizational priority.',
-    ],
-    yellow: [
-      'Has a customer vision but the design org doesn\'t consistently deliver on it.',
-      'Invests in research but insights don\'t consistently influence product strategy.',
-    ],
-    green: [
-      'Design\'s customer insights are a strategic asset that influences company direction.',
-      'Has built a research-driven design organization that is the voice of the customer.',
+      'Define the company-wide approach to customer insight, research, and voice-of-the-customer practices',
+      'Set the standard for dogfooding culture and quality control at scale',
+      'Pioneer new research methodologies and frameworks that deepen understanding of customer needs',
+      'Advocate for customer-centricity at the executive level and through external thought leadership',
+      'Build systems that connect customer feedback directly to design and product priorities across all verticals',
     ],
   },
 
@@ -474,626 +221,274 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
   // ═══════════════════════════════════════════
 
   'Ownership::Product Designer': {
-    red: [
-      'Waits to be assigned tasks and doesn\'t take initiative on their deliverables.',
-      'Drops the ball on follow-through after design handoff.',
-    ],
-    yellow: [
-      'Owns their tasks well but doesn\'t look beyond their immediate responsibilities.',
-      'Delivers work on time but doesn\'t proactively flag risks or blockers.',
-    ],
+    framing: 'As a Product Designer it is expected that you deliver your assigned work reliably, take responsibility for your own output, and proactively flag blockers or risks rather than waiting to be asked.',
+    red: [],
+    yellow: [],
     green: [
-      'Takes full ownership of their work from problem definition through implementation.',
-      'Proactively identifies and communicates risks before they become problems.',
+      'Deliver assigned tasks reliably, meeting expectations for quality and timelines',
+      'Take responsibility for your own work and follow through on feedback',
+      'Proactively flag blockers, risks, or issues as they arise',
+      'Seek guidance when needed rather than staying stuck',
+      'Demonstrate personal accountability within your defined scope',
     ],
   },
 
   'Ownership::Senior Designer': {
-    red: [
-      'Takes ownership of design but not of the overall outcome for their feature.',
-      'Blames other teams when cross-functional collaboration breaks down.',
-    ],
-    yellow: [
-      'Owns their projects end-to-end but doesn\'t extend ownership to adjacent areas.',
-      'Takes responsibility for outcomes but doesn\'t proactively improve team processes.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you own projects end-to-end, from problem understanding through delivery and iteration. You manage dependencies, take responsibility for outcomes post-launch, and proactively identify challenges and opportunities within your scope.',
+    red: [],
+    yellow: [],
     green: [
-      'Takes end-to-end ownership including cross-functional alignment and post-launch follow-up.',
-      'Proactively improves team processes and fills gaps without being asked.',
+      'Own projects end-to-end from problem understanding through delivery and iteration',
+      'Identify challenges and opportunities within your scope and raise them proactively',
+      'Manage dependencies and coordinate with partners to keep work moving',
+      'Take responsibility for outcomes post-launch and learn from the impact of your work',
+      'Demonstrate accountability for quality as well as delivery',
     ],
   },
 
   'Ownership::Staff Designer': {
-    red: [
-      'Limits ownership to their specific projects rather than the broader design direction.',
-      'Doesn\'t step up to own ambiguous cross-team challenges.',
-    ],
-    yellow: [
-      'Owns their vertical\'s design quality but doesn\'t extend to org-level initiatives.',
-      'Takes ownership when asked but doesn\'t proactively identify what needs owning.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you lead problem spaces within your vertical, set direction, and take accountability for progress and outcomes across teams. You anticipate challenges before they materialise and make prioritisation decisions that unblock others.',
+    red: [],
+    yellow: [],
     green: [
-      'Owns the design direction for their vertical and ensures quality across all touchpoints.',
-      'Proactively identifies ownership gaps across teams and fills them or assigns them.',
+      'Lead problem spaces within your vertical, setting direction and defining what success looks like',
+      'Anticipate challenges and opportunities ahead of time, creating clarity before issues materialise',
+      'Make prioritisation and trade-off decisions that unblock teams and maintain momentum',
+      'Take accountability for progress and outcomes across teams, not just your own work',
+      'Define success metrics and check in on impact after delivery',
     ],
   },
 
   'Ownership::Senior Staff Designer': {
-    red: [
-      'Avoids owning controversial or politically complex cross-vertical initiatives.',
-      'Takes credit for successes but doesn\'t own failures or learning opportunities.',
-    ],
-    yellow: [
-      'Owns cross-vertical initiatives when assigned but doesn\'t seek them out.',
-      'Takes ownership of strategy but doesn\'t ensure execution follows through.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you drive company-level outcomes related to experience and customer impact. You steer initiatives across multiple verticals, make high-judgement calls in ambiguous situations, and set the standard for ownership and accountability.',
+    red: [],
+    yellow: [],
     green: [
-      'Proactively owns and drives cross-vertical initiatives from strategy through execution.',
-      'Takes accountability for outcomes at scale and openly shares learnings from failures.',
+      'Drive company-level outcomes related to experience and customer impact',
+      'Steer initiatives across multiple verticals, aligning teams around shared outcomes',
+      'Make high-judgement calls in ambiguous situations, balancing speed, quality, and impact',
+      'Set the standard for ownership, accountability, and agency across the organisation',
+      'Anticipate long-term risks and shape direction before problems surface',
     ],
   },
 
   'Ownership::Principal Designer': {
-    red: [
-      'Proposes company-wide changes but doesn\'t own the follow-through.',
-      'Delegates ownership without ensuring accountability or providing support.',
-    ],
-    yellow: [
-      'Owns company-wide design vision but execution accountability is unclear.',
-      'Takes ownership of strategic initiatives but doesn\'t sustain momentum long-term.',
-    ],
+    framing: 'As a Principal Designer it is expected that you set the highest standard of ownership in the organisation. You anticipate long-term risks, shape direction before problems surface, and take personal accountability for the health of the design function and its impact on the business.',
+    red: [],
+    yellow: [],
     green: [
-      'Drives company-wide design initiatives from vision through sustained execution.',
-      'Creates clear ownership structures that empower others while maintaining accountability.',
-    ],
-  },
-
-  'Ownership::Lead Product Designer': {
-    red: [
-      'Micromanages instead of empowering team members to own their work.',
-      'Doesn\'t take ownership of team outcomes, only individual contributions.',
-    ],
-    yellow: [
-      'Owns team delivery but doesn\'t instill ownership mentality in team members.',
-      'Takes responsibility for team outputs but not for team development.',
-    ],
-    green: [
-      'Builds a culture of ownership where every team member feels accountable for outcomes.',
-      'Takes full ownership of team delivery, quality, and professional growth.',
-    ],
-  },
-
-  'Ownership::Group Design Manager': {
-    red: [
-      'Allows ownership gaps between teams to persist without resolution.',
-      'Takes ownership of successes but deflects responsibility for team failures.',
-    ],
-    yellow: [
-      'Owns cross-team coordination but doesn\'t empower leads to own their domains.',
-      'Addresses ownership issues when they cause problems but doesn\'t prevent them.',
-    ],
-    green: [
-      'Creates clear ownership boundaries between teams and addresses gaps proactively.',
-      'Empowers leads to own their domains while maintaining accountability for overall results.',
-    ],
-  },
-
-  'Ownership::Director': {
-    red: [
-      'Doesn\'t create clear accountability structures across verticals.',
-      'Avoids owning difficult cross-functional conflicts or trade-off decisions.',
-    ],
-    yellow: [
-      'Owns outcomes in their area but doesn\'t drive cross-functional accountability.',
-      'Creates accountability structures but doesn\'t consistently enforce them.',
-    ],
-    green: [
-      'Creates and maintains clear accountability frameworks across all verticals.',
-      'Owns cross-functional outcomes and drives resolution of the hardest trade-off decisions.',
-    ],
-  },
-
-  'Ownership::Senior Director': {
-    red: [
-      'Organizational accountability is unclear across the areas they manage.',
-      'Doesn\'t model ownership behavior during challenging organizational moments.',
-    ],
-    yellow: [
-      'Takes ownership of strategic direction but execution accountability is loose.',
-      'Models ownership but doesn\'t systematically build ownership culture.',
-    ],
-    green: [
-      'Builds an organization where accountability and ownership are cultural norms.',
-      'Takes visible ownership during the most challenging moments and leads by example.',
-    ],
-  },
-
-  'Ownership::VP Design': {
-    red: [
-      'The design organization lacks clear ownership models for cross-org initiatives.',
-      'Doesn\'t personally own and drive the most critical strategic design decisions.',
-    ],
-    yellow: [
-      'Sets ownership expectations but enforcement is inconsistent across the org.',
-      'Owns design strategy but doesn\'t drive accountability for outcomes company-wide.',
-    ],
-    green: [
-      'Has built a design organization with exemplary ownership culture at every level.',
-      'Personally owns the most important cross-organizational design decisions and outcomes.',
+      'Set the standard for ownership, accountability, and agency across Deel Design',
+      'Anticipate long-term risks and shape direction well before problems surface',
+      'Drive company-level outcomes and take accountability for their success',
+      'Make high-judgement calls that balance long-term vision with near-term business needs',
+      'Model ownership behaviours that others aspire to and explicitly coach others on accountability',
     ],
   },
 
   // ═══════════════════════════════════════════
-  //  CRAFT EXCELLENCE (IC)
+  //  CRAFT EXCELLENCE
   // ═══════════════════════════════════════════
 
   'Craft Excellence::Product Designer': {
-    red: [
-      'Delivers work with inconsistent quality — misses details in spacing, alignment, or hierarchy.',
-      'Doesn\'t apply or follow the design system consistently.',
-    ],
-    yellow: [
-      'Produces clean work but doesn\'t push beyond established patterns.',
-      'Follows the design system well but doesn\'t contribute to improving it.',
-    ],
+    framing: 'As a Product Designer it is expected that you apply craft standards consistently by following established patterns, guidelines, and systems. You deliver clean, production-ready work and actively strengthen your core craft skills through execution and feedback.',
+    red: [],
+    yellow: [],
     green: [
-      'Delivers pixel-perfect work with strong attention to detail and visual hierarchy.',
-      'Actively contributes to the design system and raises the bar for team quality.',
+      'Apply craft standards by following established patterns, guidelines, and systems',
+      'Deliver clear, detailed, production-ready work',
+      'Produce work that meets established standards and incorporate feedback to improve',
+      'Strengthen your core craft skills through consistent execution',
+      'Cover interaction design, visual design, and accessibility in your work — not just the happy path',
     ],
   },
 
   'Craft Excellence::Senior Designer': {
-    red: [
-      'Craft quality is inconsistent and requires regular review from peers.',
-      'Doesn\'t set or enforce quality standards for the work they influence.',
-    ],
-    yellow: [
-      'Maintains high personal craft standards but doesn\'t elevate others\' quality.',
-      'Produces excellent work but doesn\'t innovate on patterns or approaches.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you demonstrate mastery and elevate craft standards in practice. You raise the quality bar within your team through critique, feedback, and hands-on examples, and you balance speed and quality with good judgement.',
+    red: [],
+    yellow: [],
     green: [
-      'Consistently raises the craft bar and actively elevates the team\'s design quality.',
-      'Innovates on design patterns while maintaining coherence with the design system.',
+      'Demonstrate mastery of craft and raise the quality of execution within your team',
+      'Improve consistency and quality through critique, feedback, and hands-on examples',
+      'Balance speed and quality, knowing when to polish and when to ship to learn',
+      'Model high-quality craft in a way that others can learn from and reference',
+      'Hold a high bar for accessibility, interaction, and visual quality in your own work and in reviews',
     ],
   },
 
   'Craft Excellence::Staff Designer': {
-    red: [
-      'Focuses on strategy at the expense of maintaining high craft standards.',
-      'Design systems and patterns they establish lack the quality to serve as standards.',
-    ],
-    yellow: [
-      'Maintains personal craft excellence but doesn\'t scale it through systems and standards.',
-      'Creates good design standards but they\'re not adopted consistently across teams.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you codify craft standards for your vertical. You formalise patterns, quality expectations, and reusable approaches that emerge from practice, and you mentor designers to apply them consistently.',
+    red: [],
+    yellow: [],
     green: [
-      'Defines and scales craft standards through design systems that teams actually adopt.',
-      'Balances strategic impact with hands-on craft that inspires and guides the team.',
+      'Codify craft standards for your vertical — patterns, quality expectations, and reusable approaches',
+      'Ensure coherence across the vertical, reducing fragmentation and inconsistencies between teams',
+      'Turn implicit good design into explicit guidelines others can apply',
+      'Mentor designers to consistently apply high-quality craft',
+      'Evidence the impact of raising craft standards on the quality of shipped product',
     ],
   },
 
   'Craft Excellence::Senior Staff Designer': {
-    red: [
-      'Has become too removed from craft to set credible quality standards.',
-      'Doesn\'t ensure craft excellence is maintained across the verticals they influence.',
-    ],
-    yellow: [
-      'Maintains awareness of craft quality but doesn\'t actively drive improvement at scale.',
-      'Sets high standards but lacks mechanisms to ensure consistent execution.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you envision the long-term craft direction for Deel Design. You define and evolve design standards that improve accuracy, consistency, and quality at scale, and co-define craft philosophy across the design org.',
+    red: [],
+    yellow: [],
     green: [
-      'Drives craft excellence at scale through systems, standards, and mentorship.',
-      'Ensures cross-vertical design coherence while allowing teams appropriate creative freedom.',
+      'Envision the long-term craft direction for Deel Design',
+      'Define and evolve design standards that improve accuracy, consistency, and quality at scale',
+      'Co-define craft philosophy across Deel Design and establish craft governance',
+      'Set the bar for design excellence at an industry level',
+      'Represent Deel as a recognised craft leader internally and externally',
     ],
   },
 
   'Craft Excellence::Principal Designer': {
-    red: [
-      'Craft excellence is not a visible priority in the vision they set.',
-      'Doesn\'t engage enough with actual design work to credibly guide craft direction.',
-    ],
-    yellow: [
-      'Champions craft in principle but doesn\'t invest enough in the systems that sustain it.',
-      'Sets a high bar personally but the org struggles to consistently meet it.',
-    ],
+    framing: 'As a Principal Designer it is expected that you set the bar for design excellence at an industry level. You shape Deel\'s design identity, establish and maintain craft governance, and ensure that craft standards are a point of competitive advantage for the business.',
+    red: [],
+    yellow: [],
     green: [
-      'Sets a company-wide vision for craft excellence and invests in the systems to achieve it.',
-      'Remains connected enough to the craft to guide it credibly and inspire the organization.',
+      'Set the bar for design excellence at an industry level and represent Deel as a craft leader',
+      'Shape Deel\'s design identity through long-term craft vision and clear standards',
+      'Establish and maintain craft governance across Deel Design',
+      'Ensure craft quality is a strategic asset and point of competitive advantage',
+      'Influence how craft is understood and valued at the executive and business level',
     ],
   },
 
   // ═══════════════════════════════════════════
-  //  COMMUNICATION (IC)
+  //  COMMUNICATION
   // ═══════════════════════════════════════════
 
   'Communication::Product Designer': {
-    red: [
-      'Struggles to articulate design rationale clearly in reviews or stakeholder meetings.',
-      'Documentation is incomplete or hard for others to follow.',
-    ],
-    yellow: [
-      'Communicates clearly with their direct team but not yet with broader stakeholders.',
-      'Presents design decisions well but doesn\'t tailor the message to the audience.',
-    ],
+    framing: 'As a Product Designer it is expected that you communicate clearly within your immediate team — both verbally and in writing. You explain your design decisions with clear intent and rationale, and you seek support when facing more complex or high-stakes communication.',
+    red: [],
+    yellow: [],
     green: [
-      'Articulates design rationale clearly and tailors communication to different audiences.',
-      'Creates comprehensive documentation that enables smooth handoff and collaboration.',
+      'Communicate clearly within your immediate team, verbally and in writing',
+      'Explain design decisions using shared artifacts and clear rationale',
+      'Articulate the intent behind your design choices, not just what you made',
+      'Seek support or preparation when facing complex or high-stakes communication',
+      'Listen actively and incorporate feedback into your next communication',
     ],
   },
 
   'Communication::Senior Designer': {
-    red: [
-      'Design presentations lack clear narrative structure or persuasive framing.',
-      'Doesn\'t proactively communicate project status, risks, or decisions to stakeholders.',
-    ],
-    yellow: [
-      'Communicates well in familiar settings but struggles in high-stakes presentations.',
-      'Shares updates regularly but doesn\'t always frame them in terms of business impact.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you clearly explain design decisions and trade-offs across Product, Engineering, and adjacent functions. You tailor your communication to your audience, manage expectations within your area, and use storytelling and workshops to help teams align.',
+    red: [],
+    yellow: [],
     green: [
-      'Tells compelling design stories that win stakeholder buy-in and drive alignment.',
-      'Proactively communicates status, risks, and decisions with appropriate context and framing.',
+      'Clearly explain design decisions and trade-offs to support shared understanding across functions',
+      'Use storytelling, critique, and workshops to help the team align and move forward',
+      'Tailor your explanations to the audience and context',
+      'Manage expectations effectively within your area of ownership',
+      'Demonstrate the ability to communicate complex ideas simply and without jargon',
     ],
   },
 
   'Communication::Staff Designer': {
-    red: [
-      'Doesn\'t effectively communicate design direction to influence teams without direct authority.',
-      'Communication doesn\'t scale — relies on 1:1 conversations for alignment.',
-    ],
-    yellow: [
-      'Communicates effectively with peers but struggles to influence senior leadership.',
-      'Creates good artifacts but doesn\'t create systems for scalable communication.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you influence alignment across your vertical through clear narrative. You manage stakeholders across teams with minimal oversight, coach designers on communication, and shape shared understanding through compelling design narratives.',
+    red: [],
+    yellow: [],
     green: [
-      'Influences teams and leaders through clear, scalable communication artifacts and narratives.',
-      'Builds shared understanding across multiple teams through effective storytelling and documentation.',
+      'Influence alignment across your vertical through clear, compelling narrative',
+      'Manage stakeholders across teams with minimal oversight',
+      'Coach designers on communication and stakeholder management',
+      'Shape shared understanding by connecting design choices to user impact and business outcomes',
+      'Be known as a clear, credible, and reliable communicator across functions',
     ],
   },
 
   'Communication::Senior Staff Designer': {
-    red: [
-      'Communication doesn\'t bridge the gap between design strategy and executive understanding.',
-      'Doesn\'t adapt communication style when working across different organizational cultures.',
-    ],
-    yellow: [
-      'Communicates strategy clearly but doesn\'t always ensure understanding and buy-in.',
-      'Effective communicator but doesn\'t mentor others in communication skills.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you lead complex, high-stakes conversations that drive alignment across teams and disciplines. You communicate with authority in high-ambiguity contexts and use narrative strategically to navigate tension and enable high-quality decisions.',
+    red: [],
+    yellow: [],
     green: [
-      'Translates complex cross-vertical design strategy into clear, actionable narratives for any audience.',
-      'Mentors senior ICs and leads in executive communication and stakeholder management.',
+      'Lead complex, high-stakes conversations that drive alignment across teams and disciplines',
+      'Align senior stakeholders through compelling storytelling and clear points of view',
+      'Communicate with authority in high-ambiguity contexts',
+      'Use narrative strategically to navigate tension and enable high-quality decisions',
+      'Elevate the communication bar across Deel Design',
     ],
   },
 
   'Communication::Principal Designer': {
-    red: [
-      'Company-wide vision isn\'t communicated in ways that inspire action across teams.',
-      'Doesn\'t build the communication channels needed to sustain organizational alignment.',
-    ],
-    yellow: [
-      'Articulates vision well but follow-up communication is inconsistent.',
-      'Communicates effectively 1:1 but struggles with organizational-scale messaging.',
-    ],
+    framing: 'As a Principal Designer it is expected that you set the communication standard for the entire design org. You align executives through authoritative storytelling, navigate the most complex and politically charged conversations, and ensure Deel Design speaks with one clear, credible voice.',
+    red: [],
+    yellow: [],
     green: [
-      'Communicates a compelling design vision that inspires and aligns the entire organization.',
-      'Builds communication systems and rituals that sustain alignment as the org scales.',
+      'Set the communication standard for Deel Design and actively elevate it across the org',
+      'Align executives and senior leadership through authoritative and compelling storytelling',
+      'Navigate the most complex and politically charged conversations with clarity and confidence',
+      'Ensure Deel Design communicates with a coherent, credible voice across all contexts',
+      'Coach senior designers on executive communication and high-stakes narrative',
     ],
   },
 
   // ═══════════════════════════════════════════
-  //  COLLABORATION (IC)
+  //  COLLABORATION
   // ═══════════════════════════════════════════
 
   'Collaboration::Product Designer': {
-    red: [
-      'Works in isolation and shares work only when it\'s "ready," missing early feedback.',
-      'Struggles to collaborate effectively with engineers or product managers.',
-    ],
-    yellow: [
-      'Collaborates well when structured but doesn\'t initiate cross-functional partnerships.',
-      'Works with immediate team but doesn\'t seek input from adjacent teams.',
-    ],
+    framing: 'As a Product Designer it is expected that you collaborate openly with other designers in your vertical, participate constructively in critiques and working sessions, and build positive relationships by taking ownership and working well with others.',
+    red: [],
+    yellow: [],
     green: [
-      'Proactively partners with engineers and PMs from problem definition through implementation.',
-      'Seeks diverse perspectives and incorporates feedback to strengthen design outcomes.',
+      'Collaborate openly with other designers in your vertical in critiques and working sessions',
+      'Seek and provide feedback constructively within your immediate team',
+      'Build positive relationships by taking ownership of issues and working generously with others',
+      'Contribute to a team environment where feedback is welcomed and acted on',
+      'Show up reliably and consistently as a collaborative teammate',
     ],
   },
 
   'Collaboration::Senior Designer': {
-    red: [
-      'Dominates design discussions rather than facilitating inclusive collaboration.',
-      'Doesn\'t invest in relationships with cross-functional partners beyond immediate needs.',
-    ],
-    yellow: [
-      'Collaborates effectively but doesn\'t proactively create opportunities for collaboration.',
-      'Partners well with familiar teammates but doesn\'t extend to new or adjacent teams.',
-    ],
+    framing: 'As a Senior Product Designer it is expected that you facilitate collaboration within your cross-functional team, help discussions stay focused and productive, and proactively seek and provide feedback to strengthen shared outcomes.',
+    red: [],
+    yellow: [],
     green: [
-      'Creates and facilitates collaborative rituals that improve cross-functional outcomes.',
-      'Builds strong partnerships across functions that extend beyond immediate project needs.',
+      'Facilitate collaboration within your cross-functional team, keeping discussions focused and productive',
+      'Build shared understanding across Product, Engineering, and adjacent functions',
+      'Proactively seek and provide feedback to strengthen team outcomes',
+      'Help resolve friction between team members or functions constructively',
+      'Be known as a reliable, generous collaborator who makes the work better',
     ],
   },
 
   'Collaboration::Staff Designer': {
-    red: [
-      'Operates as a lone strategist rather than building coalition for design initiatives.',
-      'Doesn\'t model collaborative behavior for the teams they influence.',
-    ],
-    yellow: [
-      'Collaborates with peers effectively but doesn\'t systematically improve team collaboration.',
-      'Builds coalitions when needed but doesn\'t maintain them long-term.',
-    ],
+    framing: 'As a Staff Product Designer it is expected that you drive effective cross-team collaboration within your vertical. You establish norms for how designers and cross-functional partners work together and strengthen relationships that enhance quality and delivery.',
+    red: [],
+    yellow: [],
     green: [
-      'Builds and maintains collaborative relationships across multiple teams and functions.',
-      'Models and institutionalizes collaborative practices that improve how teams work together.',
+      'Drive effective cross-team collaboration within your vertical',
+      'Establish norms for how designers and cross-functional partners work together',
+      'Strengthen relationships across teams to enhance quality and delivery',
+      'Foster alignment and shared ownership across your vertical',
+      'Model the collaborative behaviours you want to see from the teams around you',
     ],
   },
 
   'Collaboration::Senior Staff Designer': {
-    red: [
-      'Drives initiatives unilaterally without building genuine cross-vertical collaboration.',
-      'Doesn\'t invest in the relationships needed to drive change across the organization.',
-    ],
-    yellow: [
-      'Collaborates well within design but doesn\'t extend to cross-functional senior leadership.',
-      'Builds alignment but doesn\'t maintain collaborative momentum through execution.',
-    ],
+    framing: 'As a Senior Staff Product Designer it is expected that you drive effective cross-team collaboration across your vertical and beyond. You establish the norms and systems that enable great partnership, and you strengthen relationships at scale.',
+    red: [],
+    yellow: [],
     green: [
-      'Builds deep cross-functional partnerships at senior levels that drive strategic alignment.',
-      'Creates collaborative forums that bring together diverse perspectives across verticals.',
+      'Drive effective cross-team collaboration across your vertical and into adjacent teams',
+      'Establish the norms and systems that enable great cross-functional partnership',
+      'Strengthen relationships at scale to enhance quality and delivery across the organisation',
+      'Identify and address collaboration breakdowns before they become blockers',
+      'Be known as a connector who builds bridges between teams, disciplines, and geographies',
     ],
   },
 
   'Collaboration::Principal Designer': {
-    red: [
-      'Works in an ivory tower — ideas don\'t reflect input from across the organization.',
-      'Doesn\'t build the collaborative infrastructure needed for company-wide initiatives.',
-    ],
-    yellow: [
-      'Collaborates with key leaders but doesn\'t create systemic collaboration channels.',
-      'Seeks input from some areas but misses important perspectives.',
-    ],
+    framing: 'As a Principal Designer it is expected that you set the standard for collaboration across Deel Design and cross-functionally. You orchestrate collaboration across verticals, build the systems and practices that enable effective cross-team partnership, and create a culture of seamless collaboration at every level.',
+    red: [],
+    yellow: [],
     green: [
-      'Creates collaborative structures that enable the organization to tackle its biggest challenges.',
-      'Builds executive-level partnerships that position design as a strategic collaborator.',
-    ],
-  },
-
-  // ═══════════════════════════════════════════
-  //  DRIVES HIGH PERFORMANCE (Manager)
-  // ═══════════════════════════════════════════
-
-  'Drives High Performance::Lead Product Designer': {
-    red: [
-      'Doesn\'t set clear expectations or hold the team accountable for quality.',
-      'Avoids performance conversations and lets underperformance persist.',
-    ],
-    yellow: [
-      'Sets expectations but doesn\'t consistently follow up on performance gaps.',
-      'Addresses performance issues when they become critical but not proactively.',
-    ],
-    green: [
-      'Sets clear, inspiring expectations and creates an environment where excellence is the norm.',
-      'Addresses performance issues promptly and constructively, driving continuous improvement.',
-    ],
-  },
-
-  'Drives High Performance::Group Design Manager': {
-    red: [
-      'Performance standards vary widely across the teams they manage.',
-      'Doesn\'t calibrate performance expectations across leads.',
-    ],
-    yellow: [
-      'Drives performance in familiar teams but struggles with newly inherited ones.',
-      'Sets standards but doesn\'t provide leads with the tools to drive performance.',
-    ],
-    green: [
-      'Creates consistent high-performance culture across all teams through calibrated standards.',
-      'Equips leads with frameworks and coaching to drive performance independently.',
-    ],
-  },
-
-  'Drives High Performance::Director': {
-    red: [
-      'High performance is aspirational rather than systematically driven.',
-      'Doesn\'t create the incentive structures or systems that sustain high performance.',
-    ],
-    yellow: [
-      'Drives performance within design but doesn\'t influence cross-functional performance.',
-      'Sets high standards but doesn\'t invest enough in the systems to sustain them.',
-    ],
-    green: [
-      'Builds performance systems — reviews, calibration, recognition — that sustain excellence.',
-      'Drives cross-functional performance by setting high standards for design collaboration.',
-    ],
-  },
-
-  'Drives High Performance::Senior Director': {
-    red: [
-      'Performance culture is inconsistent across the large org they oversee.',
-      'Tolerates mediocrity in some areas while pushing for excellence in others.',
-    ],
-    yellow: [
-      'Has high performance pockets but hasn\'t scaled the culture org-wide.',
-      'Drives performance through personal involvement rather than systemic change.',
-    ],
-    green: [
-      'Has built an organization-wide performance culture with consistent standards and recognition.',
-      'Performance systems work independently of their personal involvement.',
-    ],
-  },
-
-  'Drives High Performance::VP Design': {
-    red: [
-      'The design org is not known for high performance relative to peer functions.',
-      'Doesn\'t invest in the talent and systems needed to drive organizational performance.',
-    ],
-    yellow: [
-      'Some parts of the org perform exceptionally while others lag behind.',
-      'Drives performance but hasn\'t built it into the organizational DNA.',
-    ],
-    green: [
-      'Has built a design organization that is widely recognized for exceptional performance.',
-      'Performance culture is self-sustaining and attracts top talent.',
-    ],
-  },
-
-  // ═══════════════════════════════════════════
-  //  DEVELOPS TALENT (Manager)
-  // ═══════════════════════════════════════════
-
-  'Develops Talent::Lead Product Designer': {
-    red: [
-      'Doesn\'t invest time in 1:1s, coaching, or career development conversations.',
-      'Team members lack clarity on their growth path or development areas.',
-    ],
-    yellow: [
-      'Has regular 1:1s but they focus on project updates rather than development.',
-      'Supports growth when team members ask but doesn\'t proactively identify opportunities.',
-    ],
-    green: [
-      'Creates personalized development plans and provides regular, actionable feedback.',
-      'Proactively identifies stretch opportunities and coaches team members through challenges.',
-    ],
-  },
-
-  'Develops Talent::Group Design Manager': {
-    red: [
-      'Doesn\'t develop leads or create leadership pipeline for the organization.',
-      'Talent development is ad hoc and inconsistent across teams.',
-    ],
-    yellow: [
-      'Develops direct reports well but doesn\'t ensure skip-level talent development.',
-      'Has some talent development practices but they\'re not systematic.',
-    ],
-    green: [
-      'Builds a systematic talent development program that creates strong leaders at every level.',
-      'Ensures consistent talent development across all teams, including skip-level mentorship.',
-    ],
-  },
-
-  'Develops Talent::Director': {
-    red: [
-      'The design organization has significant talent gaps with no plan to address them.',
-      'Doesn\'t invest in talent development as a strategic priority.',
-    ],
-    yellow: [
-      'Develops senior talent well but the broader pipeline needs more investment.',
-      'Has talent development goals but execution is inconsistent.',
-    ],
-    green: [
-      'Has built a robust talent pipeline with clear career paths and development programs.',
-      'Talent development is a strategic priority with dedicated resources and measured outcomes.',
-    ],
-  },
-
-  'Develops Talent::Senior Director': {
-    red: [
-      'Leadership bench strength is weak across the org they manage.',
-      'Doesn\'t create the conditions for talent to grow across organizational boundaries.',
-    ],
-    yellow: [
-      'Develops some strong leaders but talent development is uneven across the org.',
-      'Invests in talent but doesn\'t create mobility opportunities across teams.',
-    ],
-    green: [
-      'Has built deep leadership bench strength with succession plans for every key role.',
-      'Creates talent mobility across teams and develops leaders who develop other leaders.',
-    ],
-  },
-
-  'Develops Talent::VP Design': {
-    red: [
-      'The design org struggles to retain top talent or develop future leaders.',
-      'Talent strategy is reactive — filling roles rather than building capabilities.',
-    ],
-    yellow: [
-      'Attracts good talent but retention and development programs need improvement.',
-      'Has a talent vision but it\'s not yet fully embedded in organizational practices.',
-    ],
-    green: [
-      'The design org is known as a place where careers are made and talent thrives.',
-      'Has built a talent ecosystem — hiring, development, retention — that is a competitive advantage.',
-    ],
-  },
-
-  // ═══════════════════════════════════════════
-  //  EXECUTION & IMPACT (Manager)
-  // ═══════════════════════════════════════════
-
-  'Execution & Impact::Lead Product Designer': {
-    red: [
-      'Team consistently misses deadlines or delivers work that doesn\'t meet expectations.',
-      'Doesn\'t connect team output to measurable business or user outcomes.',
-    ],
-    yellow: [
-      'Team delivers on time but impact isn\'t always clearly demonstrated.',
-      'Executes well on defined work but doesn\'t push for higher-impact opportunities.',
-    ],
-    green: [
-      'Team consistently delivers high-quality work on time with measurable impact.',
-      'Identifies and pursues the highest-impact opportunities, not just assigned work.',
-    ],
-  },
-
-  'Execution & Impact::Group Design Manager': {
-    red: [
-      'Execution quality and impact vary widely across the teams they manage.',
-      'Doesn\'t create systems for tracking or improving execution across teams.',
-    ],
-    yellow: [
-      'Teams execute well but impact measurement is inconsistent.',
-      'Drives execution on planned work but misses emerging high-impact opportunities.',
-    ],
-    green: [
-      'Creates execution systems that ensure consistent, high-impact delivery across all teams.',
-      'Identifies and allocates resources to the highest-impact opportunities across their scope.',
-    ],
-  },
-
-  'Execution & Impact::Director': {
-    red: [
-      'Design\'s impact on business outcomes is unclear or unmeasured.',
-      'Execution processes don\'t scale and create bottlenecks.',
-    ],
-    yellow: [
-      'Demonstrates design impact but can\'t consistently prove ROI to leadership.',
-      'Execution is strong but not optimized for efficiency at scale.',
-    ],
-    green: [
-      'Has built execution frameworks that consistently deliver measurable business impact.',
-      'Can clearly demonstrate design ROI and uses it to secure resources and influence.',
-    ],
-  },
-
-  'Execution & Impact::Senior Director': {
-    red: [
-      'Impact of design across the broad org is hard to quantify or communicate.',
-      'Execution model doesn\'t scale with organizational growth.',
-    ],
-    yellow: [
-      'Delivers strong impact in core areas but emerging areas are underinvested.',
-      'Has impact metrics but they don\'t fully capture design\'s strategic contribution.',
-    ],
-    green: [
-      'Has a clear, measurable framework for design impact that influences resource allocation.',
-      'Execution model scales effectively and consistently delivers strategic outcomes.',
-    ],
-  },
-
-  'Execution & Impact::VP Design': {
-    red: [
-      'Design is not seen as a significant driver of business results by the executive team.',
-      'Execution model is a bottleneck rather than an enabler for the company.',
-    ],
-    yellow: [
-      'Design impact is recognized but not yet fully integrated into business strategy.',
-      'Has strong execution but ROI story could be more compelling.',
-    ],
-    green: [
-      'Design is widely recognized as a strategic driver of business outcomes and competitive advantage.',
-      'Has built an execution model that consistently delivers outsized impact relative to investment.',
+      'Set the standard for collaboration across Deel Design and cross-functionally',
+      'Orchestrate collaboration across verticals, building systems and practices for effective partnership',
+      'Create the structures and culture that enable seamless partnership across teams, functions, and geographies',
+      'Embed collaboration norms into how the design org hires, onboards, and develops designers',
+      'Be the exemplar of generous, high-trust collaboration that others look to as the benchmark',
     ],
   },
 };
