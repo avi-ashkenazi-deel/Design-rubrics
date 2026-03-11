@@ -72,6 +72,7 @@ const DESIGN_EMAILS: string[] = [
   'pilar.espil@deel.com',
   'ramya.thalmann@deel.com',
   'rozina.szogyenyi@deel.com',
+  'sasha.grishin@deel.com',
   'sefik.mujkic@deel.com',
   'semi.lee@deel.com',
   'sergio.jimbel@deel.com',
@@ -98,10 +99,10 @@ const ADMINS = new Set([
 
 const EDITORS = new Set([
   'andra.cimpan@deel.com',
-  'david.bullock@deel.com',
-  'jonathan.wilington@letsdeel.com',
-  'marc.aquino@deel.com',
-  'muhammed@deel.com',
+  'sasha.grishin@deel.com',
+  'gav.elliott@deel.com',
+  'kunal.drego@deel.com',
+  'melihhan.bozok@deel.com',
 ]);
 
 export function isAdmin(email: string): boolean {
