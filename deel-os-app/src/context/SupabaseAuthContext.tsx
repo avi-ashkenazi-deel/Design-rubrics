@@ -14,6 +14,7 @@ interface AuthContextType {
   realPermissions: UserPermissions;
   allowedDisciplines: string[] | null;
   sendMagicLink: (email: string) => Promise<{ success: boolean; error?: string }>;
+  loginWithPassword: (email: string, password: string) => boolean;
   logout: () => void;
   error: string | null;
   setUserEmail: (email: string) => void;
@@ -183,6 +184,22 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     return { success: true };
   };
 
+  const loginWithPassword = (email: string, password: string): boolean => {
+    const normalised = email.toLowerCase().trim();
+    if (!normalised.endsWith('@deel.com') && !normalised.endsWith('@letsdeel.com')) {
+      setError('Only @deel.com email addresses are allowed');
+      return false;
+    }
+    if (password !== 'only-design-rubric-magic') {
+      setError('Incorrect password');
+      return false;
+    }
+    sessionStorage.setItem('rubric_user_email', normalised);
+    applySession(normalised);
+    setError(null);
+    return true;
+  };
+
   const setUserEmail = (email: string) => {
     if (!email.toLowerCase().endsWith('@deel.com')) {
       setError('Only @deel.com email addresses are allowed');
@@ -234,6 +251,7 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     realPermissions,
     allowedDisciplines: permissions.allowedDisciplines,
     sendMagicLink,
+    loginWithPassword,
     logout,
     error,
     setUserEmail,

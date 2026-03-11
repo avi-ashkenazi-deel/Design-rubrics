@@ -3,23 +3,42 @@ import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 
 export function PasswordLogin() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
-  const { sendMagicLink, error } = useSupabaseAuth();
+  const [mode, setMode] = useState<'password' | 'magic'>('password');
+  const { sendMagicLink, loginWithPassword, error } = useSupabaseAuth();
 
-  const isValidEmail = email.trim().toLowerCase().endsWith('@deel.com');
+  const isValidEmail = email.trim().toLowerCase().endsWith('@deel.com')
+    || email.trim().toLowerCase().endsWith('@letsdeel.com');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePasswordLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!isValidEmail) return;
+    loginWithPassword(email.trim().toLowerCase(), password);
+  };
+
+  const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isValidEmail || sending) return;
-
     setSending(true);
     const result = await sendMagicLink(email.trim().toLowerCase());
     setSending(false);
+    if (result.success) setSent(true);
+  };
 
-    if (result.success) {
-      setSent(true);
-    }
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '12px 16px',
+    fontSize: '15px',
+    border: '1px solid #2a2a2a',
+    borderRadius: '8px',
+    marginBottom: '12px',
+    boxSizing: 'border-box',
+    outline: 'none',
+    backgroundColor: '#1a1a1a',
+    color: '#ffffff',
+    fontFamily: 'inherit',
   };
 
   return (
@@ -50,42 +69,138 @@ export function PasswordLogin() {
           Deel OS
         </h1>
 
-        {!sent ? (
-          <>
-            <p style={{
-              marginBottom: '24px',
-              color: '#a0a0a0',
-              fontSize: '14px',
+        {sent ? (
+          <div>
+            <div style={{
+              width: '56px',
+              height: '56px',
+              borderRadius: '50%',
+              background: 'rgba(80, 250, 123, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+              fontSize: '24px',
             }}>
-              Enter your Deel email to receive a login link
+              ✉️
+            </div>
+            <p style={{ color: '#50fa7b', fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>
+              Check your email
+            </p>
+            <p style={{ color: '#a0a0a0', fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
+              We sent a one-time login link to<br />
+              <strong style={{ color: '#ffffff' }}>{email}</strong>
+            </p>
+            <button
+              onClick={() => { setSent(false); setEmail(''); }}
+              style={{
+                padding: '10px 20px',
+                fontSize: '13px',
+                fontWeight: 500,
+                color: '#a0a0a0',
+                backgroundColor: 'transparent',
+                border: '1px solid #2a2a2a',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Use a different email
+            </button>
+          </div>
+        ) : mode === 'password' ? (
+          <>
+            <p style={{ marginBottom: '24px', color: '#a0a0a0', fontSize: '14px' }}>
+              Sign in with your Deel email
             </p>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handlePasswordLogin}>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@deel.com"
+                style={inputStyle}
+                autoFocus
+              />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                style={inputStyle}
+              />
+
+              {error && (
+                <p style={{
+                  color: '#ff5c5c',
+                  marginBottom: '12px',
+                  fontSize: '13px',
+                  padding: '10px',
+                  background: 'rgba(255, 92, 92, 0.1)',
+                  borderRadius: '8px',
+                }}>
+                  {error}
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={!isValidEmail}
                 style={{
                   width: '100%',
-                  padding: '12px 16px',
+                  padding: '12px 24px',
                   fontSize: '15px',
-                  border: '1px solid #2a2a2a',
+                  fontWeight: 600,
+                  color: !isValidEmail ? '#6a6a6a' : '#0d0d0d',
+                  backgroundColor: !isValidEmail ? '#2a2a2a' : '#8be9fd',
+                  border: 'none',
                   borderRadius: '8px',
-                  marginBottom: '16px',
-                  boxSizing: 'border-box',
-                  outline: 'none',
-                  backgroundColor: '#1a1a1a',
-                  color: '#ffffff',
+                  cursor: !isValidEmail ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
                   fontFamily: 'inherit',
                 }}
+              >
+                Sign In
+              </button>
+            </form>
+
+            <button
+              onClick={() => setMode('magic')}
+              style={{
+                marginTop: '16px',
+                padding: '0',
+                fontSize: '13px',
+                color: '#666',
+                backgroundColor: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}
+            >
+              Use magic link instead
+            </button>
+          </>
+        ) : (
+          <>
+            <p style={{ marginBottom: '24px', color: '#a0a0a0', fontSize: '14px' }}>
+              Enter your Deel email to receive a login link
+            </p>
+
+            <form onSubmit={handleMagicLink}>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@deel.com"
+                style={inputStyle}
                 autoFocus
               />
 
               {error && (
                 <p style={{
                   color: '#ff5c5c',
-                  marginBottom: '16px',
+                  marginBottom: '12px',
                   fontSize: '13px',
                   padding: '10px',
                   background: 'rgba(255, 92, 92, 0.1)',
@@ -115,57 +230,23 @@ export function PasswordLogin() {
                 {sending ? 'Sending...' : 'Send Magic Link'}
               </button>
             </form>
-          </>
-        ) : (
-          <div>
-            <div style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '50%',
-              background: 'rgba(80, 250, 123, 0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              fontSize: '24px',
-            }}>
-              ✉️
-            </div>
-            <p style={{
-              color: '#50fa7b',
-              fontSize: '16px',
-              fontWeight: 600,
-              marginBottom: '8px',
-            }}>
-              Check your email
-            </p>
-            <p style={{
-              color: '#a0a0a0',
-              fontSize: '14px',
-              marginBottom: '24px',
-              lineHeight: '1.5',
-            }}>
-              We sent a one-time login link to<br />
-              <strong style={{ color: '#ffffff' }}>{email}</strong>
-            </p>
+
             <button
-              onClick={() => { setSent(false); setEmail(''); }}
+              onClick={() => setMode('password')}
               style={{
-                padding: '10px 20px',
+                marginTop: '16px',
+                padding: '0',
                 fontSize: '13px',
-                fontWeight: 500,
-                color: '#a0a0a0',
+                color: '#666',
                 backgroundColor: 'transparent',
-                border: '1px solid #2a2a2a',
-                borderRadius: '8px',
+                border: 'none',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
-                transition: 'all 0.2s',
               }}
             >
-              Use a different email
+              Use password instead
             </button>
-          </div>
+          </>
         )}
       </div>
     </div>
