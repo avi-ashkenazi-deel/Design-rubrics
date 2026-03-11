@@ -57,7 +57,6 @@ export function Sidebar() {
     allowedDisciplines,
     permissions,
     realPermissions,
-    isImpersonating,
     impersonatingEmail,
     impersonate,
     stopImpersonating,

@@ -88,19 +88,19 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
 
     const isDeelEmail = (e: string) => e.toLowerCase().endsWith('@deel.com');
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase!.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user?.email && isDeelEmail(session.user.email)) {
         await applySession(session.user.email);
       } else if (session?.user?.email) {
-        await supabase.auth.signOut();
+        await supabase!.auth.signOut();
       }
       setIsLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase!.auth.onAuthStateChange(async (event, session) => {
       if (event === 'SIGNED_IN' && session?.user?.email) {
         if (!isDeelEmail(session.user.email)) {
-          await supabase.auth.signOut();
+          await supabase!.auth.signOut();
           setError('Only @deel.com email addresses are allowed');
           return;
         }
