@@ -133,3 +133,27 @@ export function getAllowedDisciplines(email: string): string[] | null {
 
   return allowed.length > 0 ? allowed : ['Design'];
 }
+
+export function getAllKnownUsers(): { email: string; role: 'admin' | 'editor' | 'viewer' }[] {
+  const users: { email: string; role: 'admin' | 'editor' | 'viewer' }[] = [];
+  const seen = new Set<string>();
+
+  for (const email of ADMINS) {
+    seen.add(email);
+    users.push({ email, role: 'admin' });
+  }
+  for (const email of EDITORS) {
+    if (!seen.has(email)) {
+      seen.add(email);
+      users.push({ email, role: 'editor' });
+    }
+  }
+  for (const email of DESIGN_EMAILS) {
+    if (!seen.has(email)) {
+      seen.add(email);
+      users.push({ email, role: 'viewer' });
+    }
+  }
+
+  return users.sort((a, b) => a.email.localeCompare(b.email));
+}

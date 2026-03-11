@@ -1818,7 +1818,7 @@ select option {
 
 /* Content Area */
 .content-area {
-  max-width: 1400px;
+  max-width: 100%;
   position: relative;
 }
 

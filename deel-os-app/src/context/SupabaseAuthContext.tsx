@@ -3,8 +3,8 @@ import type { ReactNode } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { User, UserPermissions } from '../types';
 import { DEFAULT_PERMISSIONS } from '../types';
-import { getAllowedDisciplines, isAdmin, isEditor } from '../data/disciplineAccess';
-import { fetchUserPermissions, fetchAllUserPermissions } from '../utils/supabaseApi';
+import { getAllowedDisciplines, isAdmin, isEditor, getAllKnownUsers } from '../data/disciplineAccess';
+import { fetchUserPermissions } from '../utils/supabaseApi';
 
 interface AuthContextType {
   user: User | null;
@@ -247,8 +247,15 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
   }, [user, loadPermissions]);
 
   const loadAllUsers = useCallback(async () => {
-    const users = await fetchAllUserPermissions();
-    setAllUsers(users);
+    const known = getAllKnownUsers();
+    const localUsers: UserPermissions[] = known.map(u => ({
+      ...DEFAULT_PERMISSIONS,
+      email: u.email,
+      role: u.role,
+      canEdit: u.role === 'admin' || u.role === 'editor',
+      allowedDisciplines: getAllowedDisciplines(u.email),
+    }));
+    setAllUsers(localUsers);
   }, []);
 
   const impersonate = useCallback(async (email: string) => {
