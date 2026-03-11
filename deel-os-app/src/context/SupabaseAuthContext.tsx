@@ -120,9 +120,19 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
 
     supabase!.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user?.email && isDeelEmail(session.user.email)) {
+        // Magic link session — verified email, full role-based permissions
         await applySession(session.user.email);
       } else if (session?.user?.email) {
         await supabase!.auth.signOut();
+      } else {
+        // No Supabase session — check for password-based session
+        const storedEmail = sessionStorage.getItem('rubric_user_email');
+        const authMethod = sessionStorage.getItem('rubric_auth_method');
+        if (storedEmail && authMethod === 'password') {
+          const allowed = getAllowedDisciplines(storedEmail);
+          setUser({ name: nameFromEmail(storedEmail), email: storedEmail, picture: '' });
+          setRealPermissions({ ...DEFAULT_PERMISSIONS, email: storedEmail, allowedDisciplines: allowed });
+        }
       }
       setIsLoading(false);
     });
@@ -194,8 +204,18 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
       setError('Incorrect password');
       return false;
     }
+    // Password login = viewer only (email not verified).
+    // Editors/admins must use magic link to prove identity.
+    const allowed = getAllowedDisciplines(normalised);
+    const viewerPerms: UserPermissions = {
+      ...DEFAULT_PERMISSIONS,
+      email: normalised,
+      allowedDisciplines: allowed,
+    };
     sessionStorage.setItem('rubric_user_email', normalised);
-    applySession(normalised);
+    sessionStorage.setItem('rubric_auth_method', 'password');
+    setUser({ name: nameFromEmail(normalised), email: normalised, picture: '' });
+    setRealPermissions(viewerPerms);
     setError(null);
     return true;
   };
@@ -214,6 +234,7 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
       await supabase.auth.signOut();
     }
     sessionStorage.removeItem('rubric_user_email');
+    sessionStorage.removeItem('rubric_auth_method');
     setUser(null);
     setRealPermissions(DEFAULT_PERMISSIONS);
     setImpersonatedPermissions(null);
