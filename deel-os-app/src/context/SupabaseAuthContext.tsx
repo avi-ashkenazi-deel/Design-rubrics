@@ -129,9 +129,8 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
         const storedEmail = sessionStorage.getItem('rubric_user_email');
         const authMethod = sessionStorage.getItem('rubric_auth_method');
         if (storedEmail && authMethod === 'password') {
-          const allowed = getAllowedDisciplines(storedEmail);
           setUser({ name: nameFromEmail(storedEmail), email: storedEmail, picture: '' });
-          setRealPermissions({ ...DEFAULT_PERMISSIONS, email: storedEmail, allowedDisciplines: allowed });
+          setRealPermissions({ ...DEFAULT_PERMISSIONS, email: storedEmail, allowedDisciplines: ['Design'] });
         }
       }
       setIsLoading(false);
@@ -206,11 +205,11 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     }
     // Password login = viewer only (email not verified).
     // Editors/admins must use magic link to prove identity.
-    const allowed = getAllowedDisciplines(normalised);
+    // Always restrict to Design since we can't verify identity.
     const viewerPerms: UserPermissions = {
       ...DEFAULT_PERMISSIONS,
       email: normalised,
-      allowedDisciplines: allowed,
+      allowedDisciplines: ['Design'],
     };
     sessionStorage.setItem('rubric_user_email', normalised);
     sessionStorage.setItem('rubric_auth_method', 'password');

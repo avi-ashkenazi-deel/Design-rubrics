@@ -31,7 +31,7 @@ export const DEFAULT_PERMISSIONS: UserPermissions = {
   role: 'viewer',
   canEdit: false,
   visibleViews: ['competencies', 'ladders'],
-  visibleTracks: ['IC', 'Manager'],
+  visibleTracks: ['IC'],
   allowedDisciplines: null,
   designerLevel: null,
 };

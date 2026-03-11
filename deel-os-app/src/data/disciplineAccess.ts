@@ -115,7 +115,8 @@ export function isEditor(email: string): boolean {
 
 /**
  * Returns the list of disciplines a user is allowed to see.
- * Returns null for admins and unknown emails (unrestricted access).
+ * Returns null only for admins (unrestricted access).
+ * Unknown emails default to ['Design'].
  */
 export function getAllowedDisciplines(email: string): string[] | null {
   const normalised = email.toLowerCase().trim();
@@ -130,5 +131,5 @@ export function getAllowedDisciplines(email: string): string[] | null {
     }
   }
 
-  return allowed.length > 0 ? allowed : null;
+  return allowed.length > 0 ? allowed : ['Design'];
 }
