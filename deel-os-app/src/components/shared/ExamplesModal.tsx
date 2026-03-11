@@ -14,7 +14,7 @@ interface ExamplesModalProps {
 const TRAFFIC_LIGHTS = [
   { key: 'red' as const, emoji: '🔴', label: 'Needs Improvement', color: '#ff5c5c', bg: 'rgba(255, 92, 92, 0.05)', border: 'rgba(255, 92, 92, 0.15)', focusBorder: 'rgba(255, 92, 92, 0.4)' },
   { key: 'yellow' as const, emoji: '🟡', label: 'Developing', color: '#ff9f43', bg: 'rgba(255, 159, 67, 0.05)', border: 'rgba(255, 159, 67, 0.15)', focusBorder: 'rgba(255, 159, 67, 0.4)' },
-  { key: 'green' as const, emoji: '🟢', label: 'Strong', color: '#50fa7b', bg: 'rgba(80, 250, 123, 0.05)', border: 'rgba(80, 250, 123, 0.15)', focusBorder: 'rgba(80, 250, 123, 0.4)' },
+  { key: 'green' as const, emoji: '🟢', label: 'Meeting Expectations', color: '#50fa7b', bg: 'rgba(80, 250, 123, 0.05)', border: 'rgba(80, 250, 123, 0.15)', focusBorder: 'rgba(80, 250, 123, 0.4)' },
 ] as const;
 
 function AutoResizeInput({ value, onChange, placeholder, color }: {
@@ -105,19 +105,24 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
 
   const handleSave = () => {
     const cleaned: TrafficLightExamples = {
+      expectations: examples.expectations,
       red: examples.red.filter(e => e.trim() !== ''),
       yellow: examples.yellow.filter(e => e.trim() !== ''),
       green: examples.green.filter(e => e.trim() !== ''),
       framing: examples.framing,
     };
-    if (cleaned.red.length === 0) cleaned.red = [''];
-    if (cleaned.yellow.length === 0) cleaned.yellow = [''];
-    if (cleaned.green.length === 0) cleaned.green = [''];
+    if (cleaned.red.length === 0) cleaned.red = [];
+    if (cleaned.yellow.length === 0) cleaned.yellow = [];
+    if (cleaned.green.length === 0) cleaned.green = [];
     onSave(cleaned);
     onClose();
   };
 
   const hasChanges = JSON.stringify(examples) !== JSON.stringify(initialExamples);
+
+  const hasNotes = TRAFFIC_LIGHTS.some(({ key }) =>
+    examples[key].some(e => e.trim() !== '')
+  );
 
   return (
     <div className="edit-modal-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
@@ -136,53 +141,83 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
               {examples.framing}
             </div>
           )}
-          {TRAFFIC_LIGHTS.map(({ key, emoji, label, color, bg, border, focusBorder }) => (
-            <div
-              key={key}
-              className="examples-section"
-              style={{ '--section-color': color, '--section-bg': bg, '--section-border': border, '--section-focus-border': focusBorder } as React.CSSProperties}
-            >
-              <div className="examples-section-header">
-                <span className="examples-section-emoji">{emoji}</span>
-                <span className="examples-section-label" style={{ color }}>{label}</span>
-              </div>
 
-              <div className="examples-list">
-                {examples[key].filter(e => readOnly ? e.trim() !== '' : true).map((example, idx) => (
-                  <div key={idx} className="examples-item">
-                    <span className="examples-bullet" style={{ color }}>•</span>
-                    {readOnly ? (
-                      <span className="examples-readonly-text">{example}</span>
-                    ) : (
-                      <AutoResizeInput
-                        value={example}
-                        onChange={(val) => updateExample(key, idx, val)}
-                        placeholder={`Add ${label.toLowerCase()} example…`}
-                        color={color}
-                      />
-                    )}
-                    {!readOnly && examples[key].length > 1 && (
-                      <button
-                        className="examples-remove-btn"
-                        onClick={() => removeExample(key, idx)}
-                        title="Remove"
-                      >
-                        ×
-                      </button>
-                    )}
+          {/* Expectations — the neutral criteria */}
+          {examples.expectations && examples.expectations.length > 0 && (
+            <div className="examples-expectations">
+              <div className="examples-expectations-header">Expectations</div>
+              <div className="examples-expectations-list">
+                {examples.expectations.map((exp, idx) => (
+                  <div key={idx} className="examples-expectation-item">
+                    <span className="examples-expectation-number">{idx + 1}</span>
+                    <span className="examples-expectation-text">{exp}</span>
                   </div>
                 ))}
-                {!readOnly && examples[key].length < 6 && (
-                  <button className="examples-add-btn" onClick={() => addExample(key)} style={{ color }}>
-                    + Add example
-                  </button>
-                )}
-                {readOnly && examples[key].filter(e => e.trim() !== '').length === 0 && (
-                  <span className="examples-readonly-empty">No examples yet</span>
-                )}
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Traffic light legend */}
+          <div className="examples-legend">
+            <div className="examples-legend-title">Rate yourself against these expectations</div>
+            <div className="examples-legend-items">
+              {TRAFFIC_LIGHTS.map(({ emoji, label, color }) => (
+                <span key={label} className="examples-legend-item" style={{ color }}>{emoji} {label}</span>
+              ))}
+            </div>
+          </div>
+
+          {/* Editor notes per traffic light level */}
+          {(!readOnly || hasNotes) && TRAFFIC_LIGHTS.map(({ key, emoji, label, color, bg, border, focusBorder }) => {
+            const items = examples[key].filter(e => readOnly ? e.trim() !== '' : true);
+            if (readOnly && items.length === 0) return null;
+
+            return (
+              <div
+                key={key}
+                className="examples-section"
+                style={{ '--section-color': color, '--section-bg': bg, '--section-border': border, '--section-focus-border': focusBorder } as React.CSSProperties}
+              >
+                <div className="examples-section-header">
+                  <span className="examples-section-emoji">{emoji}</span>
+                  <span className="examples-section-label" style={{ color }}>{label}</span>
+                  {!readOnly && <span className="examples-section-hint">Notes</span>}
+                </div>
+
+                <div className="examples-list">
+                  {items.map((example, idx) => (
+                    <div key={idx} className="examples-item">
+                      <span className="examples-bullet" style={{ color }}>•</span>
+                      {readOnly ? (
+                        <span className="examples-readonly-text">{example}</span>
+                      ) : (
+                        <AutoResizeInput
+                          value={example}
+                          onChange={(val) => updateExample(key, idx, val)}
+                          placeholder={`Add ${label.toLowerCase()} note…`}
+                          color={color}
+                        />
+                      )}
+                      {!readOnly && examples[key].length > 1 && (
+                        <button
+                          className="examples-remove-btn"
+                          onClick={() => removeExample(key, idx)}
+                          title="Remove"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {!readOnly && examples[key].length < 6 && (
+                    <button className="examples-add-btn" onClick={() => addExample(key)} style={{ color }}>
+                      + Add note
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         <div className="edit-modal-footer">
