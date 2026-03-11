@@ -54,6 +54,7 @@ export function Sidebar() {
   } = useLadders();
 
   const {
+    user,
     allowedDisciplines,
     permissions,
     realPermissions,
@@ -62,6 +63,7 @@ export function Sidebar() {
     stopImpersonating,
     allUsers,
     loadAllUsers,
+    logout,
   } = useSupabaseAuth();
 
   // Filter disciplines based on user access
@@ -480,6 +482,28 @@ export function Sidebar() {
               </select>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* User Profile */}
+      {user && (
+        <div className="sidebar-user-profile">
+          <div className="sidebar-user-info">
+            <div className="sidebar-user-avatar">
+              {user.name.charAt(0).toUpperCase()}
+            </div>
+            <div className="sidebar-user-details">
+              <div className="sidebar-user-name">{user.name}</div>
+              <div className="sidebar-user-role">{permissions.role}</div>
+            </div>
+          </div>
+          <button className="sidebar-logout-btn" onClick={logout} title="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16,17 21,12 16,7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
         </div>
       )}
 
