@@ -98,6 +98,10 @@ const ADMINS = new Set([
 
 const EDITORS = new Set([
   'andra.cimpan@deel.com',
+  'david.bullock@deel.com',
+  'jonathan.wilington@letsdeel.com',
+  'marc.aquino@deel.com',
+  'muhammed@deel.com',
 ]);
 
 export function isAdmin(email: string): boolean {

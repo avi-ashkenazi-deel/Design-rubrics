@@ -77,7 +77,7 @@ export function LaddersView() {
   const canEdit = permissions.canEdit;
   const { 
     laddersData, 
-    selectedRoles, 
+    selectedRoles: unsortedSelectedRoles, 
     selectedFocusArea,
     isLoading,
     updateLadderCell,
@@ -85,8 +85,15 @@ export function LaddersView() {
     proficiencyData,
     levelNames,
     roleMappings,
+    mappedRoles,
+    availableRoles,
     hasProficiencyData
   } = useLadders();
+
+  const roleOrder = hasProficiencyData ? mappedRoles : availableRoles;
+  const selectedRoles = [...unsortedSelectedRoles].sort(
+    (a, b) => roleOrder.indexOf(a) - roleOrder.indexOf(b)
+  );
 
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
   const [roleSummaryOverrides, setRoleSummaryOverrides] = useState<Record<string, string>>({});
