@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 import { EditCompetencyModal } from '../shared/EditCompetencyModal';
@@ -17,6 +17,8 @@ export function CompetenciesView() {
   const canEdit = permissions.canEdit;
   const [editingCompetency, setEditingCompetency] = useState<EditingCompetency | null>(null);
   const [expandedSub, setExpandedSub] = useState<string | null>(null);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const [initialized, setInitialized] = useState(false);
 
   const toggleSubCompetency = (sub: string) => {
     setExpandedSub(prev => prev === sub ? null : sub);
@@ -77,6 +79,27 @@ export function CompetenciesView() {
   const sortedSections = Object.entries(groupedByFocusArea).sort(
     ([a], [b]) => getSectionOrder(a) - getSectionOrder(b)
   );
+
+  useEffect(() => {
+    if (!initialized && sortedSections.length > 0) {
+      if (canEdit) {
+        setExpandedSections(new Set(sortedSections.map(([area]) => area)));
+      }
+      setInitialized(true);
+    }
+  }, [sortedSections, canEdit, initialized]);
+
+  const toggleSection = (area: string) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(area)) {
+        next.delete(area);
+      } else {
+        next.add(area);
+      }
+      return next;
+    });
+  };
 
   // Short label for focus area headers
   const getFocusAreaLabel = (area: string): string => {
@@ -243,19 +266,32 @@ export function CompetenciesView() {
     <>
       <AddButton />
       <div className="competencies-sections">
-        {sortedSections.map(([area, items]) => (
-          <div key={area} className="competencies-section">
-            <div className="competencies-section-header">
-              <h3 className="competencies-section-title">{getFocusAreaLabel(area)}</h3>
-              {getFocusAreaDescription(area) && (
-                <p className="competencies-section-subtitle">{getFocusAreaDescription(area)}</p>
+        {sortedSections.map(([area, items]) => {
+          const isExpanded = expandedSections.has(area);
+          return (
+            <div key={area} className={`competencies-section ${isExpanded ? 'expanded' : 'collapsed'}`}>
+              <div className="competencies-section-header" onClick={() => toggleSection(area)}>
+                <div className="competencies-section-header-content">
+                  <h3 className="competencies-section-title">
+                    {getFocusAreaLabel(area)}
+                    <span className="competencies-section-count">{items.length}</span>
+                  </h3>
+                  {getFocusAreaDescription(area) && (
+                    <p className="competencies-section-subtitle">{getFocusAreaDescription(area)}</p>
+                  )}
+                </div>
+                <svg className={`competencies-section-chevron ${isExpanded ? 'open' : ''}`} viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+              {isExpanded && (
+                <div className="competencies-grid">
+                  {items.map(item => renderCompetencyCard(item))}
+                </div>
               )}
             </div>
-            <div className="competencies-grid">
-              {items.map(item => renderCompetencyCard(item))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Edit/Add Modal */}

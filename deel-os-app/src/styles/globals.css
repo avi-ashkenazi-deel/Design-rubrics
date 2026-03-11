@@ -669,6 +669,56 @@ select option {
 
 .competencies-section-header {
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 10px 14px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+
+.competencies-section-header:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.competencies-section.collapsed .competencies-section-header {
+  margin-bottom: 0;
+}
+
+.competencies-section-header-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.competencies-section-chevron {
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.competencies-section-chevron.open {
+  transform: rotate(0deg);
+}
+
+.competencies-section-chevron:not(.open) {
+  transform: rotate(-90deg);
+}
+
+.competencies-section-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  vertical-align: middle;
 }
 
 .competencies-section-title {
