@@ -96,6 +96,10 @@ const ADMINS = new Set([
   'avi.ashkenazi@deel.com',
 ]);
 
+export function isAdmin(email: string): boolean {
+  return ADMINS.has(email.toLowerCase().trim());
+}
+
 /**
  * Returns the list of disciplines a user is allowed to see.
  * Returns null for admins and unknown emails (unrestricted access).
