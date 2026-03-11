@@ -63,7 +63,7 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     role: 'admin',
     canEdit: true,
     visibleViews: ['competencies', 'rubrics', 'ladders', 'admin'],
-    visibleTracks: [],
+    visibleTracks: ['IC', 'Manager'],
     allowedDisciplines: null,
     designerLevel: null,
   };
@@ -73,7 +73,7 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     role: 'editor',
     canEdit: true,
     visibleViews: ['competencies', 'rubrics', 'ladders'],
-    visibleTracks: [],
+    visibleTracks: ['IC', 'Manager'],
     allowedDisciplines: null,
     designerLevel: null,
   };
