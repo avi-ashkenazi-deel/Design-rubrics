@@ -3161,6 +3161,20 @@ select option:disabled {
   opacity: 0.8;
 }
 
+.examples-readonly-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.examples-readonly-empty {
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  font-style: italic;
+  padding-left: 16px;
+}
+
 /* ───────── Admin View ───────── */
 
 .admin-view {

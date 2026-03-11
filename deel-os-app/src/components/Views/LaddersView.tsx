@@ -280,14 +280,12 @@ export function LaddersView() {
                       style={{ '--level-color': LEVEL_TEXT_COLORS[roleContents[idx].levelNum] + '40' } as React.CSSProperties}
                     >
                       <div dangerouslySetInnerHTML={{ __html: formatCellText(value) }} />
-                      {canEdit && (
-                        <div
-                          className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
-                          onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
-                        >
-                          Examples →
-                        </div>
-                      )}
+                      <div
+                        className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
+                        onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                      >
+                        Examples →
+                      </div>
                     </div>
                     {canEdit && (
                       <div 
@@ -489,6 +487,7 @@ export function LaddersView() {
           initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { red: [''], yellow: [''], green: [''] }}
           focusArea={examplesModal?.focusArea || ''}
           role={examplesModal?.role || ''}
+          readOnly={!canEdit}
         />
       </>
     );
@@ -553,14 +552,12 @@ export function LaddersView() {
                     {...glow}
                   >
                     <div dangerouslySetInnerHTML={{ __html: formatCellText(value) }} />
-                    {canEdit && (
-                      <div
-                        className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
-                        onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
-                      >
-                        Examples →
-                      </div>
-                    )}
+                    <div
+                      className={`ladders-cell-examples-link ${hasExamples(item.focusArea, selectedRoles[idx]) ? 'has-examples' : ''}`}
+                      onClick={() => handleOpenExamples(item.focusArea, selectedRoles[idx])}
+                    >
+                      Examples →
+                    </div>
                   </div>
                   {canEdit && (
                     <div 
@@ -609,6 +606,7 @@ export function LaddersView() {
         initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { red: [''], yellow: [''], green: [''] }}
         focusArea={examplesModal?.focusArea || ''}
         role={examplesModal?.role || ''}
+        readOnly={!canEdit}
       />
     </>
   );

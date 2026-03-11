@@ -8,6 +8,7 @@ interface ExamplesModalProps {
   initialExamples: TrafficLightExamples;
   focusArea: string;
   role: string;
+  readOnly?: boolean;
 }
 
 const TRAFFIC_LIGHTS = [
@@ -48,11 +49,16 @@ function AutoResizeInput({ value, onChange, placeholder, color }: {
   );
 }
 
-export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusArea, role }: ExamplesModalProps) {
+export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusArea, role, readOnly = false }: ExamplesModalProps) {
   const [examples, setExamples] = useState<TrafficLightExamples>(initialExamples);
 
   useEffect(() => {
-    setExamples(initialExamples);
+    setExamples({
+      ...initialExamples,
+      red: initialExamples.red.length > 0 ? initialExamples.red : [''],
+      yellow: initialExamples.yellow.length > 0 ? initialExamples.yellow : [''],
+      green: initialExamples.green.length > 0 ? initialExamples.green : [''],
+    });
   }, [initialExamples]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -142,16 +148,20 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
               </div>
 
               <div className="examples-list">
-                {examples[key].map((example, idx) => (
+                {examples[key].filter(e => readOnly ? e.trim() !== '' : true).map((example, idx) => (
                   <div key={idx} className="examples-item">
                     <span className="examples-bullet" style={{ color }}>•</span>
-                    <AutoResizeInput
-                      value={example}
-                      onChange={(val) => updateExample(key, idx, val)}
-                      placeholder={`Add ${label.toLowerCase()} example…`}
-                      color={color}
-                    />
-                    {examples[key].length > 1 && (
+                    {readOnly ? (
+                      <span className="examples-readonly-text">{example}</span>
+                    ) : (
+                      <AutoResizeInput
+                        value={example}
+                        onChange={(val) => updateExample(key, idx, val)}
+                        placeholder={`Add ${label.toLowerCase()} example…`}
+                        color={color}
+                      />
+                    )}
+                    {!readOnly && examples[key].length > 1 && (
                       <button
                         className="examples-remove-btn"
                         onClick={() => removeExample(key, idx)}
@@ -162,10 +172,13 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
                     )}
                   </div>
                 ))}
-                {examples[key].length < 6 && (
+                {!readOnly && examples[key].length < 6 && (
                   <button className="examples-add-btn" onClick={() => addExample(key)} style={{ color }}>
                     + Add example
                   </button>
+                )}
+                {readOnly && examples[key].filter(e => e.trim() !== '').length === 0 && (
+                  <span className="examples-readonly-empty">No examples yet</span>
                 )}
               </div>
             </div>
@@ -176,12 +189,16 @@ export function ExamplesModal({ isOpen, onClose, onSave, initialExamples, focusA
           <div className="edit-modal-hint">
             <kbd>Esc</kbd> to close
           </div>
-          <div className="edit-modal-actions">
-            <button className="edit-modal-btn edit-modal-btn-cancel" onClick={onClose}>Cancel</button>
-            <button className="edit-modal-btn edit-modal-btn-save" onClick={handleSave} disabled={!hasChanges}>
-              Save
-            </button>
-          </div>
+          {readOnly ? (
+            <button className="edit-modal-btn edit-modal-btn-cancel" onClick={onClose}>Close</button>
+          ) : (
+            <div className="edit-modal-actions">
+              <button className="edit-modal-btn edit-modal-btn-cancel" onClick={onClose}>Cancel</button>
+              <button className="edit-modal-btn edit-modal-btn-save" onClick={handleSave} disabled={!hasChanges}>
+                Save
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
