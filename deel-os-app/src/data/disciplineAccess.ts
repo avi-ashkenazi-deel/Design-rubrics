@@ -96,8 +96,16 @@ const ADMINS = new Set([
   'avi.ashkenazi@deel.com',
 ]);
 
+const EDITORS = new Set([
+  'andra.cimpan@deel.com',
+]);
+
 export function isAdmin(email: string): boolean {
   return ADMINS.has(email.toLowerCase().trim());
+}
+
+export function isEditor(email: string): boolean {
+  return EDITORS.has(email.toLowerCase().trim()) || isAdmin(email);
 }
 
 /**

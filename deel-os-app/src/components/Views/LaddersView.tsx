@@ -337,19 +337,22 @@ export function LaddersView() {
             return (
               <td key={role} className="mapping-level-cell-wrapper">
                 <div
-                  className="mapping-level-cell"
+                  className={`mapping-level-cell${canEdit ? '' : ' readonly'}`}
                   style={{
                     backgroundColor: LEVEL_COLORS[levelNum],
-                    color: LEVEL_TEXT_COLORS[levelNum]
+                    color: LEVEL_TEXT_COLORS[levelNum],
+                    cursor: canEdit ? 'pointer' : 'default'
                   }}
-                  onClick={() => setOpenDropdown(isOpen ? null : { role, competency: comp })}
+                  onClick={canEdit ? () => setOpenDropdown(isOpen ? null : { role, competency: comp }) : undefined}
                 >
                   {label}
-                  <svg className="mapping-dropdown-arrow" viewBox="0 0 12 12" width="10" height="10" fill="currentColor">
-                    <path d="M3 5l3 3 3-3z" />
-                  </svg>
+                  {canEdit && (
+                    <svg className="mapping-dropdown-arrow" viewBox="0 0 12 12" width="10" height="10" fill="currentColor">
+                      <path d="M3 5l3 3 3-3z" />
+                    </svg>
+                  )}
                 </div>
-                {isOpen && (
+                {canEdit && isOpen && (
                   <div className="mapping-dropdown" ref={dropdownRef}>
                     {[0, 1, 2, 3, 4].map(lvl => (
                       <div

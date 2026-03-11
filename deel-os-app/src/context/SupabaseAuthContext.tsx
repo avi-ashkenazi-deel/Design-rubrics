@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { User, UserPermissions } from '../types';
 import { DEFAULT_PERMISSIONS } from '../types';
-import { getAllowedDisciplines, isAdmin } from '../data/disciplineAccess';
+import { getAllowedDisciplines, isAdmin, isEditor } from '../data/disciplineAccess';
 import { fetchUserPermissions, fetchAllUserPermissions } from '../utils/supabaseApi';
 
 interface AuthContextType {
@@ -68,9 +68,24 @@ export function SupabaseAuthProvider({ children }: AuthProviderProps) {
     designerLevel: null,
   };
 
+  const EDITOR_PERMISSIONS: UserPermissions = {
+    email: '',
+    role: 'editor',
+    canEdit: true,
+    visibleViews: ['competencies', 'rubrics', 'ladders'],
+    visibleTracks: [],
+    allowedDisciplines: null,
+    designerLevel: null,
+  };
+
   const loadPermissions = useCallback(async (email: string): Promise<UserPermissions> => {
     if (isAdmin(email)) {
       return { ...ADMIN_PERMISSIONS, email };
+    }
+
+    if (isEditor(email)) {
+      const allowed = getAllowedDisciplines(email);
+      return { ...EDITOR_PERMISSIONS, email, allowedDisciplines: allowed };
     }
 
     try {
