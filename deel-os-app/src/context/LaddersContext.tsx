@@ -1,7 +1,17 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { LadderData, LaddersConfig, ProficiencyLevel, RoleMappingEntry } from '../types';
 import { loadLaddersDisciplines, loadLaddersConfig, loadLaddersData, loadProficiencyData, loadRoleMapping } from '../utils/csvParser';
+
+// Map rubric/URL role names (e.g. "Senior Staff Product Designer") to ladder role names (e.g. "Senior Staff Designer")
+function mapUrlRoleToLadderRole(urlRole: string, ladderRoles: string[]): string | null {
+  const trimmed = urlRole.trim();
+  if (ladderRoles.includes(trimmed)) return trimmed;
+  // Rubric uses "X Product Designer", ladder uses "X Designer" (e.g. Senior Staff Product Designer -> Senior Staff Designer)
+  const mapped = trimmed.replace(/\s+Product\s+Designer$/, ' Designer');
+  if (ladderRoles.includes(mapped)) return mapped;
+  return null;
+}
 
 interface LaddersContextType {
   // Discipline state
@@ -68,6 +78,7 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
   const [roleMappings, setRoleMappings] = useState<RoleMappingEntry[]>([]);
   const [mappedRoles, setMappedRoles] = useState<string[]>([]);
   const [hasProficiencyData, setHasProficiencyData] = useState(false);
+  const appliedUrlRoles = useRef(false);
 
   // Load disciplines on mount
   useEffect(() => {
@@ -129,8 +140,22 @@ export function LaddersProvider({ children }: LaddersProviderProps) {
           setRoleMappings(mapResult.mappings);
           setMappedRoles(mapResult.roles);
           setHasProficiencyData(true);
-          // Use mapped roles for selection
-          setSelectedRoles(mapResult.roles.slice(0, 2));
+          // Apply URL levels param if present and not yet applied (handles rubric->ladder role name mapping)
+          let rolesToSelect = mapResult.roles.slice(0, 2);
+          if (!appliedUrlRoles.current) {
+            const urlLevels = new URLSearchParams(window.location.search).get('levels');
+            if (urlLevels) {
+              const urlRoles = urlLevels.split(',').map((s) => s.trim());
+              const mapped = urlRoles
+                .map((r) => mapUrlRoleToLadderRole(r, mapResult.roles))
+                .filter((r): r is string => r != null);
+              if (mapped.length > 0) {
+                rolesToSelect = mapped;
+                appliedUrlRoles.current = true;
+              }
+            }
+          }
+          setSelectedRoles(rolesToSelect);
           setIsLoading(false);
           return;
         }
