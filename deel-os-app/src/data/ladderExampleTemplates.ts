@@ -1,8 +1,6 @@
 export interface TrafficLightExamples {
   expectations: string[];
-  red: string[];
-  yellow: string[];
-  green: string[];
+  examples: string[];
   framing?: string;
 }
 
@@ -23,9 +21,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Question assumptions in your brief and bring fresh perspectives to the problem',
       'Articulate clearly what problem you are solving and why it matters to the user',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Problem Solving::Senior Designer': {
@@ -37,9 +33,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Use insights to influence which problems the team prioritises',
       'Demonstrate multiple approaches and articulate the trade-offs between them',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Problem Solving::Staff Designer': {
@@ -51,9 +45,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Imagine alternative models, workflows, or experiences that challenge the status quo',
       'Influence cross-functional prioritisation by bringing a clear, evidence-backed point of view on the problem',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Problem Solving::Senior Staff Designer': {
@@ -65,9 +57,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Use storytelling and compelling narrative to influence organisational priorities',
       'Ensure design meaningfully influences long-term business strategy',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Problem Solving::Principal Designer': {
@@ -79,9 +69,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Shape long-term business strategy through design-led thinking and insight',
       'Mentor Senior Staff and Staff designers on strategic problem definition and vision-setting',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   // ═══════════════════════════════════════════
@@ -97,9 +85,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Respond constructively when priorities shift and seek guidance on how to adjust',
       'Reflect openly on what\'s working and what isn\'t in your approach',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Adaptability::Senior Designer': {
@@ -111,9 +97,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Respond effectively to shifting priorities with minimal supervision',
       'Share what you\'ve learned from experiments with the wider team',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Adaptability::Staff Designer': {
@@ -125,9 +109,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Turn successful experiments into repeatable approaches others can build on',
       'Thrive in ambiguous or rapidly evolving contexts and help others do the same',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Adaptability::Senior Staff Designer': {
@@ -139,9 +121,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Ensure successful experiments become embedded practice rather than one-off wins',
       'Coach designers to thrive in ambiguity rather than wait for clarity',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Adaptability::Principal Designer': {
@@ -153,9 +133,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Evolve culture across domains as the organisation scales and changes',
       'Model adaptability at the highest level, demonstrating how to lead through uncertainty',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   // ═══════════════════════════════════════════
@@ -171,9 +149,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Reference customer insights shared by the team to inform your design decisions',
       'Ground your decisions in user needs rather than assumption or personal preference',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Customer Focus::Senior Designer': {
@@ -185,9 +161,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Develop a working understanding of your customer segments and their distinct needs',
       'Ensure your design decisions are evidence-based, not assumption-based',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Customer Focus::Staff Designer': {
@@ -199,9 +173,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Coach designers on research methods and ensure the voice of the customer reaches cross-functional decisions',
       'Ensure empathy and evidence are embedded from problem framing all the way through to delivery',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Customer Focus::Senior Staff Designer': {
@@ -213,9 +185,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Coach designers on research methods and customer-centered decision-making',
       'Use market and competitor analysis to shape design direction at a vertical level',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Customer Focus::Principal Designer': {
@@ -227,9 +197,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Advocate for customer-centricity at the executive level and through external thought leadership',
       'Build systems that connect customer feedback directly to design and product priorities across all verticals',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   // ═══════════════════════════════════════════
@@ -245,9 +213,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Seek guidance when needed rather than staying stuck',
       'Demonstrate personal accountability within your defined scope',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Ownership::Senior Designer': {
@@ -259,9 +225,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Take responsibility for outcomes post-launch and learn from the impact of your work',
       'Demonstrate accountability for quality as well as delivery',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Ownership::Staff Designer': {
@@ -273,9 +237,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Take accountability for progress and outcomes across teams, not just your own work',
       'Define success metrics and check in on impact after delivery',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Ownership::Senior Staff Designer': {
@@ -287,9 +249,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Set the standard for ownership, accountability, and agency across the organisation',
       'Anticipate long-term risks and shape direction before problems surface',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Ownership::Principal Designer': {
@@ -301,9 +261,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Make high-judgement calls that balance long-term vision with near-term business needs',
       'Model ownership behaviours that others aspire to and explicitly coach others on accountability',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   // ═══════════════════════════════════════════
@@ -319,9 +277,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Strengthen your core craft skills through consistent execution',
       'Cover interaction design, visual design, and accessibility in your work — not just the happy path',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Craft Excellence::Senior Designer': {
@@ -333,9 +289,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Model high-quality craft in a way that others can learn from and reference',
       'Hold a high bar for accessibility, interaction, and visual quality in your own work and in reviews',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Craft Excellence::Staff Designer': {
@@ -347,9 +301,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Mentor designers to consistently apply high-quality craft',
       'Evidence the impact of raising craft standards on the quality of shipped product',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Craft Excellence::Senior Staff Designer': {
@@ -361,9 +313,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Set the bar for design excellence at an industry level',
       'Represent Deel as a recognised craft leader internally and externally',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Craft Excellence::Principal Designer': {
@@ -375,9 +325,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Ensure craft quality is a strategic asset and point of competitive advantage',
       'Influence how craft is understood and valued at the executive and business level',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   // ═══════════════════════════════════════════
@@ -393,9 +341,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Seek support or preparation when facing complex or high-stakes communication',
       'Listen actively and incorporate feedback into your next communication',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Communication::Senior Designer': {
@@ -407,9 +353,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Manage expectations effectively within your area of ownership',
       'Demonstrate the ability to communicate complex ideas simply and without jargon',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Communication::Staff Designer': {
@@ -421,9 +365,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Shape shared understanding by connecting design choices to user impact and business outcomes',
       'Be known as a clear, credible, and reliable communicator across functions',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Communication::Senior Staff Designer': {
@@ -435,9 +377,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Use narrative strategically to navigate tension and enable high-quality decisions',
       'Elevate the communication bar across Deel Design',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Communication::Principal Designer': {
@@ -449,9 +389,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Ensure Deel Design communicates with a coherent, credible voice across all contexts',
       'Coach senior designers on executive communication and high-stakes narrative',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   // ═══════════════════════════════════════════
@@ -467,9 +405,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Contribute to a team environment where feedback is welcomed and acted on',
       'Show up reliably and consistently as a collaborative teammate',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Collaboration::Senior Designer': {
@@ -481,9 +417,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Help resolve friction between team members or functions constructively',
       'Be known as a reliable, generous collaborator who makes the work better',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Collaboration::Staff Designer': {
@@ -495,9 +429,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Foster alignment and shared ownership across your vertical',
       'Model the collaborative behaviours you want to see from the teams around you',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Collaboration::Senior Staff Designer': {
@@ -509,9 +441,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Identify and address collaboration breakdowns before they become blockers',
       'Be known as a connector who builds bridges between teams, disciplines, and geographies',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 
   'Collaboration::Principal Designer': {
@@ -523,9 +453,7 @@ export const DEFAULT_LADDER_EXAMPLES: Record<string, TrafficLightExamples> = {
       'Embed collaboration norms into how the design org hires, onboards, and develops designers',
       'Be the exemplar of generous, high-trust collaboration that others look to as the benchmark',
     ],
-    red: [],
-    yellow: [],
-    green: [],
+    examples: [],
   },
 };
 
@@ -535,5 +463,5 @@ export function getExampleKey(focusArea: string, role: string): string {
 
 export function getDefaultExamples(focusArea: string, role: string): TrafficLightExamples {
   const key = getExampleKey(focusArea, role);
-  return DEFAULT_LADDER_EXAMPLES[key] || { expectations: [], red: [''], yellow: [''], green: [''] };
+  return DEFAULT_LADDER_EXAMPLES[key] || { expectations: [], examples: [''] };
 }

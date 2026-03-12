@@ -1686,6 +1686,8 @@ select option {
   box-shadow: 0 10px 24px rgba(17, 24, 39, 0.06), 0 1px 2px rgba(17, 24, 39, 0.04);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 10;
 }
 
 .ladders-filter-control {
@@ -1750,6 +1752,7 @@ select option {
   box-shadow: 0 18px 36px rgba(17, 24, 39, 0.12);
   padding: 6px;
   border-top: 1px solid #D7DAE1;
+  z-index: 9999;
 }
 
 .ladders-filter-control .multi-select-arrow {
@@ -3771,6 +3774,13 @@ select option:disabled {
   background: var(--section-bg);
   border: 1px solid var(--section-border);
   transition: border-color 0.2s ease;
+}
+
+.examples-section-unified {
+  --section-bg: rgba(37, 99, 235, 0.04);
+  --section-border: rgba(37, 99, 235, 0.15);
+  --section-focus-border: rgba(37, 99, 235, 0.35);
+  --input-accent: #2563EB;
 }
 
 .examples-section:focus-within {

@@ -28,7 +28,6 @@ export function MultiSelect({
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -92,9 +91,3 @@ export function MultiSelect({
     </div>
   );
 }
-
-
-
-
-
-

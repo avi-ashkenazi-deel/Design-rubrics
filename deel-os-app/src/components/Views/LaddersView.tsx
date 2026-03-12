@@ -564,7 +564,7 @@ export function LaddersView() {
           isOpen={examplesModal !== null}
           onClose={() => setExamplesModal(null)}
           onSave={handleSaveExamples}
-          initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { expectations: [], red: [''], yellow: [''], green: [''] }}
+          initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { expectations: [], examples: [''] }}
           focusArea={examplesModal?.focusArea || ''}
           role={examplesModal?.role || ''}
           readOnly={!canEdit}
@@ -684,7 +684,7 @@ export function LaddersView() {
         isOpen={examplesModal !== null}
         onClose={() => setExamplesModal(null)}
         onSave={handleSaveExamples}
-        initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { expectations: [], red: [''], yellow: [''], green: [''] }}
+        initialExamples={examplesModal ? getExamplesForCell(examplesModal.focusArea, examplesModal.role) : { expectations: [], examples: [''] }}
         focusArea={examplesModal?.focusArea || ''}
         role={examplesModal?.role || ''}
         readOnly={!canEdit}
