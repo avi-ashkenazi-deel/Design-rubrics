@@ -429,8 +429,8 @@ export function Sidebar() {
         </>
       )}
 
-      {/* Data status - shown when in a view */}
-      {isInView && !isLaddersView && (
+      {/* Data status - shown when in a view, editors/admins only */}
+      {isInView && !isLaddersView && permissions.canEdit && (
         <div className="section" style={{ marginTop: 'auto' }}>
           <div className="section-title">Data</div>
           <div className="data-status-sidebar">
