@@ -12,9 +12,9 @@ interface ExamplesModalProps {
 }
 
 const TRAFFIC_LIGHTS = [
-  { key: 'red' as const, emoji: '🔴', label: 'Needs Improvement', color: '#ff5c5c', bg: 'rgba(255, 92, 92, 0.05)', border: 'rgba(255, 92, 92, 0.15)', focusBorder: 'rgba(255, 92, 92, 0.4)' },
-  { key: 'yellow' as const, emoji: '🟡', label: 'Developing', color: '#ff9f43', bg: 'rgba(255, 159, 67, 0.05)', border: 'rgba(255, 159, 67, 0.15)', focusBorder: 'rgba(255, 159, 67, 0.4)' },
-  { key: 'green' as const, emoji: '🟢', label: 'Meeting Expectations', color: '#50fa7b', bg: 'rgba(80, 250, 123, 0.05)', border: 'rgba(80, 250, 123, 0.15)', focusBorder: 'rgba(80, 250, 123, 0.4)' },
+  { key: 'red' as const, emoji: '🔴', label: 'Needs Improvement', color: '#DC2626', bg: 'rgba(220, 38, 38, 0.05)', border: 'rgba(220, 38, 38, 0.15)', focusBorder: 'rgba(220, 38, 38, 0.4)' },
+  { key: 'yellow' as const, emoji: '🟡', label: 'Developing', color: '#EA580C', bg: 'rgba(234, 88, 12, 0.05)', border: 'rgba(234, 88, 12, 0.15)', focusBorder: 'rgba(234, 88, 12, 0.4)' },
+  { key: 'green' as const, emoji: '🟢', label: 'Meeting Expectations', color: '#16A34A', bg: 'rgba(22, 163, 74, 0.05)', border: 'rgba(22, 163, 74, 0.15)', focusBorder: 'rgba(22, 163, 74, 0.4)' },
 ] as const;
 
 function AutoResizeInput({ value, onChange, placeholder, color }: {

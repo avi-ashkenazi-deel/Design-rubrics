@@ -58,7 +58,7 @@ export function MultiSelect({
     <div className={`multi-select ${isOpen ? 'open' : ''}`} ref={ref}>
       <div className="multi-select-toggle" onClick={() => setIsOpen(!isOpen)}>
         <span className="multi-select-label">{displayLabel}</span>
-        <span className="multi-select-arrow">▾</span>
+        <span className="multi-select-arrow" aria-hidden="true" />
       </div>
       <div className="multi-select-dropdown">
         {options.map(option => (

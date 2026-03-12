@@ -4,32 +4,32 @@ const DEEL_VALUES = [
   { 
     title: 'Genuine Care', 
     description: 'Valuing customers deeply and understanding the impact of their work.',
-    color: '#ff6b6b'
+    color: '#DC2626'
   },
   { 
     title: 'Deel Speed', 
     description: 'Moving quickly but building lasting, high-quality solutions.',
-    color: '#feca57'
+    color: '#D97706'
   },
   { 
     title: 'Default Optimism', 
     description: 'Maintaining a positive outlook, even during challenges.',
-    color: '#48dbfb'
+    color: '#2563EB'
   },
   { 
     title: 'Work Smart', 
     description: 'Achieving more with fewer resources and being resourceful.',
-    color: '#1dd1a1'
+    color: '#16A34A'
   },
   { 
     title: 'Exceed Expectations', 
     description: 'Taking ownership and always aiming to overachieve.',
-    color: '#ff9ff3'
+    color: '#7C3AED'
   },
   { 
     title: 'Together Everywhere', 
     description: 'Connecting globally and empowering teams regardless of location.',
-    color: '#54a0ff'
+    color: '#0891B2'
   }
 ];
 
@@ -130,7 +130,7 @@ export function WelcomeView() {
           vy: (Math.random() - 0.5) * 0.2,
           size: Math.random() * 2 + 0.5,
           alpha: Math.random() * 0.2 + 0.05,
-          color: ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#ff9ff3', '#54a0ff'][Math.floor(Math.random() * 6)]
+          color: ['#DC2626', '#D97706', '#2563EB', '#16A34A', '#7C3AED', '#0891B2'][Math.floor(Math.random() * 6)]
         });
       }
     };
@@ -240,7 +240,7 @@ export function WelcomeView() {
       });
 
       // Draw subtle connections
-      ctx.strokeStyle = '#ffffff';
+      ctx.strokeStyle = '#111827';
       ctx.lineWidth = 0.5;
       particlesRef.current.forEach((p1, i) => {
         particlesRef.current.slice(i + 1).forEach(p2 => {
@@ -294,20 +294,20 @@ export function WelcomeView() {
       ctx.font = '500 42px Inter, system-ui, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.shadowColor = `rgba(255, 107, 107, ${pulse * 0.5})`;
+      ctx.shadowColor = `rgba(37, 99, 235, ${pulse * 0.3})`;
       ctx.shadowBlur = isZoomedOut ? 8 : (15 + pulse * 8);
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#111827';
       ctx.fillText('Deel', 0, -38);
       
       // Draw "OS" - sized to match width of "Deel"
       ctx.font = 'bold 68px Inter, system-ui, sans-serif';
-      ctx.shadowColor = `rgba(255, 255, 255, ${pulse * 0.4})`;
+      ctx.shadowColor = `rgba(37, 99, 235, ${pulse * 0.25})`;
       ctx.shadowBlur = isZoomedOut ? 10 : (20 + pulse * 10);
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = '#111827';
       ctx.fillText('OS', 0, 30);
       
       ctx.restore();
@@ -341,7 +341,7 @@ export function WelcomeView() {
         
         // Stroked "OS"
         ctx.font = 'bold 68px Inter, system-ui, sans-serif';
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.strokeStyle = 'rgba(17, 24, 39, 0.7)';
         ctx.lineWidth = 2.5 / pulseScale;
         ctx.strokeText('OS', 0, 30);
         
@@ -417,7 +417,7 @@ export function WelcomeView() {
         ctx.shadowOffsetY = 0;
 
         // Card background
-        ctx.fillStyle = 'rgba(18, 18, 18, 0.98)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
         ctx.beginPath();
         ctx.roundRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12);
         ctx.fill();
@@ -451,7 +451,7 @@ export function WelcomeView() {
         ctx.shadowBlur = isCentered ? 10 : (isInBackground ? 8 : 5);
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = '#111827';
         ctx.font = 'bold 13px Inter, system-ui, sans-serif';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
@@ -460,7 +460,7 @@ export function WelcomeView() {
         // Description with subtle colored glow
         ctx.shadowColor = card.value.color;
         ctx.shadowBlur = isCentered ? 6 : (isInBackground ? 5 : 3);
-        ctx.fillStyle = isCentered ? '#dddddd' : '#cccccc';
+        ctx.fillStyle = isCentered ? '#4B5563' : '#6B7280';
         ctx.font = '11px Inter, system-ui, sans-serif';
         const words = card.value.description.split(' ');
         let line = '';

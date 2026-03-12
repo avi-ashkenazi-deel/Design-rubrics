@@ -4,6 +4,7 @@ import { useSupabaseAuth } from '../../context/SupabaseAuthContext';
 import { getLaddersTextDiff, formatCellText } from '../../utils/textDiff';
 import { EditCellModal } from '../shared/EditCellModal';
 import { ExamplesModal } from '../shared/ExamplesModal';
+import { MultiSelect } from '../shared/MultiSelect';
 import { getExampleKey, getDefaultExamples, type TrafficLightExamples } from '../../data/ladderExampleTemplates';
 import type { LadderData, ProficiencyLevel } from '../../types';
 
@@ -56,19 +57,19 @@ const ROLE_SUMMARIES: Record<string, string> = {
 };
 
 const LEVEL_COLORS: Record<number, string> = {
-  0: 'rgba(255, 255, 255, 0.05)',
-  1: 'rgba(108, 211, 217, 0.18)',
-  2: 'rgba(98, 216, 98, 0.18)',
-  3: 'rgba(121, 77, 252, 0.18)',
-  4: 'rgba(204, 86, 233, 0.22)'
+  0: 'rgba(0, 0, 0, 0.03)',
+  1: 'rgba(37, 99, 235, 0.1)',
+  2: 'rgba(22, 163, 74, 0.1)',
+  3: 'rgba(124, 58, 237, 0.1)',
+  4: 'rgba(219, 39, 119, 0.1)'
 };
 
 const LEVEL_TEXT_COLORS: Record<number, string> = {
-  0: '#555555',
-  1: '#6CD3D9',
-  2: '#62D862',
-  3: '#DACEFD',
-  4: '#F0A0D0'
+  0: '#9CA3AF',
+  1: '#2563EB',
+  2: '#16A34A',
+  3: '#7C3AED',
+  4: '#DB2777'
 };
 
 export function LaddersView() {
@@ -76,9 +77,16 @@ export function LaddersView() {
   const { permissions } = useSupabaseAuth();
   const canEdit = permissions.canEdit;
   const { 
+    disciplines,
+    currentDiscipline,
+    setCurrentDiscipline,
+    config,
+    selectedFile,
+    setSelectedFile,
     laddersData, 
     selectedRoles: unsortedSelectedRoles, 
     selectedFocusArea,
+    setSelectedFocusArea,
     isLoading,
     updateLadderCell,
     updateRoleMapping,
@@ -87,9 +95,19 @@ export function LaddersView() {
     roleMappings,
     mappedRoles,
     availableRoles,
-    hasProficiencyData
+    hasProficiencyData,
+    focusAreas,
+    toggleRole
   } = useLadders();
 
+  const visibleDisciplines = permissions.allowedDisciplines
+    ? disciplines.filter((discipline) => permissions.allowedDisciplines?.includes(discipline))
+    : disciplines;
+  const visibleTrackFiles = config?.files?.filter((file) => {
+    const lower = file.name.toLowerCase();
+    return permissions.visibleTracks.some((track) => lower.includes(track.toLowerCase()));
+  }) ?? [];
+  const filterRoleOptions = hasProficiencyData ? mappedRoles : availableRoles;
   const roleOrder = hasProficiencyData ? mappedRoles : availableRoles;
   const selectedRoles = [...unsortedSelectedRoles].sort(
     (a, b) => roleOrder.indexOf(a) - roleOrder.indexOf(b)
@@ -119,6 +137,12 @@ export function LaddersView() {
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown]);
+
+  useEffect(() => {
+    if (visibleTrackFiles.length === 1 && selectedFile !== visibleTrackFiles[0].file) {
+      setSelectedFile(visibleTrackFiles[0].file);
+    }
+  }, [visibleTrackFiles, selectedFile, setSelectedFile]);
 
   const getRoleSummary = (role: string): string => {
     return roleSummaryOverrides[role] ?? ROLE_SUMMARIES[role] ?? '';
@@ -159,21 +183,76 @@ export function LaddersView() {
 
   const dataAvailable = hasProficiencyData ? proficiencyData.length > 0 : laddersData.length > 0;
 
+  const renderFilters = () => (
+    <div className="ladders-filter-bar">
+      {visibleDisciplines.length > 1 && (
+        <div className="ladders-filter-control select-wrapper">
+          <select value={currentDiscipline} onChange={(e) => setCurrentDiscipline(e.target.value)}>
+            {visibleDisciplines.map((discipline) => (
+              <option key={discipline} value={discipline}>{discipline}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {visibleTrackFiles.length > 1 && (
+        <div className="ladders-filter-control select-wrapper">
+          <select value={selectedFile} onChange={(e) => setSelectedFile(e.target.value)}>
+            <option value="">Track</option>
+            {visibleTrackFiles.map((file) => (
+              <option key={file.file} value={file.file}>{file.name}</option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <div className="ladders-filter-control select-wrapper">
+        <select value={selectedFocusArea} onChange={(e) => setSelectedFocusArea(e.target.value)}>
+          <option value="">All focus areas</option>
+          {focusAreas.map((area) => (
+            <option key={area} value={area}>{area}</option>
+          ))}
+        </select>
+      </div>
+
+      <div className="ladders-filter-control ladders-filter-multiselect">
+        <MultiSelect
+          options={filterRoleOptions.map((role) => ({ value: role, label: role }))}
+          selected={selectedRoles}
+          onChange={toggleRole}
+          placeholder="Select roles..."
+          getLabel={(selected) => {
+            if (selected.length === 0) return 'Select roles...';
+            if (selected.length === filterRoleOptions.length) return 'All roles';
+            if (selected.length === 1) return selected[0];
+            return `${selected.length} roles selected`;
+          }}
+        />
+      </div>
+    </div>
+  );
+
   if (!dataAvailable) {
     return (
-      <div className="empty-state">
-        <h3>No ladder data loaded</h3>
-        <p>Select a discipline and ladder track to view career progression.</p>
-      </div>
+      <>
+        {renderFilters()}
+        <div className="empty-state">
+          <h3>No ladder data loaded</h3>
+          <p>Choose a discipline and ladder track in the filters above to view career progression.</p>
+        </div>
+      </>
     );
   }
 
   if (selectedRoles.length === 0) {
     return (
-      <div className="empty-state">
-        <h3>Select roles to compare</h3>
-        <p>Check the roles you want to compare in the sidebar.</p>
-      </div>
+      <>
+        {renderFilters()}
+        <div className="empty-state">
+          <h3>Select roles to compare</h3>
+          <p>Use the roles filter above to choose which roles you want to compare.</p>
+        </div>
+      </>
     );
   }
 
@@ -443,6 +522,7 @@ export function LaddersView() {
 
     return (
       <>
+        {renderFilters()}
         {renderOverviewPanel()}
         <div className="ladders-comparison-grid">
           {Object.entries(groupedByFocusArea).map(([focusArea, items]) => {
@@ -581,6 +661,7 @@ export function LaddersView() {
 
   return (
     <>
+      {renderFilters()}
       <div className="ladders-comparison-grid">
         {Object.entries(groupedByFocusArea).map(([focusArea, items]) => (
           <div key={focusArea} className="ladders-focus-area-group">

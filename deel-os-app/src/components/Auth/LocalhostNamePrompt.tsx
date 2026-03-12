@@ -43,7 +43,7 @@ export function LocalhostNamePrompt() {
         </h1>
         <p style={{ 
           marginBottom: '8px',
-          color: '#4f46e5',
+          color: '#2563EB',
           fontSize: '12px',
           fontWeight: 500
         }}>
@@ -98,14 +98,14 @@ export function LocalhostNamePrompt() {
               fontSize: '16px',
               fontWeight: 500,
               color: 'white',
-              backgroundColor: isValidEmail ? '#4f46e5' : '#a5a5a5',
+              backgroundColor: isValidEmail ? '#2563EB' : '#a5a5a5',
               border: 'none',
               borderRadius: '8px',
               cursor: isValidEmail ? 'pointer' : 'not-allowed',
               transition: 'background-color 0.2s'
             }}
-            onMouseOver={(e) => isValidEmail && (e.currentTarget.style.backgroundColor = '#4338ca')}
-            onMouseOut={(e) => isValidEmail && (e.currentTarget.style.backgroundColor = '#4f46e5')}
+            onMouseOver={(e) => isValidEmail && (e.currentTarget.style.backgroundColor = '#1D4ED8')}
+            onMouseOut={(e) => isValidEmail && (e.currentTarget.style.backgroundColor = '#2563EB')}
           >
             Continue
           </button>

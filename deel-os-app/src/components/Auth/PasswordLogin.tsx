@@ -31,13 +31,13 @@ export function PasswordLogin() {
     width: '100%',
     padding: '12px 16px',
     fontSize: '15px',
-    border: '1px solid #2a2a2a',
+    border: '1px solid #E2E4E9',
     borderRadius: '8px',
     marginBottom: '12px',
     boxSizing: 'border-box',
     outline: 'none',
-    backgroundColor: '#1a1a1a',
-    color: '#ffffff',
+    backgroundColor: '#F9FAFB',
+    color: '#111827',
     fontFamily: 'inherit',
   };
 
@@ -48,23 +48,24 @@ export function PasswordLogin() {
       alignItems: 'center',
       justifyContent: 'center',
       minHeight: '100vh',
-      backgroundColor: '#0d0d0d',
+      backgroundColor: '#F5F6F8',
       padding: '20px',
     }}>
       <div style={{
-        backgroundColor: '#141414',
-        border: '1px solid #2a2a2a',
+        backgroundColor: '#FFFFFF',
+        border: '1px solid #E2E4E9',
         padding: '40px',
         borderRadius: '16px',
         maxWidth: '420px',
         width: '100%',
         textAlign: 'center',
+        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.06)',
       }}>
         <h1 style={{
           marginBottom: '8px',
           fontSize: '24px',
           fontWeight: 700,
-          color: '#ffffff',
+          color: '#111827',
         }}>
           Deel OS
         </h1>
@@ -75,7 +76,7 @@ export function PasswordLogin() {
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              background: 'rgba(80, 250, 123, 0.1)',
+              background: 'rgba(22, 163, 74, 0.1)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -84,12 +85,12 @@ export function PasswordLogin() {
             }}>
               ✉️
             </div>
-            <p style={{ color: '#50fa7b', fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>
+            <p style={{ color: '#16A34A', fontSize: '16px', fontWeight: 600, marginBottom: '8px' }}>
               Check your email
             </p>
-            <p style={{ color: '#a0a0a0', fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
+            <p style={{ color: '#6B7280', fontSize: '14px', marginBottom: '24px', lineHeight: '1.5' }}>
               We sent a one-time login link to<br />
-              <strong style={{ color: '#ffffff' }}>{email}</strong>
+              <strong style={{ color: '#111827' }}>{email}</strong>
             </p>
             <button
               onClick={() => { setSent(false); setEmail(''); }}
@@ -97,9 +98,9 @@ export function PasswordLogin() {
                 padding: '10px 20px',
                 fontSize: '13px',
                 fontWeight: 500,
-                color: '#a0a0a0',
+                color: '#6B7280',
                 backgroundColor: 'transparent',
-                border: '1px solid #2a2a2a',
+                border: '1px solid #E2E4E9',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
@@ -110,7 +111,7 @@ export function PasswordLogin() {
           </div>
         ) : mode === 'password' ? (
           <>
-            <p style={{ marginBottom: '24px', color: '#a0a0a0', fontSize: '14px' }}>
+            <p style={{ marginBottom: '24px', color: '#6B7280', fontSize: '14px' }}>
               Sign in with your Deel email
             </p>
 
@@ -133,11 +134,11 @@ export function PasswordLogin() {
 
               {error && (
                 <p style={{
-                  color: '#ff5c5c',
+                  color: '#DC2626',
                   marginBottom: '12px',
                   fontSize: '13px',
                   padding: '10px',
-                  background: 'rgba(255, 92, 92, 0.1)',
+                  background: 'rgba(220, 38, 38, 0.06)',
                   borderRadius: '8px',
                 }}>
                   {error}
@@ -152,8 +153,8 @@ export function PasswordLogin() {
                   padding: '12px 24px',
                   fontSize: '15px',
                   fontWeight: 600,
-                  color: !isValidEmail ? '#6a6a6a' : '#0d0d0d',
-                  backgroundColor: !isValidEmail ? '#2a2a2a' : '#8be9fd',
+                  color: !isValidEmail ? '#9CA3AF' : '#FFFFFF',
+                  backgroundColor: !isValidEmail ? '#EFF0F3' : '#2563EB',
                   border: 'none',
                   borderRadius: '8px',
                   cursor: !isValidEmail ? 'not-allowed' : 'pointer',
@@ -171,7 +172,7 @@ export function PasswordLogin() {
                 marginTop: '16px',
                 padding: '0',
                 fontSize: '13px',
-                color: '#666',
+                color: '#9CA3AF',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
@@ -183,7 +184,7 @@ export function PasswordLogin() {
           </>
         ) : (
           <>
-            <p style={{ marginBottom: '24px', color: '#a0a0a0', fontSize: '14px' }}>
+            <p style={{ marginBottom: '24px', color: '#6B7280', fontSize: '14px' }}>
               Enter your Deel email to receive a login link
             </p>
 
@@ -199,11 +200,11 @@ export function PasswordLogin() {
 
               {error && (
                 <p style={{
-                  color: '#ff5c5c',
+                  color: '#DC2626',
                   marginBottom: '12px',
                   fontSize: '13px',
                   padding: '10px',
-                  background: 'rgba(255, 92, 92, 0.1)',
+                  background: 'rgba(220, 38, 38, 0.06)',
                   borderRadius: '8px',
                 }}>
                   {error}
@@ -218,8 +219,8 @@ export function PasswordLogin() {
                   padding: '12px 24px',
                   fontSize: '15px',
                   fontWeight: 600,
-                  color: (!isValidEmail || sending) ? '#6a6a6a' : '#0d0d0d',
-                  backgroundColor: (!isValidEmail || sending) ? '#2a2a2a' : '#8be9fd',
+                  color: (!isValidEmail || sending) ? '#9CA3AF' : '#FFFFFF',
+                  backgroundColor: (!isValidEmail || sending) ? '#EFF0F3' : '#2563EB',
                   border: 'none',
                   borderRadius: '8px',
                   cursor: (!isValidEmail || sending) ? 'not-allowed' : 'pointer',
@@ -237,7 +238,7 @@ export function PasswordLogin() {
                 marginTop: '16px',
                 padding: '0',
                 fontSize: '13px',
-                color: '#666',
+                color: '#9CA3AF',
                 backgroundColor: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
