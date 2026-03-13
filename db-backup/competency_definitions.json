@@ -1,0 +1,289 @@
+[
+  {
+    "id": 1,
+    "discipline": "Account Executive Expansion",
+    "competency": "Sales Acumen",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 2,
+    "discipline": "Account Executive Expansion",
+    "competency": "High Performance",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 3,
+    "discipline": "Account Executive Expansion",
+    "competency": "Executional Excellence",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 4,
+    "discipline": "Account Executive Expansion",
+    "competency": "Problem Solving",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 5,
+    "discipline": "Account Executive Expansion",
+    "competency": "Customer Experience",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 6,
+    "discipline": "Account Executive Expansion",
+    "competency": "Communication",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 7,
+    "discipline": "Account Executive Expansion",
+    "competency": "Collaboration",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 8,
+    "discipline": "Account Executive Expansion",
+    "competency": "Coachability",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 9,
+    "discipline": "Design",
+    "competency": "Craft Excellence",
+    "definition": "This is the executional quality of the work. It encompasses a designer's strong command of typography, layout, color, and spacing, ensuring UIs are clean, consistent, and well-structured. It also includes the demonstration of taste, a refined visual sensibility that results in designs that \"just look good\" and feel balanced and intentional. Prototyping and AI-driven design are also crucial here; designers should be able to create high-fidelity prototypes to share with the team and explore emerging tools like AI to enhance their workflow.",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 10,
+    "discipline": "Design",
+    "competency": "Customer Focus",
+    "definition": "This is the foundation of great UX. It's the ability to define and simplify complex user problems and create intuitive, elegant, and user-centered solutions. This includes framing problems clearly, mapping pain points, thinking through all possible states and edge cases, and catching them early in the process.",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 11,
+    "discipline": "Design",
+    "competency": "Problem Solving",
+    "definition": "This competency is about understanding the broader business context and how design directly contributes to product goals and business outcomes. It's about being a strategic partner, challenging low-impact features, and contributing to the roadmap. Designs should be intentional and grounded in data, leveraging both qualitative and quantitative insights to validate decisions and frame them as testable hypotheses.",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 12,
+    "discipline": "Design",
+    "competency": "Collaboration",
+    "definition": "Designers at Deel are expected to work seamlessly across functions, building strong partnerships with peers and stakeholders. They proactively seek and provide feedback, foster trust, and contribute to a supportive, solution-oriented team environment. Effective collaboration means understanding cross-functional priorities, aligning on shared goals, and ensuring design decisions complement broader business and product objectives.",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 13,
+    "discipline": "Design",
+    "competency": "Communication",
+    "definition": "Clear, confident communication is essential for Deel designers. They must be skilled storytellers who can articulate design decisions with clarity and purpose, tailoring their message to suit different audiences. Beyond simply presenting work, they \"sell\" their design vision - bringing others along the journey through persuasive narratives that connect design rationale to user needs and business impact.",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 14,
+    "discipline": "Design",
+    "competency": "Ownership",
+    "definition": "This is about a designer's agency and self-motivation. A high-performing designer takes initiative, pushes for quality, and drives work forward without being asked. They act with autonomy and demonstrate a deep sense of responsibility for their work, bringing potential solutions to the table rather than just problems.",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 15,
+    "discipline": "Partnerships",
+    "competency": "Partner (or Enterprise) Prospecting",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 16,
+    "discipline": "Partnerships",
+    "competency": "Negotiation skills",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 17,
+    "discipline": "Partnerships",
+    "competency": "Relationship Management",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 18,
+    "discipline": "Partnerships",
+    "competency": "Channel Knowledge",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 19,
+    "discipline": "Partnerships",
+    "competency": "Key Account Management",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 20,
+    "discipline": "Partnerships",
+    "competency": "Metrics Management",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 21,
+    "discipline": "Partnerships",
+    "competency": "Communication",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 22,
+    "discipline": "Partnerships",
+    "competency": "Collaboration",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 23,
+    "discipline": "Partnerships",
+    "competency": "Resilience",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 24,
+    "discipline": "Partnerships",
+    "competency": "Stakeholder Management",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 25,
+    "discipline": "Partnerships",
+    "competency": "Coachability",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 26,
+    "discipline": "Partnerships",
+    "competency": "Sales Methodologies",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 27,
+    "discipline": "SDR",
+    "competency": "Executional Excellence",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 28,
+    "discipline": "SDR",
+    "competency": "Customer Experience",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 29,
+    "discipline": "SDR",
+    "competency": "Technical Aptitude",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 30,
+    "discipline": "SDR",
+    "competency": "Problem Solving",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 31,
+    "discipline": "SDR",
+    "competency": "Communication",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 32,
+    "discipline": "SDR",
+    "competency": "Coachability",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 33,
+    "discipline": "SDR",
+    "competency": "Motivation",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 34,
+    "discipline": "SDR",
+    "competency": "Desire to Learn",
+    "definition": "",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 35,
+    "discipline": "Deel",
+    "competency": "Problem Solving",
+    "definition": "Solves complex problems fast. Uses data, judgment, and creativity to get to the root cause and deliver practical, high-impact solutions. Stays focused under pressure and turns challenges into opportunities to drive better results.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  },
+  {
+    "id": 36,
+    "discipline": "Deel",
+    "competency": "Adaptability",
+    "definition": "Responds quickly and effectively to change, shifting priorities, and uncertainty. Maintains performance under pressure and adjusts approach as needed. Embraces feedback, learns fast, and continuously evolves to stay ahead.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  },
+  {
+    "id": 37,
+    "discipline": "Deel",
+    "competency": "Customer Focus",
+    "definition": "Puts the customer at the center of decisions and actions. Builds strong relationships, anticipates needs, and delivers solutions that create real value. Balances customer satisfaction with business outcomes.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  },
+  {
+    "id": 38,
+    "discipline": "Deel",
+    "competency": "Ownership",
+    "definition": "Takes full responsibility for results and follows through relentlessly. Acts with initiative, delivers on commitments, and holds themselves and others accountable. Stays focused and moves work forward, even when direction is limited or conditions change.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  },
+  {
+    "id": 39,
+    "discipline": "Deel",
+    "competency": "Drives High Performance",
+    "definition": "Creates the conditions for sustained excellence. Sets high standards, reinforces focus and accountability, and builds the systems and behaviors that help teams consistently exceed expectations.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  },
+  {
+    "id": 40,
+    "discipline": "Deel",
+    "competency": "Develops Talent",
+    "definition": "Actively builds the capabilities of others to strengthen team performance and future readiness. Provides candid feedback, stretch opportunities, and coaching to accelerate growth. Invests in developing high-potential talent and holds people accountable for learning and progress.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  },
+  {
+    "id": 41,
+    "discipline": "Deel",
+    "competency": "Execution & Impact",
+    "definition": "Delivers high-quality results with urgency and discipline. Hits OKRs, clears roadblocks fast, and drives measurable business outcomes, regardless of ambiguity or challenge. Owns outcomes end-to-end and holds the bar high for self and others.",
+    "created_at": "2026-02-17T20:22:23.020484+00:00"
+  }
+]

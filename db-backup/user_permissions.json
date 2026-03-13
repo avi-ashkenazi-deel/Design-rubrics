@@ -1,0 +1,6 @@
+{
+  "code": "PGRST205",
+  "details": null,
+  "hint": "Perhaps you meant the table 'public.questions'",
+  "message": "Could not find the table 'public.user_permissions' in the schema cache"
+}

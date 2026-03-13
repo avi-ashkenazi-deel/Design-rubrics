@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "discipline": "Design",
+    "stage": "Case study",
+    "competency": "Problem Solving",
+    "question": "• What was the core problem you were trying to solve, and for whom? How did you validate that this was a real problem worth solving?\n• How did this design directly impact the business or product's key performance indicators (KPIs)? Can you walk me through the specific metrics you were tracking?\n• What data or user insights did you use to inform your decisions? Did you proactively seek out this information or was it provided to you?\n• Did you ever challenge the initial brief or project scope? Why, and how did you approach that conversation with stakeholders?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 2,
+    "discipline": "Design",
+    "stage": "Case study",
+    "competency": "Craft Excellence",
+    "question": "• Can you walk me through your key design decisions regarding layout, hierarchy, and typography? What was the rationale behind these choices?\n• How did you ensure visual consistency throughout the project, especially if it was a large or complex one? Did you consider how this work would fit into an existing design system?\n• Let's talk about prototypes. Can you show me a prototype and explain your approach to creating it? What fidelity did you use and why?\n• Where in this work do you feel your personal design perspective or taste really comes through?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 3,
+    "discipline": "Design",
+    "stage": "Case study",
+    "competency": "Collaboration",
+    "question": "• Tell me about your collaboration with your product manager and engineers on this project. Can you give me a specific example of a challenge you faced and how you resolved it together?\n• How did you handle constructive feedback, especially when you disagreed with it?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 4,
+    "discipline": "Design",
+    "stage": "Case study",
+    "competency": "Communication",
+    "question": "• Could you tell me the story of this project from start to finish? What was the most compelling or unexpected part of that journey for you?\n• How did you \"sell\" or communicate your design to stakeholders? Can you describe a specific time you had to get buy-in for a difficult or controversial decision?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 5,
+    "discipline": "Design",
+    "stage": "Case study",
+    "competency": "Ownership",
+    "question": "• What was the biggest challenge you faced on this project, and how did you solve it?\n• Did you identify any opportunities beyond the initial scope? If so, what were they and how did you act on them?\n• Looking back, what are you most proud of in this work? What was a key learning or a \"superpower\" you brought to this project?\n• How did you balance the complexity of this solution with simplicity for the user?\n• Can you walk me through a trade-off you had to make in this project? How did you arrive at that decision?\n• In what ways did you seek out and incorporate feedback—from your team, stakeholders, or users—to make this design better?\n• Thinking about the final output, what's something you would do differently today?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 6,
+    "discipline": "Design",
+    "stage": "Co working",
+    "competency": "Problem Solving",
+    "question": "• What app and feature did you choose, and why?\n• What specific problem are you trying to solve with this feature? How does this problem align with the app's business goals and market position?\n• What assumptions are you making about the user and their needs? How would you validate these assumptions?\n• What are the most important user flows or states you are considering for this task?\n• Are there any competitors who solve this problem better? What can we learn from them?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 7,
+    "discipline": "Design",
+    "stage": "Co working",
+    "competency": "Craft Excellence",
+    "question": "• How are you using your chosen design tool (Figma, AI, etc.) to work efficiently and reach the goal within 60 minutes?\n• Can you explain your thought process for the visual choices you are making, such as layout and information architecture?\n• Show me how you would prototype this solution. What level of fidelity are you aiming for by the end of this session, and why?\n• What is the core essence of this feature, and which area should we design first to capture that?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 8,
+    "discipline": "Design",
+    "stage": "Co working",
+    "competency": "Collaboration",
+    "question": "• As I provide feedback, can you walk me through your thoughts on it? How would you incorporate or respond to this feedback?\n• How would you communicate your design decisions and the rationale behind them to the rest of the team (e.g., product managers, engineers)?\n• What is the interaction pattern for this feature? Are there any other screens that would be impacted by this change?\n• If you could have help from us, what would you ask for?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 9,
+    "discipline": "Design",
+    "stage": "Co working",
+    "competency": "Ownership",
+    "question": "• How do you self-critique your work as you go? Are we, by solving one issue, creating another?\n• How are you managing your time during this constrained task to ensure you reach a working prototype?\n• What would you improve visually and from an interaction perspective if you had more time?\n• What do you think is the next logical feature to build after this one?\n• How would you sell this feature internally in one sentence? And how would you communicate it to the world?\n• How do you feel about this task overall? Is there anything you would change about your approach?\n• How do you feel about your time management? Did you make any preparations in advance?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 10,
+    "discipline": "Design",
+    "stage": "Talent interview",
+    "competency": "Communication",
+    "question": "• On a scale of 1 to 10, how would you rate your performance in the case study interview and why?\n• Beyond the skills we saw in the case study, what are three specific areas you are actively working to improve in as a designer?\n• What are your sources of inspiration, and how do you incorporate them into your work?\n• Do you have any role models in the design industry? What do you admire about their work or approach?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 11,
+    "discipline": "Design",
+    "stage": "Talent interview",
+    "competency": "Collaboration",
+    "question": "• Why are you interested in joining Deel specifically? What do you know about our company culture?\n• Can you describe a time you had to work on a high-priority, last-minute project for a valued customer? Walk me through what you did and why.\n• How do you feel about working hard to deliver projects that are at risk of not meeting their deadline? Can you give me an example of how you've handled this in the past?\n• Imagine you have five projects, all at risk of not being delivered on time. How would you approach this situation? How would your strategy change if you had six projects at risk?\n• Let's say you're a product designer with a lot of incoming feedback on a piece of work, and you don't think you can address it all by the deadline. What's your process for prioritizing and communicating this?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 12,
+    "discipline": "Design",
+    "stage": "Talent interview",
+    "competency": "Ownership",
+    "question": "• How would you approach a two-day deadline to achieve a complex goal? Walk me through your process.\n• You're three days away from a deadline, and you've just realized the proposed solution is completely wrong. What are your immediate next steps?\n• In a fast-paced environment, do you prefer \"work-life balance\" or \"work-life choice,\" and what's the difference to you?\n• Beyond your design tasks, what else do you believe a product designer should be doing to contribute to a team's success?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 13,
+    "discipline": "Design",
+    "stage": "Hiring manager",
+    "competency": "Communication",
+    "question": "• On a scale of 1 to 10, how would you rate your performance in the case study interview and why?\n• Beyond the skills we saw in the case study, what are three specific areas you are actively working to improve in as a designer?\n• What are your sources of inspiration, and how do you incorporate them into your work?\n• Do you have any role models in the design industry? What do you admire about their work or approach?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 14,
+    "discipline": "Design",
+    "stage": "Hiring manager",
+    "competency": "Collaboration",
+    "question": "• Why are you interested in joining Deel specifically? What do you know about our company culture?\n• Can you describe a time you had to work on a high-priority, last-minute project for a valued customer? Walk me through what you did and why.\n• How do you feel about working hard to deliver projects that are at risk of not meeting their deadline? Can you give me an example of how you've handled this in the past?\n• Imagine you have five projects, all at risk of not being delivered on time. How would you approach this situation? How would your strategy change if you had six projects at risk?\n• Let's say you're a product designer with a lot of incoming feedback on a piece of work, and you don't think you can address it all by the deadline. What's your process for prioritizing and communicating this?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  },
+  {
+    "id": 15,
+    "discipline": "Design",
+    "stage": "Hiring manager",
+    "competency": "Ownership",
+    "question": "• How would you approach a two-day deadline to achieve a complex goal? Walk me through your process.\n• You're three days away from a deadline, and you've just realized the proposed solution is completely wrong. What are your immediate next steps?\n• In a fast-paced environment, do you prefer \"work-life balance\" or \"work-life choice,\" and what's the difference to you?\n• Beyond your design tasks, what else do you believe a product designer should be doing to contribute to a team's success?",
+    "created_at": "2026-01-31T08:59:56.316134+00:00"
+  }
+]

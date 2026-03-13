@@ -1,0 +1,6 @@
+{
+  "code": "PGRST205",
+  "details": null,
+  "hint": "Perhaps you meant the table 'public.competency_definitions'",
+  "message": "Could not find the table 'public.competency_mappings' in the schema cache"
+}
