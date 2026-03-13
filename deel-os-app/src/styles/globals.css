@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
   --bg-primary: #F5F6F8;
@@ -31,12 +31,16 @@
 }
 
 body {
-  font-family: 'Mulish', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.5;
   overflow: hidden;
+}
+
+h1 {
+  font-family: 'Bagoss', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Auth Overlay */
@@ -696,8 +700,9 @@ select option {
 }
 
 .header h1 {
+  font-family: 'Bagoss', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 500;
   margin-bottom: 8px;
 }
 
